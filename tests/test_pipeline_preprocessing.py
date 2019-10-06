@@ -1,0 +1,63 @@
+
+import luigi
+
+from shutil import rmtree
+from os.path import join, dirname, isfile, isdir
+from unittest import TestCase
+import luigi
+
+from cap2.pipeline.preprocessing.count_reads import CountRawReads
+from cap2.pipeline.preprocessing.fastqc import FastQC
+from cap2.pipeline.preprocessing.map_to_human import RemoveHumanReads
+
+RAW_READS_1 = join(dirname(__file__), 'data/zymo_pos_cntrl.r1.fq.gz')
+RAW_READS_2 = join(dirname(__file__), 'data/zymo_pos_cntrl.r2.fq.gz')
+TEST_CONFIG = join(dirname(__file__), 'data/test_config.yaml')
+
+
+class DummyHumanRemovalDB(luigi.ExternalTask):
+
+    @property
+    def bowtie2_index(self):
+        return join(dirname(__file__), 'data/hg38/genome_sample')
+
+    def output(self):
+        return luigi.LocalTarget(join(dirname(__file__), 'data/hg38/genome_sample.1.bt2'))
+
+
+class TestPipelinePreprocessing(TestCase):
+
+    def test_invoke_count_raw_reads(self):
+        instance = CountRawReads(in_filename=RAW_READS_1, sample_name='test_sample', config_filename=TEST_CONFIG)
+        luigi.build([instance], local_scheduler=True)
+        self.assertTrue(isfile(instance.output().fn))
+        text = open(instance.output().path).read()
+        self.assertIn('raw_reads,1000', text)
+        rmtree('test_out')
+
+    def test_invoke_fastqc(self):
+        instance = FastQC(
+            in_filename=RAW_READS_1,
+            sample_name='test_sample',
+            config_filename=TEST_CONFIG,
+            cores=1
+        )
+        luigi.build([instance], local_scheduler=True)
+        self.assertTrue(isfile(instance.output()['zip_output'].path))
+        self.assertTrue(isfile(instance.output()['report'].path))
+        rmtree('test_out')
+
+    def test_invoke_remove_human_reads(self):
+        instance = RemoveHumanReads(
+            pe1=RAW_READS_1,
+            pe2=RAW_READS_2,
+            sample_name='test_sample',
+            config_filename=TEST_CONFIG,
+            cores=1
+        )
+        instance.db = DummyHumanRemovalDB()
+        luigi.build([instance], local_scheduler=True)
+        self.assertTrue(isfile(instance.output()['bam'].path))
+        self.assertTrue(isfile(instance.output()['nonhuman_reads'][0].path))
+        self.assertTrue(isfile(instance.output()['nonhuman_reads'][1].path))
+        # rmtree('test_out')

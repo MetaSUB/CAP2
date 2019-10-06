@@ -1,0 +1,65 @@
+{
+  "build": "hcfea43d_1",
+  "build_number": 1,
+  "channel": "https://repo.anaconda.com/pkgs/main/osx-64",
+  "constrains": [],
+  "depends": [],
+  "extracted_package_dir": "/Users/dcdanko/miniconda3/pkgs/libcxxabi-4.0.1-hcfea43d_1",
+  "features": "",
+  "files": [
+    "lib/libc++abi.1.0.dylib",
+    "lib/libc++abi.1.dylib",
+    "lib/libc++abi.a",
+    "lib/libc++abi.dylib"
+  ],
+  "fn": "libcxxabi-4.0.1-hcfea43d_1.conda",
+  "legacy_bz2_md5": "b06555a43b9c0857b87b342115bea761",
+  "license": "MIT license or UIUC License",
+  "license_family": "Other",
+  "link": {
+    "source": "/Users/dcdanko/miniconda3/pkgs/libcxxabi-4.0.1-hcfea43d_1",
+    "type": 1
+  },
+  "md5": "ad58ef7c481c1bddffb6adb539bbd6fc",
+  "name": "libcxxabi",
+  "package_tarball_full_path": "/Users/dcdanko/miniconda3/pkgs/libcxxabi-4.0.1-hcfea43d_1.conda",
+  "paths_data": {
+    "paths": [
+      {
+        "_path": "lib/libc++abi.1.0.dylib",
+        "path_type": "hardlink",
+        "sha256": "75d1e8ba7541c334895f513fd83c3515e06b9e3b3f1cc158d7a0622fe1067748",
+        "sha256_in_prefix": "75d1e8ba7541c334895f513fd83c3515e06b9e3b3f1cc158d7a0622fe1067748",
+        "size_in_bytes": 297040
+      },
+      {
+        "_path": "lib/libc++abi.1.dylib",
+        "path_type": "softlink",
+        "sha256": "75d1e8ba7541c334895f513fd83c3515e06b9e3b3f1cc158d7a0622fe1067748",
+        "size_in_bytes": 297040
+      },
+      {
+        "_path": "lib/libc++abi.a",
+        "path_type": "hardlink",
+        "sha256": "8b4a445c9ac1878ba369a9ba6ae316ebf07dd4f23667747ba29bfe74db8974f1",
+        "sha256_in_prefix": "8b4a445c9ac1878ba369a9ba6ae316ebf07dd4f23667747ba29bfe74db8974f1",
+        "size_in_bytes": 356968
+      },
+      {
+        "_path": "lib/libc++abi.dylib",
+        "path_type": "softlink",
+        "sha256": "75d1e8ba7541c334895f513fd83c3515e06b9e3b3f1cc158d7a0622fe1067748",
+        "size_in_bytes": 297040
+      }
+    ],
+    "paths_version": 1
+  },
+  "requested_spec": "None",
+  "sha256": "417508a9fd168531fc4271d67afebe90bef2f844c025848874dd02f0e76c72e5",
+  "size": 358413,
+  "subdir": "osx-64",
+  "timestamp": 1540686629315,
+  "track_features": "",
+  "url": "https://repo.anaconda.com/pkgs/main/osx-64/libcxxabi-4.0.1-hcfea43d_1.conda",
+  "version": "4.0.1"
+}

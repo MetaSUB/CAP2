@@ -1,0 +1,97 @@
+{
+  "build": "ha441bb4_0",
+  "build_number": 0,
+  "channel": "https://repo.anaconda.com/pkgs/main/osx-64",
+  "constrains": [],
+  "depends": [
+    "libedit >=3.1.20181209,<3.2.0a0",
+    "zlib >=1.2.11,<1.3.0a0"
+  ],
+  "extracted_package_dir": "/Users/dcdanko/miniconda3/pkgs/sqlite-3.30.0-ha441bb4_0",
+  "features": "",
+  "files": [
+    "bin/sqlite3",
+    "include/sqlite3.h",
+    "include/sqlite3ext.h",
+    "lib/libsqlite3.0.dylib",
+    "lib/libsqlite3.a",
+    "lib/libsqlite3.dylib",
+    "lib/pkgconfig/sqlite3.pc"
+  ],
+  "fn": "sqlite-3.30.0-ha441bb4_0.tar.bz2",
+  "license": "Public-Domain (http://www.sqlite.org/copyright.html)",
+  "link": {
+    "source": "/Users/dcdanko/miniconda3/pkgs/sqlite-3.30.0-ha441bb4_0",
+    "type": 1
+  },
+  "md5": "cb28181410da01cf9695520aee528a08",
+  "name": "sqlite",
+  "package_tarball_full_path": "/Users/dcdanko/miniconda3/pkgs/sqlite-3.30.0-ha441bb4_0.tar.bz2",
+  "paths_data": {
+    "paths": [
+      {
+        "_path": "bin/sqlite3",
+        "file_mode": "binary",
+        "path_type": "hardlink",
+        "prefix_placeholder": "/opt/concourse/worker/volumes/live/f110f8cd-9e71-46d4-7e17-364e69b15ee5/volume/sqlite_1570211292004/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehol",
+        "sha256": "921bed98f0771c1c9678977cc80de2a8eb38570c5556a685c20c4cb11c694999",
+        "sha256_in_prefix": "69fcb9df9e2e0068b7c1dbaba991e48cd5f66791912d8dce4cfe7d6717f6e0e5",
+        "size_in_bytes": 1814364
+      },
+      {
+        "_path": "include/sqlite3.h",
+        "path_type": "hardlink",
+        "sha256": "0342a803c78826339ec27bac3357fff95aa4b5abfa016d98ff037396a97f9cdf",
+        "sha256_in_prefix": "0342a803c78826339ec27bac3357fff95aa4b5abfa016d98ff037396a97f9cdf",
+        "size_in_bytes": 564824
+      },
+      {
+        "_path": "include/sqlite3ext.h",
+        "path_type": "hardlink",
+        "sha256": "1bfef5f1972ef380fcf2679c64f3005b156a774a0c2144b023286f61a70cad95",
+        "sha256_in_prefix": "1bfef5f1972ef380fcf2679c64f3005b156a774a0c2144b023286f61a70cad95",
+        "size_in_bytes": 34156
+      },
+      {
+        "_path": "lib/libsqlite3.0.dylib",
+        "file_mode": "binary",
+        "path_type": "hardlink",
+        "prefix_placeholder": "/opt/concourse/worker/volumes/live/f110f8cd-9e71-46d4-7e17-364e69b15ee5/volume/sqlite_1570211292004/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehol",
+        "sha256": "8399bdb6411998c7e83fa0f0a0bbeb8568ada9a11dff390b72fe2a82386cf853",
+        "sha256_in_prefix": "dbc2c20f1250d9d152097a042138657fd67f59d3ca559ca49da3b885baba51b9",
+        "size_in_bytes": 1578376
+      },
+      {
+        "_path": "lib/libsqlite3.a",
+        "path_type": "hardlink",
+        "sha256": "c15147461b56ccdfee749818422bc08b16e4f1bb4d0c4fe6951b0b72c044dc75",
+        "sha256_in_prefix": "c15147461b56ccdfee749818422bc08b16e4f1bb4d0c4fe6951b0b72c044dc75",
+        "size_in_bytes": 1934856
+      },
+      {
+        "_path": "lib/libsqlite3.dylib",
+        "path_type": "softlink",
+        "sha256": "8399bdb6411998c7e83fa0f0a0bbeb8568ada9a11dff390b72fe2a82386cf853",
+        "size_in_bytes": 1578376
+      },
+      {
+        "_path": "lib/pkgconfig/sqlite3.pc",
+        "file_mode": "text",
+        "path_type": "hardlink",
+        "prefix_placeholder": "/opt/anaconda1anaconda2anaconda3",
+        "sha256": "e5bcec82086e658c87e7dd3ad3c083bcf44fa706885b596bd9093d2eff6e0705",
+        "sha256_in_prefix": "eb0b6b2d5c7d2e8f7d1354129a6afbd91980e9bf0230c7b382d3573918b61931",
+        "size_in_bytes": 289
+      }
+    ],
+    "paths_version": 1
+  },
+  "requested_spec": "None",
+  "sha256": "437f1ad6ebd15022d1ed3a426eeb180e860be86aab834452b8cfe334a5a54360",
+  "size": 2497380,
+  "subdir": "osx-64",
+  "timestamp": 1570211488637,
+  "track_features": "",
+  "url": "https://repo.anaconda.com/pkgs/main/osx-64/sqlite-3.30.0-ha441bb4_0.tar.bz2",
+  "version": "3.30.0"
+}

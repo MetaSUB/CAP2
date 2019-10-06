@@ -1,0 +1,2095 @@
+{
+  "build": "1",
+  "build_number": 1,
+  "channel": "https://conda.anaconda.org/bioconda/osx-64",
+  "constrains": [],
+  "depends": [
+    "font-ttf-dejavu-sans-mono",
+    "fontconfig",
+    "openjdk >=8.0.144",
+    "perl"
+  ],
+  "extracted_package_dir": "/Users/dcdanko/miniconda3/pkgs/fastqc-0.11.8-1",
+  "features": "",
+  "files": [
+    "bin/fastqc",
+    "opt/fastqc-0.11.8/Configuration/adapter_list.txt",
+    "opt/fastqc-0.11.8/Configuration/contaminant_list.txt",
+    "opt/fastqc-0.11.8/Configuration/limits.txt",
+    "opt/fastqc-0.11.8/Help/1 Introduction/.svn/entries",
+    "opt/fastqc-0.11.8/Help/1 Introduction/.svn/text-base/1.1 What is FastQC.html.svn-base",
+    "opt/fastqc-0.11.8/Help/1 Introduction/1.1 What is FastQC.html",
+    "opt/fastqc-0.11.8/Help/2 Basic Operations/.svn/entries",
+    "opt/fastqc-0.11.8/Help/2 Basic Operations/.svn/text-base/2.1 Opening a sequence file.html.svn-base",
+    "opt/fastqc-0.11.8/Help/2 Basic Operations/.svn/text-base/2.2 Evaluating Results.html.svn-base",
+    "opt/fastqc-0.11.8/Help/2 Basic Operations/.svn/text-base/2.3 Saving a Report.html.svn-base",
+    "opt/fastqc-0.11.8/Help/2 Basic Operations/2.1 Opening a sequence file.html",
+    "opt/fastqc-0.11.8/Help/2 Basic Operations/2.2 Evaluating Results.html",
+    "opt/fastqc-0.11.8/Help/2 Basic Operations/2.3 Saving a Report.html",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/entries",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/prop-base/duplication_levels.png.svn-base",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/prop-base/kmer_profiles.png.svn-base",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/prop-base/per_base_gc_content.png.svn-base",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/prop-base/per_base_n_content.png.svn-base",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/prop-base/per_base_quality.png.svn-base",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/prop-base/per_base_sequence_content.png.svn-base",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/prop-base/per_sequence_gc_content.png.svn-base",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/prop-base/per_sequence_quality.png.svn-base",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/prop-base/per_tile_quality.png.svn-base",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/prop-base/sequence_length_distribution.png.svn-base",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/1 Basic Statistics.html.svn-base",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/10 Adapter Content.html.svn-base",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/11 Kmer Content.html.svn-base",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/12 Per Tile Sequence Quality.html.svn-base",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/2 Per Base Sequence Quality.html.svn-base",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/3 Per Sequence Quality Scores.html.svn-base",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/4 Per Base Sequence Content.html.svn-base",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/5 Per Sequence GC Content.html.svn-base",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/6 Per Base N Content.html.svn-base",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/7 Sequence Length Distribution.html.svn-base",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/8 Duplicate Sequences.html.svn-base",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/9 Overrepresented Sequences.html.svn-base",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/duplication_levels.png.svn-base",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/kmer_profiles.png.svn-base",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/per_base_gc_content.png.svn-base",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/per_base_n_content.png.svn-base",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/per_base_quality.png.svn-base",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/per_base_sequence_content.png.svn-base",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/per_sequence_gc_content.png.svn-base",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/per_sequence_quality.png.svn-base",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/per_tile_quality.png.svn-base",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/sequence_length_distribution.png.svn-base",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/1 Basic Statistics.html",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/10 Adapter Content.html",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/11 Kmer Content.html",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/12 Per Tile Sequence Quality.html",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/2 Per Base Sequence Quality.html",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/3 Per Sequence Quality Scores.html",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/4 Per Base Sequence Content.html",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/5 Per Sequence GC Content.html",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/6 Per Base N Content.html",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/7 Sequence Length Distribution.html",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/8 Duplicate Sequences.html",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/9 Overrepresented Sequences.html",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/duplication_levels.png",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/kmer_profiles.png",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/per_base_gc_content.png",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/per_base_n_content.png",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/per_base_quality.png",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/per_base_sequence_content.png",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/per_sequence_gc_content.png",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/per_sequence_quality.png",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/per_tile_quality.png",
+    "opt/fastqc-0.11.8/Help/3 Analysis Modules/sequence_length_distribution.png",
+    "opt/fastqc-0.11.8/INSTALL.txt",
+    "opt/fastqc-0.11.8/LICENSE",
+    "opt/fastqc-0.11.8/LICENSE.txt",
+    "opt/fastqc-0.11.8/LICENSE_JHDF5.txt",
+    "opt/fastqc-0.11.8/README.md",
+    "opt/fastqc-0.11.8/README.txt",
+    "opt/fastqc-0.11.8/RELEASE_NOTES.txt",
+    "opt/fastqc-0.11.8/Templates/Icons/error.png",
+    "opt/fastqc-0.11.8/Templates/Icons/fastqc_icon.png",
+    "opt/fastqc-0.11.8/Templates/Icons/tick.png",
+    "opt/fastqc-0.11.8/Templates/Icons/warning.png",
+    "opt/fastqc-0.11.8/Templates/fastqc2fo.xsl",
+    "opt/fastqc-0.11.8/Templates/header_template.html",
+    "opt/fastqc-0.11.8/cisd-jhdf5.jar",
+    "opt/fastqc-0.11.8/conda_build.sh",
+    "opt/fastqc-0.11.8/fastqc",
+    "opt/fastqc-0.11.8/fastqc.orig",
+    "opt/fastqc-0.11.8/fastqc_icon.ico",
+    "opt/fastqc-0.11.8/jbzip2-0.9.jar",
+    "opt/fastqc-0.11.8/net/sourceforge/iharder/base64/Base64$1.class",
+    "opt/fastqc-0.11.8/net/sourceforge/iharder/base64/Base64$InputStream.class",
+    "opt/fastqc-0.11.8/net/sourceforge/iharder/base64/Base64$OutputStream.class",
+    "opt/fastqc-0.11.8/net/sourceforge/iharder/base64/Base64.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/analysis/UnivariateFunction.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/analysis/solvers/AbstractUnivariateSolver.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/analysis/solvers/AllowedSolution.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/analysis/solvers/BaseAbstractUnivariateSolver.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/analysis/solvers/BaseUnivariateSolver.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/analysis/solvers/BracketedUnivariateSolver.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/analysis/solvers/BrentSolver.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/analysis/solvers/UnivariateSolver.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/analysis/solvers/UnivariateSolverUtils.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/distribution/AbstractIntegerDistribution.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/distribution/AbstractRealDistribution$1.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/distribution/AbstractRealDistribution.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/distribution/BetaDistribution.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/distribution/BinomialDistribution.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/distribution/CauchyDistribution.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/distribution/ChiSquaredDistribution.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/distribution/FDistribution.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/distribution/GammaDistribution.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/distribution/HypergeometricDistribution.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/distribution/IntegerDistribution.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/distribution/NormalDistribution.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/distribution/PascalDistribution.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/distribution/PoissonDistribution.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/distribution/RealDistribution.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/distribution/SaddlePointExpansion.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/distribution/TDistribution.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/distribution/WeibullDistribution.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/distribution/ZipfDistribution.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/exception/ConvergenceException.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/exception/DimensionMismatchException.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/exception/MathArithmeticException.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/exception/MathIllegalArgumentException.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/exception/MathIllegalNumberException.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/exception/MathIllegalStateException.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/exception/MathInternalError.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/exception/MaxCountExceededException.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/exception/NoBracketingException.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/exception/NotFiniteNumberException.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/exception/NotPositiveException.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/exception/NotStrictlyPositiveException.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/exception/NullArgumentException.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/exception/NumberIsTooLargeException.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/exception/NumberIsTooSmallException.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/exception/OutOfRangeException.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/exception/TooManyEvaluationsException.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/exception/util/ArgUtils.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/exception/util/ExceptionContext.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/exception/util/ExceptionContextProvider.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/exception/util/Localizable.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/exception/util/LocalizedFormats.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/random/AbstractWell.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/random/BitsStreamGenerator.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/random/RandomData.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/random/RandomDataImpl.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/random/RandomGenerator.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/random/Well19937c.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/special/Beta$1.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/special/Beta.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/special/Erf.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/special/Gamma$1.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/special/Gamma.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/util/ArithmeticUtils.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/util/ContinuedFraction.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/util/DoubleArray.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/util/FastMath$ExpFracTable.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/util/FastMath$ExpIntTable.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/util/FastMath$lnMant.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/util/FastMath.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/util/FastMathCalc.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/util/FastMathLiteralArrays.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/util/Incrementor$1.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/util/Incrementor$MaxCountExceededCallback.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/util/Incrementor.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/util/MathUtils.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/util/Precision.class",
+    "opt/fastqc-0.11.8/org/apache/commons/math3/util/ResizableDoubleArray.class",
+    "opt/fastqc-0.11.8/run_fastqc.bat",
+    "opt/fastqc-0.11.8/sam-1.103.jar",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Analysis/AnalysisListener.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Analysis/AnalysisQueue.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Analysis/AnalysisRunner.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Analysis/OfflineRunner.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Dialogs/AboutDialog$1.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Dialogs/AboutDialog.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Dialogs/FastQCTitlePanel$SmoothJLabel.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Dialogs/FastQCTitlePanel.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Dialogs/WelcomePanel.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/FastQCApplication$1.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/FastQCApplication.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/FastQCConfig.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/FastQCMenuBar.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/FileFilters/BAMFileFilter.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/FileFilters/CasavaFastQFileFilter.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/FileFilters/FastQFileFilter.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/FileFilters/GobyFileFilter.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/FileFilters/MappedBAMFileFilter.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/FileFilters/SequenceFileFilter.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Graphs/BaseGroup.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Graphs/LineGraph.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Graphs/QualityBoxPlot.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Graphs/TileGraph.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Help/HelpDialog.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Help/HelpIndexRoot$FileSorter.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Help/HelpIndexRoot.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Help/HelpPage.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Help/HelpPageDisplay$HelpEditor.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Help/HelpPageDisplay.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Help/HelpSearchPanel.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/AbstractQCModule.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/AdapterContent$Adapter.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/AdapterContent$ResultsTable.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/AdapterContent.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/BasicStats$ResultsTable.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/BasicStats.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/DuplicationLevel.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/GCModel/GCModel.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/GCModel/GCModelValue.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/KmerContent$Kmer.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/KmerContent$ResultsTable.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/KmerContent.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/ModuleConfig.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/ModuleFactory.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/NContent.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/OverRepresentedSeqs$OverrepresentedSeq.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/OverRepresentedSeqs$ResultsTable.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/OverRepresentedSeqs.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/PerBaseQualityScores.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/PerBaseSequenceContent.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/PerSequenceGCContent.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/PerSequenceQualityScores.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/PerTileQualityScores.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/QCModule.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/SequenceLengthDistribution.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Report/HTMLReportArchive.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Report/stylesheet.txt",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Resources/error.png",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Resources/fastqc_icon.png",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Resources/fastqc_icon.svg",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Resources/fastqc_icon_100.png",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Resources/tick.png",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Resources/warning.png",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Results/ResultsPanel$ModuleRenderer.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Results/ResultsPanel.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Sequence/BAMFile.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Sequence/Contaminant/Contaminant.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Sequence/Contaminant/ContaminantHit.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Sequence/Contaminant/ContaminentFinder.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Sequence/Fast5File.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Sequence/FastQFile.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Sequence/QualityEncoding/PhredEncoding.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Sequence/Sequence.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Sequence/SequenceFactory.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Sequence/SequenceFile.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Sequence/SequenceFileGroup.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Sequence/SequenceFormatException.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Statistics/NormalDistribution.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Statistics/PearsonCorrelation.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Utilities/CasavaBasename.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Utilities/HotColdColourGradient.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Utilities/ImageToBase64.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Utilities/MultiMemberGZIPInputStream.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Utilities/NameFormatException.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Utilities/NanoporeBasename.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Utilities/QualityCount.class",
+    "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Utilities/RGB.class"
+  ],
+  "fn": "fastqc-0.11.8-1.tar.bz2",
+  "license": "GPL >=3",
+  "link": {
+    "source": "/Users/dcdanko/miniconda3/pkgs/fastqc-0.11.8-1",
+    "type": 1
+  },
+  "md5": "d6097e58b5481a5321e183757f71f691",
+  "name": "fastqc",
+  "package_tarball_full_path": "/Users/dcdanko/miniconda3/pkgs/fastqc-0.11.8-1.tar.bz2",
+  "paths_data": {
+    "paths": [
+      {
+        "_path": "bin/fastqc",
+        "path_type": "softlink",
+        "sha256": "cba78fcd4c7f4f3a2e1f3f888ef9757a5ee1862aeff92f9f10b4360de933c0ed",
+        "size_in_bytes": 14505
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Configuration/adapter_list.txt",
+        "path_type": "hardlink",
+        "sha256": "cd74ebc0170ca8622a03df2691a326a675db2dff7533d84a6399f128c36ea8cc",
+        "sha256_in_prefix": "cd74ebc0170ca8622a03df2691a326a675db2dff7533d84a6399f128c36ea8cc",
+        "size_in_bytes": 1366
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Configuration/contaminant_list.txt",
+        "path_type": "hardlink",
+        "sha256": "2586b4736c634bcdf1c1531ea2af23888cdfa109b61e3509b000b9c6d70f4aa2",
+        "sha256_in_prefix": "2586b4736c634bcdf1c1531ea2af23888cdfa109b61e3509b000b9c6d70f4aa2",
+        "size_in_bytes": 13361
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Configuration/limits.txt",
+        "path_type": "hardlink",
+        "sha256": "1e1708bab11ab65f7e78edb384c78cb364c9737053de15ed1014b4a0538a517e",
+        "sha256_in_prefix": "1e1708bab11ab65f7e78edb384c78cb364c9737053de15ed1014b4a0538a517e",
+        "size_in_bytes": 2608
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/1 Introduction/.svn/entries",
+        "path_type": "hardlink",
+        "sha256": "f95b6bbb732d67c3adaa22e2371a39a88aab160578044d28dd40a8d19af0cb92",
+        "sha256_in_prefix": "f95b6bbb732d67c3adaa22e2371a39a88aab160578044d28dd40a8d19af0cb92",
+        "size_in_bytes": 379
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/1 Introduction/.svn/text-base/1.1 What is FastQC.html.svn-base",
+        "path_type": "hardlink",
+        "sha256": "6738e84bbcaec5f0e5a83c606d87b33086bd2b5fa0bf6b6231cf8b782292981b",
+        "sha256_in_prefix": "6738e84bbcaec5f0e5a83c606d87b33086bd2b5fa0bf6b6231cf8b782292981b",
+        "size_in_bytes": 1210
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/1 Introduction/1.1 What is FastQC.html",
+        "path_type": "hardlink",
+        "sha256": "6738e84bbcaec5f0e5a83c606d87b33086bd2b5fa0bf6b6231cf8b782292981b",
+        "sha256_in_prefix": "6738e84bbcaec5f0e5a83c606d87b33086bd2b5fa0bf6b6231cf8b782292981b",
+        "size_in_bytes": 1210
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/2 Basic Operations/.svn/entries",
+        "path_type": "hardlink",
+        "sha256": "6565519df3e212147fbd777eac1963dd013fb3b72207368ebb481769fe4b4fb5",
+        "sha256_in_prefix": "6565519df3e212147fbd777eac1963dd013fb3b72207368ebb481769fe4b4fb5",
+        "size_in_bytes": 734
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/2 Basic Operations/.svn/text-base/2.1 Opening a sequence file.html.svn-base",
+        "path_type": "hardlink",
+        "sha256": "aa2ca161711383aedee1db38050018ab91f8dd05daa3f86245538dd7fd9755d1",
+        "sha256_in_prefix": "aa2ca161711383aedee1db38050018ab91f8dd05daa3f86245538dd7fd9755d1",
+        "size_in_bytes": 2021
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/2 Basic Operations/.svn/text-base/2.2 Evaluating Results.html.svn-base",
+        "path_type": "hardlink",
+        "sha256": "b49f7b6785fda5d6dde54bbf2acadc626cfb1a188cd2f4452ed756128b7772e0",
+        "sha256_in_prefix": "b49f7b6785fda5d6dde54bbf2acadc626cfb1a188cd2f4452ed756128b7772e0",
+        "size_in_bytes": 1195
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/2 Basic Operations/.svn/text-base/2.3 Saving a Report.html.svn-base",
+        "path_type": "hardlink",
+        "sha256": "ab161cfa4703b71a1505b6bf86c311c89743a037c0e7089746befc008fa9ecfa",
+        "sha256_in_prefix": "ab161cfa4703b71a1505b6bf86c311c89743a037c0e7089746befc008fa9ecfa",
+        "size_in_bytes": 1202
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/2 Basic Operations/2.1 Opening a sequence file.html",
+        "path_type": "hardlink",
+        "sha256": "aa2ca161711383aedee1db38050018ab91f8dd05daa3f86245538dd7fd9755d1",
+        "sha256_in_prefix": "aa2ca161711383aedee1db38050018ab91f8dd05daa3f86245538dd7fd9755d1",
+        "size_in_bytes": 2021
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/2 Basic Operations/2.2 Evaluating Results.html",
+        "path_type": "hardlink",
+        "sha256": "b49f7b6785fda5d6dde54bbf2acadc626cfb1a188cd2f4452ed756128b7772e0",
+        "sha256_in_prefix": "b49f7b6785fda5d6dde54bbf2acadc626cfb1a188cd2f4452ed756128b7772e0",
+        "size_in_bytes": 1195
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/2 Basic Operations/2.3 Saving a Report.html",
+        "path_type": "hardlink",
+        "sha256": "ab161cfa4703b71a1505b6bf86c311c89743a037c0e7089746befc008fa9ecfa",
+        "sha256_in_prefix": "ab161cfa4703b71a1505b6bf86c311c89743a037c0e7089746befc008fa9ecfa",
+        "size_in_bytes": 1202
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/entries",
+        "path_type": "hardlink",
+        "sha256": "9226599588cd67676a8a9d95ef53add59d99e3f48a76d7a00785a2277e74bfb8",
+        "sha256_in_prefix": "9226599588cd67676a8a9d95ef53add59d99e3f48a76d7a00785a2277e74bfb8",
+        "size_in_bytes": 3776
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/prop-base/duplication_levels.png.svn-base",
+        "path_type": "hardlink",
+        "sha256": "ebbf7e8800c3446bc3a195fa53573bde1073b0bf7581a614372f1391a9286d02",
+        "sha256_in_prefix": "ebbf7e8800c3446bc3a195fa53573bde1073b0bf7581a614372f1391a9286d02",
+        "size_in_bytes": 53
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/prop-base/kmer_profiles.png.svn-base",
+        "path_type": "hardlink",
+        "sha256": "87ae87fd7834d6b1457b3f33c7a12b1300e14a09caf29263b7600d8b5a915e2e",
+        "sha256_in_prefix": "87ae87fd7834d6b1457b3f33c7a12b1300e14a09caf29263b7600d8b5a915e2e",
+        "size_in_bytes": 79
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/prop-base/per_base_gc_content.png.svn-base",
+        "path_type": "hardlink",
+        "sha256": "ebbf7e8800c3446bc3a195fa53573bde1073b0bf7581a614372f1391a9286d02",
+        "sha256_in_prefix": "ebbf7e8800c3446bc3a195fa53573bde1073b0bf7581a614372f1391a9286d02",
+        "size_in_bytes": 53
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/prop-base/per_base_n_content.png.svn-base",
+        "path_type": "hardlink",
+        "sha256": "ebbf7e8800c3446bc3a195fa53573bde1073b0bf7581a614372f1391a9286d02",
+        "sha256_in_prefix": "ebbf7e8800c3446bc3a195fa53573bde1073b0bf7581a614372f1391a9286d02",
+        "size_in_bytes": 53
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/prop-base/per_base_quality.png.svn-base",
+        "path_type": "hardlink",
+        "sha256": "ebbf7e8800c3446bc3a195fa53573bde1073b0bf7581a614372f1391a9286d02",
+        "sha256_in_prefix": "ebbf7e8800c3446bc3a195fa53573bde1073b0bf7581a614372f1391a9286d02",
+        "size_in_bytes": 53
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/prop-base/per_base_sequence_content.png.svn-base",
+        "path_type": "hardlink",
+        "sha256": "ebbf7e8800c3446bc3a195fa53573bde1073b0bf7581a614372f1391a9286d02",
+        "sha256_in_prefix": "ebbf7e8800c3446bc3a195fa53573bde1073b0bf7581a614372f1391a9286d02",
+        "size_in_bytes": 53
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/prop-base/per_sequence_gc_content.png.svn-base",
+        "path_type": "hardlink",
+        "sha256": "ebbf7e8800c3446bc3a195fa53573bde1073b0bf7581a614372f1391a9286d02",
+        "sha256_in_prefix": "ebbf7e8800c3446bc3a195fa53573bde1073b0bf7581a614372f1391a9286d02",
+        "size_in_bytes": 53
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/prop-base/per_sequence_quality.png.svn-base",
+        "path_type": "hardlink",
+        "sha256": "ebbf7e8800c3446bc3a195fa53573bde1073b0bf7581a614372f1391a9286d02",
+        "sha256_in_prefix": "ebbf7e8800c3446bc3a195fa53573bde1073b0bf7581a614372f1391a9286d02",
+        "size_in_bytes": 53
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/prop-base/per_tile_quality.png.svn-base",
+        "path_type": "hardlink",
+        "sha256": "ebbf7e8800c3446bc3a195fa53573bde1073b0bf7581a614372f1391a9286d02",
+        "sha256_in_prefix": "ebbf7e8800c3446bc3a195fa53573bde1073b0bf7581a614372f1391a9286d02",
+        "size_in_bytes": 53
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/prop-base/sequence_length_distribution.png.svn-base",
+        "path_type": "hardlink",
+        "sha256": "ebbf7e8800c3446bc3a195fa53573bde1073b0bf7581a614372f1391a9286d02",
+        "sha256_in_prefix": "ebbf7e8800c3446bc3a195fa53573bde1073b0bf7581a614372f1391a9286d02",
+        "size_in_bytes": 53
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/1 Basic Statistics.html.svn-base",
+        "path_type": "hardlink",
+        "sha256": "f17eef37bc2f743cee4b39f9dc793fd7ec62182accf299001e7e423433d35938",
+        "sha256_in_prefix": "f17eef37bc2f743cee4b39f9dc793fd7ec62182accf299001e7e423433d35938",
+        "size_in_bytes": 1821
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/10 Adapter Content.html.svn-base",
+        "path_type": "hardlink",
+        "sha256": "5d29b121724ff87bc124a8c63f9a04f3097f1d6fb67b9db5d81bd65d86cc9476",
+        "sha256_in_prefix": "5d29b121724ff87bc124a8c63f9a04f3097f1d6fb67b9db5d81bd65d86cc9476",
+        "size_in_bytes": 2440
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/11 Kmer Content.html.svn-base",
+        "path_type": "hardlink",
+        "sha256": "7844e73170455146169e4f2da94b3d3c2b729a2966d65c686461c116ed5892e2",
+        "sha256_in_prefix": "7844e73170455146169e4f2da94b3d3c2b729a2966d65c686461c116ed5892e2",
+        "size_in_bytes": 2517
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/12 Per Tile Sequence Quality.html.svn-base",
+        "path_type": "hardlink",
+        "sha256": "a8cce38a0ad7b77ddad4faeba3759926856392609f4637dd7393a93385bcdb5c",
+        "sha256_in_prefix": "a8cce38a0ad7b77ddad4faeba3759926856392609f4637dd7393a93385bcdb5c",
+        "size_in_bytes": 2264
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/2 Per Base Sequence Quality.html.svn-base",
+        "path_type": "hardlink",
+        "sha256": "ea7d60f915ce5d21a2068a45465c2233399285bad1aef7e2bd835f8c53442922",
+        "sha256_in_prefix": "ea7d60f915ce5d21a2068a45465c2233399285bad1aef7e2bd835f8c53442922",
+        "size_in_bytes": 3691
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/3 Per Sequence Quality Scores.html.svn-base",
+        "path_type": "hardlink",
+        "sha256": "b1599c312b3f944c29ae893b2a4e07c44c83b43e9b6e66624ea179376c43c017",
+        "sha256_in_prefix": "b1599c312b3f944c29ae893b2a4e07c44c83b43e9b6e66624ea179376c43c017",
+        "size_in_bytes": 1718
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/4 Per Base Sequence Content.html.svn-base",
+        "path_type": "hardlink",
+        "sha256": "98bfe916f8f8060f7ed7f1d941575109df705352837991f514c72acf8c1d4a9c",
+        "sha256_in_prefix": "98bfe916f8f8060f7ed7f1d941575109df705352837991f514c72acf8c1d4a9c",
+        "size_in_bytes": 3618
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/5 Per Sequence GC Content.html.svn-base",
+        "path_type": "hardlink",
+        "sha256": "0c5675514b3eb6d314155c4ad5b9ff1ff169c478195c3a49ec0336a4db0944e1",
+        "sha256_in_prefix": "0c5675514b3eb6d314155c4ad5b9ff1ff169c478195c3a49ec0336a4db0944e1",
+        "size_in_bytes": 1873
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/6 Per Base N Content.html.svn-base",
+        "path_type": "hardlink",
+        "sha256": "fbc0cfb79607a3c16b409f842af681edc21f908d58a6ad3a50732ed3b94edc64",
+        "sha256_in_prefix": "fbc0cfb79607a3c16b409f842af681edc21f908d58a6ad3a50732ed3b94edc64",
+        "size_in_bytes": 1884
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/7 Sequence Length Distribution.html.svn-base",
+        "path_type": "hardlink",
+        "sha256": "0177ef8293f38b366d3cf862629709617f533f11e3c8ccd8024681f71acbbd0b",
+        "sha256_in_prefix": "0177ef8293f38b366d3cf862629709617f533f11e3c8ccd8024681f71acbbd0b",
+        "size_in_bytes": 1222
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/8 Duplicate Sequences.html.svn-base",
+        "path_type": "hardlink",
+        "sha256": "4834f18049144315ea90750d7afd61ed304aeedb30034ada49c44e2562fd6441",
+        "sha256_in_prefix": "4834f18049144315ea90750d7afd61ed304aeedb30034ada49c44e2562fd6441",
+        "size_in_bytes": 6071
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/9 Overrepresented Sequences.html.svn-base",
+        "path_type": "hardlink",
+        "sha256": "5ec8a3ab683c92abee210c7a72db144962128059366bb7aaee31f5648723217d",
+        "sha256_in_prefix": "5ec8a3ab683c92abee210c7a72db144962128059366bb7aaee31f5648723217d",
+        "size_in_bytes": 2408
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/duplication_levels.png.svn-base",
+        "path_type": "hardlink",
+        "sha256": "be3713865351d0f32097f59c41c57eb57bc55408644d838d999a5d9b71b5b7d6",
+        "sha256_in_prefix": "be3713865351d0f32097f59c41c57eb57bc55408644d838d999a5d9b71b5b7d6",
+        "size_in_bytes": 20545
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/kmer_profiles.png.svn-base",
+        "path_type": "hardlink",
+        "sha256": "9ae101bf2dc0020209cfe7be11772c3f44be6bdde2046c13a1559ca1ae2087d3",
+        "sha256_in_prefix": "9ae101bf2dc0020209cfe7be11772c3f44be6bdde2046c13a1559ca1ae2087d3",
+        "size_in_bytes": 76372
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/per_base_gc_content.png.svn-base",
+        "path_type": "hardlink",
+        "sha256": "2cd2fe7efe44ac376d80aa9bcd8f4961a412d08ce195d683996d3ede6cde8d05",
+        "sha256_in_prefix": "2cd2fe7efe44ac376d80aa9bcd8f4961a412d08ce195d683996d3ede6cde8d05",
+        "size_in_bytes": 14660
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/per_base_n_content.png.svn-base",
+        "path_type": "hardlink",
+        "sha256": "1bad3e474f99729ffb342e9a17e13374d91e56c52160a4a868dbb30c15b83d88",
+        "sha256_in_prefix": "1bad3e474f99729ffb342e9a17e13374d91e56c52160a4a868dbb30c15b83d88",
+        "size_in_bytes": 13693
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/per_base_quality.png.svn-base",
+        "path_type": "hardlink",
+        "sha256": "4b403497ca789d06ca98c09f55cfa02f712e8de36ad55ffaf8ffc5c0eac44b45",
+        "sha256_in_prefix": "4b403497ca789d06ca98c09f55cfa02f712e8de36ad55ffaf8ffc5c0eac44b45",
+        "size_in_bytes": 10081
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/per_base_sequence_content.png.svn-base",
+        "path_type": "hardlink",
+        "sha256": "472e4b6a03fe7337f27ceb07c9e5aa3af8746796811cb8b18cc51b603b26bba5",
+        "sha256_in_prefix": "472e4b6a03fe7337f27ceb07c9e5aa3af8746796811cb8b18cc51b603b26bba5",
+        "size_in_bytes": 18414
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/per_sequence_gc_content.png.svn-base",
+        "path_type": "hardlink",
+        "sha256": "9f6a2f9929dcf406a38b1a0e2e6b664ba0a9535db0b7b557b981c330a7a957bd",
+        "sha256_in_prefix": "9f6a2f9929dcf406a38b1a0e2e6b664ba0a9535db0b7b557b981c330a7a957bd",
+        "size_in_bytes": 20781
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/per_sequence_quality.png.svn-base",
+        "path_type": "hardlink",
+        "sha256": "05edbd85f1d5d6d152bd0eba11228619430048b214d00e8047f51e411d8050de",
+        "sha256_in_prefix": "05edbd85f1d5d6d152bd0eba11228619430048b214d00e8047f51e411d8050de",
+        "size_in_bytes": 21368
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/per_tile_quality.png.svn-base",
+        "path_type": "hardlink",
+        "sha256": "4490aaa4c658215aadaf35b55f0a17e12640deb552c62914259e3b30de72d485",
+        "sha256_in_prefix": "4490aaa4c658215aadaf35b55f0a17e12640deb552c62914259e3b30de72d485",
+        "size_in_bytes": 11765
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/.svn/text-base/sequence_length_distribution.png.svn-base",
+        "path_type": "hardlink",
+        "sha256": "694dc7e79bf95f898c43e08f51a51b39fe8974e771c13a1e4766440c5790b35c",
+        "sha256_in_prefix": "694dc7e79bf95f898c43e08f51a51b39fe8974e771c13a1e4766440c5790b35c",
+        "size_in_bytes": 19558
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/1 Basic Statistics.html",
+        "path_type": "hardlink",
+        "sha256": "f17eef37bc2f743cee4b39f9dc793fd7ec62182accf299001e7e423433d35938",
+        "sha256_in_prefix": "f17eef37bc2f743cee4b39f9dc793fd7ec62182accf299001e7e423433d35938",
+        "size_in_bytes": 1821
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/10 Adapter Content.html",
+        "path_type": "hardlink",
+        "sha256": "5d29b121724ff87bc124a8c63f9a04f3097f1d6fb67b9db5d81bd65d86cc9476",
+        "sha256_in_prefix": "5d29b121724ff87bc124a8c63f9a04f3097f1d6fb67b9db5d81bd65d86cc9476",
+        "size_in_bytes": 2440
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/11 Kmer Content.html",
+        "path_type": "hardlink",
+        "sha256": "7844e73170455146169e4f2da94b3d3c2b729a2966d65c686461c116ed5892e2",
+        "sha256_in_prefix": "7844e73170455146169e4f2da94b3d3c2b729a2966d65c686461c116ed5892e2",
+        "size_in_bytes": 2517
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/12 Per Tile Sequence Quality.html",
+        "path_type": "hardlink",
+        "sha256": "a8cce38a0ad7b77ddad4faeba3759926856392609f4637dd7393a93385bcdb5c",
+        "sha256_in_prefix": "a8cce38a0ad7b77ddad4faeba3759926856392609f4637dd7393a93385bcdb5c",
+        "size_in_bytes": 2264
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/2 Per Base Sequence Quality.html",
+        "path_type": "hardlink",
+        "sha256": "ea7d60f915ce5d21a2068a45465c2233399285bad1aef7e2bd835f8c53442922",
+        "sha256_in_prefix": "ea7d60f915ce5d21a2068a45465c2233399285bad1aef7e2bd835f8c53442922",
+        "size_in_bytes": 3691
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/3 Per Sequence Quality Scores.html",
+        "path_type": "hardlink",
+        "sha256": "b1599c312b3f944c29ae893b2a4e07c44c83b43e9b6e66624ea179376c43c017",
+        "sha256_in_prefix": "b1599c312b3f944c29ae893b2a4e07c44c83b43e9b6e66624ea179376c43c017",
+        "size_in_bytes": 1718
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/4 Per Base Sequence Content.html",
+        "path_type": "hardlink",
+        "sha256": "98bfe916f8f8060f7ed7f1d941575109df705352837991f514c72acf8c1d4a9c",
+        "sha256_in_prefix": "98bfe916f8f8060f7ed7f1d941575109df705352837991f514c72acf8c1d4a9c",
+        "size_in_bytes": 3618
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/5 Per Sequence GC Content.html",
+        "path_type": "hardlink",
+        "sha256": "0c5675514b3eb6d314155c4ad5b9ff1ff169c478195c3a49ec0336a4db0944e1",
+        "sha256_in_prefix": "0c5675514b3eb6d314155c4ad5b9ff1ff169c478195c3a49ec0336a4db0944e1",
+        "size_in_bytes": 1873
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/6 Per Base N Content.html",
+        "path_type": "hardlink",
+        "sha256": "fbc0cfb79607a3c16b409f842af681edc21f908d58a6ad3a50732ed3b94edc64",
+        "sha256_in_prefix": "fbc0cfb79607a3c16b409f842af681edc21f908d58a6ad3a50732ed3b94edc64",
+        "size_in_bytes": 1884
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/7 Sequence Length Distribution.html",
+        "path_type": "hardlink",
+        "sha256": "0177ef8293f38b366d3cf862629709617f533f11e3c8ccd8024681f71acbbd0b",
+        "sha256_in_prefix": "0177ef8293f38b366d3cf862629709617f533f11e3c8ccd8024681f71acbbd0b",
+        "size_in_bytes": 1222
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/8 Duplicate Sequences.html",
+        "path_type": "hardlink",
+        "sha256": "4834f18049144315ea90750d7afd61ed304aeedb30034ada49c44e2562fd6441",
+        "sha256_in_prefix": "4834f18049144315ea90750d7afd61ed304aeedb30034ada49c44e2562fd6441",
+        "size_in_bytes": 6071
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/9 Overrepresented Sequences.html",
+        "path_type": "hardlink",
+        "sha256": "5ec8a3ab683c92abee210c7a72db144962128059366bb7aaee31f5648723217d",
+        "sha256_in_prefix": "5ec8a3ab683c92abee210c7a72db144962128059366bb7aaee31f5648723217d",
+        "size_in_bytes": 2408
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/duplication_levels.png",
+        "path_type": "hardlink",
+        "sha256": "be3713865351d0f32097f59c41c57eb57bc55408644d838d999a5d9b71b5b7d6",
+        "sha256_in_prefix": "be3713865351d0f32097f59c41c57eb57bc55408644d838d999a5d9b71b5b7d6",
+        "size_in_bytes": 20545
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/kmer_profiles.png",
+        "path_type": "hardlink",
+        "sha256": "9ae101bf2dc0020209cfe7be11772c3f44be6bdde2046c13a1559ca1ae2087d3",
+        "sha256_in_prefix": "9ae101bf2dc0020209cfe7be11772c3f44be6bdde2046c13a1559ca1ae2087d3",
+        "size_in_bytes": 76372
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/per_base_gc_content.png",
+        "path_type": "hardlink",
+        "sha256": "2cd2fe7efe44ac376d80aa9bcd8f4961a412d08ce195d683996d3ede6cde8d05",
+        "sha256_in_prefix": "2cd2fe7efe44ac376d80aa9bcd8f4961a412d08ce195d683996d3ede6cde8d05",
+        "size_in_bytes": 14660
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/per_base_n_content.png",
+        "path_type": "hardlink",
+        "sha256": "1bad3e474f99729ffb342e9a17e13374d91e56c52160a4a868dbb30c15b83d88",
+        "sha256_in_prefix": "1bad3e474f99729ffb342e9a17e13374d91e56c52160a4a868dbb30c15b83d88",
+        "size_in_bytes": 13693
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/per_base_quality.png",
+        "path_type": "hardlink",
+        "sha256": "4b403497ca789d06ca98c09f55cfa02f712e8de36ad55ffaf8ffc5c0eac44b45",
+        "sha256_in_prefix": "4b403497ca789d06ca98c09f55cfa02f712e8de36ad55ffaf8ffc5c0eac44b45",
+        "size_in_bytes": 10081
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/per_base_sequence_content.png",
+        "path_type": "hardlink",
+        "sha256": "472e4b6a03fe7337f27ceb07c9e5aa3af8746796811cb8b18cc51b603b26bba5",
+        "sha256_in_prefix": "472e4b6a03fe7337f27ceb07c9e5aa3af8746796811cb8b18cc51b603b26bba5",
+        "size_in_bytes": 18414
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/per_sequence_gc_content.png",
+        "path_type": "hardlink",
+        "sha256": "9f6a2f9929dcf406a38b1a0e2e6b664ba0a9535db0b7b557b981c330a7a957bd",
+        "sha256_in_prefix": "9f6a2f9929dcf406a38b1a0e2e6b664ba0a9535db0b7b557b981c330a7a957bd",
+        "size_in_bytes": 20781
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/per_sequence_quality.png",
+        "path_type": "hardlink",
+        "sha256": "05edbd85f1d5d6d152bd0eba11228619430048b214d00e8047f51e411d8050de",
+        "sha256_in_prefix": "05edbd85f1d5d6d152bd0eba11228619430048b214d00e8047f51e411d8050de",
+        "size_in_bytes": 21368
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/per_tile_quality.png",
+        "path_type": "hardlink",
+        "sha256": "4490aaa4c658215aadaf35b55f0a17e12640deb552c62914259e3b30de72d485",
+        "sha256_in_prefix": "4490aaa4c658215aadaf35b55f0a17e12640deb552c62914259e3b30de72d485",
+        "size_in_bytes": 11765
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Help/3 Analysis Modules/sequence_length_distribution.png",
+        "path_type": "hardlink",
+        "sha256": "694dc7e79bf95f898c43e08f51a51b39fe8974e771c13a1e4766440c5790b35c",
+        "sha256_in_prefix": "694dc7e79bf95f898c43e08f51a51b39fe8974e771c13a1e4766440c5790b35c",
+        "size_in_bytes": 19558
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/INSTALL.txt",
+        "path_type": "hardlink",
+        "sha256": "0c48fdafc115643e03fbb1a84f8d256cabf5e8792683778c8c79b538fd357cf9",
+        "sha256_in_prefix": "0c48fdafc115643e03fbb1a84f8d256cabf5e8792683778c8c79b538fd357cf9",
+        "size_in_bytes": 6721
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/LICENSE",
+        "path_type": "hardlink",
+        "sha256": "189b1af95d661151e054cea10c91b3d754e4de4d3fecfb074c1fb29476f7167b",
+        "sha256_in_prefix": "189b1af95d661151e054cea10c91b3d754e4de4d3fecfb074c1fb29476f7167b",
+        "size_in_bytes": 18431
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/LICENSE.txt",
+        "path_type": "hardlink",
+        "sha256": "0b383d5a63da644f628d99c33976ea6487ed89aaa59f0b3257992deac1171e6b",
+        "sha256_in_prefix": "0b383d5a63da644f628d99c33976ea6487ed89aaa59f0b3257992deac1171e6b",
+        "size_in_bytes": 35821
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/LICENSE_JHDF5.txt",
+        "path_type": "hardlink",
+        "sha256": "3a7384a3d3c12acfd59286ac9ff1ee2a14a7bc3422aaccad6adeecb7d2762a1f",
+        "sha256_in_prefix": "3a7384a3d3c12acfd59286ac9ff1ee2a14a7bc3422aaccad6adeecb7d2762a1f",
+        "size_in_bytes": 11766
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/README.md",
+        "path_type": "hardlink",
+        "sha256": "8a9ddca3f95ce1421a9b350d6c672ec6dc7ccf48d0ffbfecf00244c513de1c33",
+        "sha256_in_prefix": "8a9ddca3f95ce1421a9b350d6c672ec6dc7ccf48d0ffbfecf00244c513de1c33",
+        "size_in_bytes": 1052
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/README.txt",
+        "path_type": "hardlink",
+        "sha256": "e21fdeb670e1a068eee914e300df5246f5fec26cca3b94627beba18ffeee5316",
+        "sha256_in_prefix": "e21fdeb670e1a068eee914e300df5246f5fec26cca3b94627beba18ffeee5316",
+        "size_in_bytes": 2286
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/RELEASE_NOTES.txt",
+        "path_type": "hardlink",
+        "sha256": "972bbe406a612b4db3fdc18415aa2213b5313047db53743245605669aba090aa",
+        "sha256_in_prefix": "972bbe406a612b4db3fdc18415aa2213b5313047db53743245605669aba090aa",
+        "size_in_bytes": 37395
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Templates/Icons/error.png",
+        "path_type": "hardlink",
+        "sha256": "b9c7d86bf2dd0d414244154de0ab2aab467f38f2454d2b3b760569f01ed01c2d",
+        "sha256_in_prefix": "b9c7d86bf2dd0d414244154de0ab2aab467f38f2454d2b3b760569f01ed01c2d",
+        "size_in_bytes": 1561
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Templates/Icons/fastqc_icon.png",
+        "path_type": "hardlink",
+        "sha256": "e63253011f67bd11f6a0da03813c419c040ff5950315148de291d1bcb0aab9a2",
+        "sha256_in_prefix": "e63253011f67bd11f6a0da03813c419c040ff5950315148de291d1bcb0aab9a2",
+        "size_in_bytes": 1197
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Templates/Icons/tick.png",
+        "path_type": "hardlink",
+        "sha256": "e9ed21a3f0e4d704b70ae850a6a0116eb23f857ce314c32e20111892de3ff79d",
+        "sha256_in_prefix": "e9ed21a3f0e4d704b70ae850a6a0116eb23f857ce314c32e20111892de3ff79d",
+        "size_in_bytes": 1715
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Templates/Icons/warning.png",
+        "path_type": "hardlink",
+        "sha256": "24e92cafbeb094dc687a94fe73b5f0cc26b178fa124107eb66cfb96b4e0b8443",
+        "sha256_in_prefix": "24e92cafbeb094dc687a94fe73b5f0cc26b178fa124107eb66cfb96b4e0b8443",
+        "size_in_bytes": 1450
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Templates/fastqc2fo.xsl",
+        "path_type": "hardlink",
+        "sha256": "a0e21842f1fb4f5ece369859fc8d6a30640cb7069eb71ec7385abb7cb85b54e0",
+        "sha256_in_prefix": "a0e21842f1fb4f5ece369859fc8d6a30640cb7069eb71ec7385abb7cb85b54e0",
+        "size_in_bytes": 2385
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/Templates/header_template.html",
+        "path_type": "hardlink",
+        "sha256": "ebe7bc64b1f33f0cf7eb7cbe879741339d97b56c4e0f59bda09e25aa872a2227",
+        "sha256_in_prefix": "ebe7bc64b1f33f0cf7eb7cbe879741339d97b56c4e0f59bda09e25aa872a2227",
+        "size_in_bytes": 2750
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/cisd-jhdf5.jar",
+        "path_type": "hardlink",
+        "sha256": "98cf378705638652c57d2c6ecf29895376e6097432340fea10f5cbc63a1a165c",
+        "sha256_in_prefix": "98cf378705638652c57d2c6ecf29895376e6097432340fea10f5cbc63a1a165c",
+        "size_in_bytes": 9267374
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/conda_build.sh",
+        "file_mode": "text",
+        "path_type": "hardlink",
+        "prefix_placeholder": "/opt/anaconda1anaconda2anaconda3",
+        "sha256": "aa011b2b946faafd11f2252898c69a1fc39f89d37887f83b2247385d6c3b6748",
+        "sha256_in_prefix": "8869101a435709cf94caa2bf30586e373dbc4aea81db55528d5f248b103d24af",
+        "size_in_bytes": 7859
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/fastqc",
+        "path_type": "hardlink",
+        "sha256": "cba78fcd4c7f4f3a2e1f3f888ef9757a5ee1862aeff92f9f10b4360de933c0ed",
+        "sha256_in_prefix": "cba78fcd4c7f4f3a2e1f3f888ef9757a5ee1862aeff92f9f10b4360de933c0ed",
+        "size_in_bytes": 14505
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/fastqc.orig",
+        "path_type": "hardlink",
+        "sha256": "9c35d799b73dff87c6f936cee28607815fdb2e6bfe10b77134689ee663f7b0e8",
+        "sha256_in_prefix": "9c35d799b73dff87c6f936cee28607815fdb2e6bfe10b77134689ee663f7b0e8",
+        "size_in_bytes": 14402
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/fastqc_icon.ico",
+        "path_type": "hardlink",
+        "sha256": "85488acf50dca0a658605e2bc0534a1a7e1fb02c2084f7c0bf311fc7ca2f5ee5",
+        "sha256_in_prefix": "85488acf50dca0a658605e2bc0534a1a7e1fb02c2084f7c0bf311fc7ca2f5ee5",
+        "size_in_bytes": 2238
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/jbzip2-0.9.jar",
+        "path_type": "hardlink",
+        "sha256": "bb1cfc85076e5bfad2ab8f84a3e2fa01a008d75f1083eef35d4ce83b4ef40e3d",
+        "sha256_in_prefix": "bb1cfc85076e5bfad2ab8f84a3e2fa01a008d75f1083eef35d4ce83b4ef40e3d",
+        "size_in_bytes": 50147
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/net/sourceforge/iharder/base64/Base64$1.class",
+        "path_type": "hardlink",
+        "sha256": "6b3ffa98ff8897c95e384845a9676e354ca2200c185adb9787e4748d13c0978e",
+        "sha256_in_prefix": "6b3ffa98ff8897c95e384845a9676e354ca2200c185adb9787e4748d13c0978e",
+        "size_in_bytes": 1297
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/net/sourceforge/iharder/base64/Base64$InputStream.class",
+        "path_type": "hardlink",
+        "sha256": "7fc5f53fe8c9b6803d67cffb72b7c01efb7dcf33fbd5cb0a7bfcc2fe30bebba5",
+        "sha256_in_prefix": "7fc5f53fe8c9b6803d67cffb72b7c01efb7dcf33fbd5cb0a7bfcc2fe30bebba5",
+        "size_in_bytes": 2215
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/net/sourceforge/iharder/base64/Base64$OutputStream.class",
+        "path_type": "hardlink",
+        "sha256": "b54baad6e2e98cc85a0c87af5ef29200ce2dee842aad40ec6e94c5f593fbfa90",
+        "sha256_in_prefix": "b54baad6e2e98cc85a0c87af5ef29200ce2dee842aad40ec6e94c5f593fbfa90",
+        "size_in_bytes": 2498
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/net/sourceforge/iharder/base64/Base64.class",
+        "path_type": "hardlink",
+        "sha256": "69ae05bae864cd9fc7c354b125c1927c3306c0f16dd5489a12ee1cabf09879da",
+        "sha256_in_prefix": "69ae05bae864cd9fc7c354b125c1927c3306c0f16dd5489a12ee1cabf09879da",
+        "size_in_bytes": 21723
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/analysis/UnivariateFunction.class",
+        "path_type": "hardlink",
+        "sha256": "b83e4103e718bcf2e5392504016ca0abb6a69ea2ed70fb1c16eaa6c2c051fe27",
+        "sha256_in_prefix": "b83e4103e718bcf2e5392504016ca0abb6a69ea2ed70fb1c16eaa6c2c051fe27",
+        "size_in_bytes": 174
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/analysis/solvers/AbstractUnivariateSolver.class",
+        "path_type": "hardlink",
+        "sha256": "396a07112237a7596bc323eeecf6293e28246490f764a238e19a49f1093582d6",
+        "sha256_in_prefix": "396a07112237a7596bc323eeecf6293e28246490f764a238e19a49f1093582d6",
+        "size_in_bytes": 1017
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/analysis/solvers/AllowedSolution.class",
+        "path_type": "hardlink",
+        "sha256": "9d27d8fa4a70daf418043d8fc00397bbd7492d3027382714bdabb9b7c00494ec",
+        "sha256_in_prefix": "9d27d8fa4a70daf418043d8fc00397bbd7492d3027382714bdabb9b7c00494ec",
+        "size_in_bytes": 1391
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/analysis/solvers/BaseAbstractUnivariateSolver.class",
+        "path_type": "hardlink",
+        "sha256": "bae378dc1fa15bc35d5acd09287bcac376038a57c5047d7e17fe75cf44f02c32",
+        "sha256_in_prefix": "bae378dc1fa15bc35d5acd09287bcac376038a57c5047d7e17fe75cf44f02c32",
+        "size_in_bytes": 5483
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/analysis/solvers/BaseUnivariateSolver.class",
+        "path_type": "hardlink",
+        "sha256": "3b29c1ac17af0099a314861968fe18365bd166635f2433dfea434cd1457ce054",
+        "sha256_in_prefix": "3b29c1ac17af0099a314861968fe18365bd166635f2433dfea434cd1457ce054",
+        "size_in_bytes": 716
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/analysis/solvers/BracketedUnivariateSolver.class",
+        "path_type": "hardlink",
+        "sha256": "0e248a9fa7ec59b9782cc5cbca7d7a142abf360d503109ea586033fab69e98a2",
+        "sha256_in_prefix": "0e248a9fa7ec59b9782cc5cbca7d7a142abf360d503109ea586033fab69e98a2",
+        "size_in_bytes": 852
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/analysis/solvers/BrentSolver.class",
+        "path_type": "hardlink",
+        "sha256": "88e697b86a231045661bcd735a45809d1b79954b1972b4b620f896dc3c6d358b",
+        "sha256_in_prefix": "88e697b86a231045661bcd735a45809d1b79954b1972b4b620f896dc3c6d358b",
+        "size_in_bytes": 2844
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/analysis/solvers/UnivariateSolver.class",
+        "path_type": "hardlink",
+        "sha256": "5a1f96277fd3d7aabc569b278ed9c31977c9b253fb1b5bc3a52a4ba4f85c49fc",
+        "sha256_in_prefix": "5a1f96277fd3d7aabc569b278ed9c31977c9b253fb1b5bc3a52a4ba4f85c49fc",
+        "size_in_bytes": 386
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/analysis/solvers/UnivariateSolverUtils.class",
+        "path_type": "hardlink",
+        "sha256": "2770100962308b7e8682f5190698fd256508ba26a9db4f11abfbcb36c1e170aa",
+        "sha256_in_prefix": "2770100962308b7e8682f5190698fd256508ba26a9db4f11abfbcb36c1e170aa",
+        "size_in_bytes": 6171
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/distribution/AbstractIntegerDistribution.class",
+        "path_type": "hardlink",
+        "sha256": "97a6406f3f90356c03af3d49e5dd4abd0d7b793774c230f923123e1ff10b6378",
+        "sha256_in_prefix": "97a6406f3f90356c03af3d49e5dd4abd0d7b793774c230f923123e1ff10b6378",
+        "size_in_bytes": 3801
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/distribution/AbstractRealDistribution$1.class",
+        "path_type": "hardlink",
+        "sha256": "23b1b524b360f9bf30acbe15e9865ad527d5988e8d3a1c5b477867b22abe5858",
+        "sha256_in_prefix": "23b1b524b360f9bf30acbe15e9865ad527d5988e8d3a1c5b477867b22abe5858",
+        "size_in_bytes": 942
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/distribution/AbstractRealDistribution.class",
+        "path_type": "hardlink",
+        "sha256": "b51551024b01c611d65484555ba3753d7c682a1b1aa8665630c6d3ccd271837b",
+        "sha256_in_prefix": "b51551024b01c611d65484555ba3753d7c682a1b1aa8665630c6d3ccd271837b",
+        "size_in_bytes": 3986
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/distribution/BetaDistribution.class",
+        "path_type": "hardlink",
+        "sha256": "159e17aeaf4b6b7e36e88a28e3cbfb740499252e8627ebb65fd5aacb795cd5bf",
+        "sha256_in_prefix": "159e17aeaf4b6b7e36e88a28e3cbfb740499252e8627ebb65fd5aacb795cd5bf",
+        "size_in_bytes": 3281
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/distribution/BinomialDistribution.class",
+        "path_type": "hardlink",
+        "sha256": "80c75569ba95c179824674c00caacf9461168a26c186d0b7938a24adc263daa9",
+        "sha256_in_prefix": "80c75569ba95c179824674c00caacf9461168a26c186d0b7938a24adc263daa9",
+        "size_in_bytes": 2544
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/distribution/CauchyDistribution.class",
+        "path_type": "hardlink",
+        "sha256": "32b6ecf8dd3aa432189460c5ac5a160b9d6ea97f3d7df4244ba465b5ec746526",
+        "sha256_in_prefix": "32b6ecf8dd3aa432189460c5ac5a160b9d6ea97f3d7df4244ba465b5ec746526",
+        "size_in_bytes": 3061
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/distribution/ChiSquaredDistribution.class",
+        "path_type": "hardlink",
+        "sha256": "25d41dea188be6595a1803e7f837109d7c2df4cbbbf65a379c7976b14e2f450b",
+        "sha256_in_prefix": "25d41dea188be6595a1803e7f837109d7c2df4cbbbf65a379c7976b14e2f450b",
+        "size_in_bytes": 2063
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/distribution/FDistribution.class",
+        "path_type": "hardlink",
+        "sha256": "eac99602a7ac2677df2f94b8238376397e66ade32ed4a02ce2afcb2420c4989b",
+        "sha256_in_prefix": "eac99602a7ac2677df2f94b8238376397e66ade32ed4a02ce2afcb2420c4989b",
+        "size_in_bytes": 3595
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/distribution/GammaDistribution.class",
+        "path_type": "hardlink",
+        "sha256": "b861ebb329a887e765391b7853f5929e40276665d3e44e1d4e5102933ceb4a09",
+        "sha256_in_prefix": "b861ebb329a887e765391b7853f5929e40276665d3e44e1d4e5102933ceb4a09",
+        "size_in_bytes": 2754
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/distribution/HypergeometricDistribution.class",
+        "path_type": "hardlink",
+        "sha256": "2cd87e88ff4baa3daeaae77ba6ae82a1b18f7d158ff68ff6023a745b2baf632c",
+        "sha256_in_prefix": "2cd87e88ff4baa3daeaae77ba6ae82a1b18f7d158ff68ff6023a745b2baf632c",
+        "size_in_bytes": 4761
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/distribution/IntegerDistribution.class",
+        "path_type": "hardlink",
+        "sha256": "e528548ebbb0e80e1758a56991b619cf5465d9b94e903cf4e45e5deb155d4a8b",
+        "sha256_in_prefix": "e528548ebbb0e80e1758a56991b619cf5465d9b94e903cf4e45e5deb155d4a8b",
+        "size_in_bytes": 678
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/distribution/NormalDistribution.class",
+        "path_type": "hardlink",
+        "sha256": "548dd646db66cbe215195641421e530b521cf7894c307c2c4eba2a52260ee3df",
+        "sha256_in_prefix": "548dd646db66cbe215195641421e530b521cf7894c307c2c4eba2a52260ee3df",
+        "size_in_bytes": 3708
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/distribution/PascalDistribution.class",
+        "path_type": "hardlink",
+        "sha256": "a9cfb16effc3e38d2049b31b24512e71627ebb955ca989357206e4d406894fef",
+        "sha256_in_prefix": "a9cfb16effc3e38d2049b31b24512e71627ebb955ca989357206e4d406894fef",
+        "size_in_bytes": 2618
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/distribution/PoissonDistribution.class",
+        "path_type": "hardlink",
+        "sha256": "2fabbb14e0b1b5be1473d061698edbe7277daea8fcb5568646c031316e73ce1e",
+        "sha256_in_prefix": "2fabbb14e0b1b5be1473d061698edbe7277daea8fcb5568646c031316e73ce1e",
+        "size_in_bytes": 3235
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/distribution/RealDistribution.class",
+        "path_type": "hardlink",
+        "sha256": "4d7c9d83ed8f603beb8b564e9dac6cf117a6224fbe08f1837699207f6ed6213c",
+        "sha256_in_prefix": "4d7c9d83ed8f603beb8b564e9dac6cf117a6224fbe08f1837699207f6ed6213c",
+        "size_in_bytes": 755
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/distribution/SaddlePointExpansion.class",
+        "path_type": "hardlink",
+        "sha256": "ef338868f39e5d0955b4800406ff0758c9aad4d71dfade2c378735d79df44b35",
+        "sha256_in_prefix": "ef338868f39e5d0955b4800406ff0758c9aad4d71dfade2c378735d79df44b35",
+        "size_in_bytes": 2658
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/distribution/TDistribution.class",
+        "path_type": "hardlink",
+        "sha256": "52bc0ee6e1a37e95f9e5052961575d3c6619bc01931fd23e2ecbedcedb20cc0e",
+        "sha256_in_prefix": "52bc0ee6e1a37e95f9e5052961575d3c6619bc01931fd23e2ecbedcedb20cc0e",
+        "size_in_bytes": 2946
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/distribution/WeibullDistribution.class",
+        "path_type": "hardlink",
+        "sha256": "c52f1afe5ffe698bfb68ba1715c29290053c87c22a7522c6c94043f75f29588d",
+        "sha256_in_prefix": "c52f1afe5ffe698bfb68ba1715c29290053c87c22a7522c6c94043f75f29588d",
+        "size_in_bytes": 3859
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/distribution/ZipfDistribution.class",
+        "path_type": "hardlink",
+        "sha256": "3e5eeeb6687c08df0ba5d3441cdd061def3eb7373f76f8d059492b72e824e395",
+        "sha256_in_prefix": "3e5eeeb6687c08df0ba5d3441cdd061def3eb7373f76f8d059492b72e824e395",
+        "size_in_bytes": 3020
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/exception/ConvergenceException.class",
+        "path_type": "hardlink",
+        "sha256": "b28963ba518b082ce4e6d7e5659e6cb3c29ee29b0205dc455855553b7443e183",
+        "sha256_in_prefix": "b28963ba518b082ce4e6d7e5659e6cb3c29ee29b0205dc455855553b7443e183",
+        "size_in_bytes": 1102
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/exception/DimensionMismatchException.class",
+        "path_type": "hardlink",
+        "sha256": "b822c5cfb881ab97a9112d98abe05c9a3f2fdf4ebcc67113834dae1069ac5550",
+        "sha256_in_prefix": "b822c5cfb881ab97a9112d98abe05c9a3f2fdf4ebcc67113834dae1069ac5550",
+        "size_in_bytes": 1254
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/exception/MathArithmeticException.class",
+        "path_type": "hardlink",
+        "sha256": "f191928f7e55b773d82e48446b1818bc6bfec34a600f19497ee857002b80e232",
+        "sha256_in_prefix": "f191928f7e55b773d82e48446b1818bc6bfec34a600f19497ee857002b80e232",
+        "size_in_bytes": 1570
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/exception/MathIllegalArgumentException.class",
+        "path_type": "hardlink",
+        "sha256": "9a89cba578fec4e7194134f9aba55b8dcf102e86f8302387f5aa5117ddce1de7",
+        "sha256_in_prefix": "9a89cba578fec4e7194134f9aba55b8dcf102e86f8302387f5aa5117ddce1de7",
+        "size_in_bytes": 1313
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/exception/MathIllegalNumberException.class",
+        "path_type": "hardlink",
+        "sha256": "cd3551c8f6d6ccbe091987620b84b4eb3ce037651a3f3bd455808f2c6c0c0432",
+        "sha256_in_prefix": "cd3551c8f6d6ccbe091987620b84b4eb3ce037651a3f3bd455808f2c6c0c0432",
+        "size_in_bytes": 986
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/exception/MathIllegalStateException.class",
+        "path_type": "hardlink",
+        "sha256": "30041af9cd7a253de27c6370619e23d35ac0ad2924bda11f5f93745926a33c9b",
+        "sha256_in_prefix": "30041af9cd7a253de27c6370619e23d35ac0ad2924bda11f5f93745926a33c9b",
+        "size_in_bytes": 1815
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/exception/MathInternalError.class",
+        "path_type": "hardlink",
+        "sha256": "42ea6ac6d00ff0853596221fd6938cb2b0c862e5d86fa2142a537b33ecd7dcc9",
+        "sha256_in_prefix": "42ea6ac6d00ff0853596221fd6938cb2b0c862e5d86fa2142a537b33ecd7dcc9",
+        "size_in_bytes": 1448
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/exception/MaxCountExceededException.class",
+        "path_type": "hardlink",
+        "sha256": "124d34eb0fd6931e605812c3585bd1f483b00d16aa7d0f2216314affcb002a05",
+        "sha256_in_prefix": "124d34eb0fd6931e605812c3585bd1f483b00d16aa7d0f2216314affcb002a05",
+        "size_in_bytes": 1417
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/exception/NoBracketingException.class",
+        "path_type": "hardlink",
+        "sha256": "fcaef3e7929e24f485a2e0d28201a90a28610b8ca98d1a0b8778c5a6270cab55",
+        "sha256_in_prefix": "fcaef3e7929e24f485a2e0d28201a90a28610b8ca98d1a0b8778c5a6270cab55",
+        "size_in_bytes": 1629
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/exception/NotFiniteNumberException.class",
+        "path_type": "hardlink",
+        "sha256": "fddc42110f8d7516a16e1dee70755f5bf2c069e3be44450e9a608c150b345e8b",
+        "sha256_in_prefix": "fddc42110f8d7516a16e1dee70755f5bf2c069e3be44450e9a608c150b345e8b",
+        "size_in_bytes": 1019
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/exception/NotPositiveException.class",
+        "path_type": "hardlink",
+        "sha256": "fe90b4b9e41e0e1ae061c6386100859efb6d9653d7ba01633171a0a61260e692",
+        "sha256_in_prefix": "fe90b4b9e41e0e1ae061c6386100859efb6d9653d7ba01633171a0a61260e692",
+        "size_in_bytes": 983
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/exception/NotStrictlyPositiveException.class",
+        "path_type": "hardlink",
+        "sha256": "9e97275cd9364a0398d93f375b7fa2b04e66d5f6ba368bb62f8a143cc8636f70",
+        "sha256_in_prefix": "9e97275cd9364a0398d93f375b7fa2b04e66d5f6ba368bb62f8a143cc8636f70",
+        "size_in_bytes": 1007
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/exception/NullArgumentException.class",
+        "path_type": "hardlink",
+        "sha256": "ce43703b4e4f49614921c73aa9ebad8a8e1be41162b5dd2e239591b9dcdffd56",
+        "sha256_in_prefix": "ce43703b4e4f49614921c73aa9ebad8a8e1be41162b5dd2e239591b9dcdffd56",
+        "size_in_bytes": 924
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/exception/NumberIsTooLargeException.class",
+        "path_type": "hardlink",
+        "sha256": "4116d9836486a8064d8b633e980690ee17d4d1b7db646eaaef87367311cfef79",
+        "sha256_in_prefix": "4116d9836486a8064d8b633e980690ee17d4d1b7db646eaaef87367311cfef79",
+        "size_in_bytes": 1471
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/exception/NumberIsTooSmallException.class",
+        "path_type": "hardlink",
+        "sha256": "f914d7977d5d22e518d813ff7965f7b38decf36196983e95f0470c6c1bbee717",
+        "sha256_in_prefix": "f914d7977d5d22e518d813ff7965f7b38decf36196983e95f0470c6c1bbee717",
+        "size_in_bytes": 1471
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/exception/OutOfRangeException.class",
+        "path_type": "hardlink",
+        "sha256": "e2464f991ecff94ce803438e92f043a58cb007b80c45e4fbf9795310edfe8de3",
+        "sha256_in_prefix": "e2464f991ecff94ce803438e92f043a58cb007b80c45e4fbf9795310edfe8de3",
+        "size_in_bytes": 1393
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/exception/TooManyEvaluationsException.class",
+        "path_type": "hardlink",
+        "sha256": "318b90b375c2374516d96d84a303d9ef1b42f164fb16ecb3c0a83635bb0cedee",
+        "sha256_in_prefix": "318b90b375c2374516d96d84a303d9ef1b42f164fb16ecb3c0a83635bb0cedee",
+        "size_in_bytes": 980
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/exception/util/ArgUtils.class",
+        "path_type": "hardlink",
+        "sha256": "37dba406b68b49e32b0f0bdd981474b42aaa3344e04654504b7cd0de94d64396",
+        "sha256_in_prefix": "37dba406b68b49e32b0f0bdd981474b42aaa3344e04654504b7cd0de94d64396",
+        "size_in_bytes": 931
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/exception/util/ExceptionContext.class",
+        "path_type": "hardlink",
+        "sha256": "ab40462daa8c0772222ac3caf5db23060bb2fcf18a52a25edc2288642d9b6d9d",
+        "sha256_in_prefix": "ab40462daa8c0772222ac3caf5db23060bb2fcf18a52a25edc2288642d9b6d9d",
+        "size_in_bytes": 6009
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/exception/util/ExceptionContextProvider.class",
+        "path_type": "hardlink",
+        "sha256": "ffa3e9c804f1a41ac1b1c0c0bb1857ce176eef7c2c2212d13d0b31082c000d16",
+        "sha256_in_prefix": "ffa3e9c804f1a41ac1b1c0c0bb1857ce176eef7c2c2212d13d0b31082c000d16",
+        "size_in_bytes": 253
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/exception/util/Localizable.class",
+        "path_type": "hardlink",
+        "sha256": "13614b0f28acdf9712cf8e1865119507cc893f9badd40d70eba814871bf643d8",
+        "sha256_in_prefix": "13614b0f28acdf9712cf8e1865119507cc893f9badd40d70eba814871bf643d8",
+        "size_in_bytes": 290
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/exception/util/LocalizedFormats.class",
+        "path_type": "hardlink",
+        "sha256": "b531a2fe22faab916b2924dba8e5a8a29f1d1d75a53a16ce76704cd972c2381a",
+        "sha256_in_prefix": "b531a2fe22faab916b2924dba8e5a8a29f1d1d75a53a16ce76704cd972c2381a",
+        "size_in_bytes": 42550
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/random/AbstractWell.class",
+        "path_type": "hardlink",
+        "sha256": "4d478df306f152f16f4ffa54c57457b06b9cbcb7a2dd97fc93b4f0627eccbfb4",
+        "sha256_in_prefix": "4d478df306f152f16f4ffa54c57457b06b9cbcb7a2dd97fc93b4f0627eccbfb4",
+        "size_in_bytes": 2178
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/random/BitsStreamGenerator.class",
+        "path_type": "hardlink",
+        "sha256": "b9f31891280f6eea1e53bacea171ebe5564b6b63613e8d583a440b87c2083653",
+        "sha256_in_prefix": "b9f31891280f6eea1e53bacea171ebe5564b6b63613e8d583a440b87c2083653",
+        "size_in_bytes": 2415
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/random/RandomData.class",
+        "path_type": "hardlink",
+        "sha256": "afa671824d8c4cb3f4a28498833b33b438d544827442fa1641beb25fb1c66e76",
+        "sha256_in_prefix": "afa671824d8c4cb3f4a28498833b33b438d544827442fa1641beb25fb1c66e76",
+        "size_in_bytes": 618
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/random/RandomDataImpl.class",
+        "path_type": "hardlink",
+        "sha256": "4c5e85bb0f318cc8c775e9ee68c887b6204bfdd6bb02efb312e9e5d1543c6d8f",
+        "sha256_in_prefix": "4c5e85bb0f318cc8c775e9ee68c887b6204bfdd6bb02efb312e9e5d1543c6d8f",
+        "size_in_bytes": 14016
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/random/RandomGenerator.class",
+        "path_type": "hardlink",
+        "sha256": "88729df3b4b87cca3da26e0998d323f42e8cbda697db57518554217f88a31648",
+        "sha256_in_prefix": "88729df3b4b87cca3da26e0998d323f42e8cbda697db57518554217f88a31648",
+        "size_in_bytes": 395
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/random/Well19937c.class",
+        "path_type": "hardlink",
+        "sha256": "362c3adbcb37b76f8951c2b2fa0d0a17e9aa66724d0764b848d072a6dd0c9f4f",
+        "sha256_in_prefix": "362c3adbcb37b76f8951c2b2fa0d0a17e9aa66724d0764b848d072a6dd0c9f4f",
+        "size_in_bytes": 1609
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/special/Beta$1.class",
+        "path_type": "hardlink",
+        "sha256": "2c8494d242fa0cf4818ba9f0e373874c3883dcabd6275bd9e3f355063bd54cd2",
+        "sha256_in_prefix": "2c8494d242fa0cf4818ba9f0e373874c3883dcabd6275bd9e3f355063bd54cd2",
+        "size_in_bytes": 960
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/special/Beta.class",
+        "path_type": "hardlink",
+        "sha256": "b4c82b53d6152cbb15045c3fb623006e21613c5227ee28633cbd29ec0db82ff5",
+        "sha256_in_prefix": "b4c82b53d6152cbb15045c3fb623006e21613c5227ee28633cbd29ec0db82ff5",
+        "size_in_bytes": 1914
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/special/Erf.class",
+        "path_type": "hardlink",
+        "sha256": "05902163b8d9cd28ce92e70cf05cdaab867f62161194558ebf2705d86dbace08",
+        "sha256_in_prefix": "05902163b8d9cd28ce92e70cf05cdaab867f62161194558ebf2705d86dbace08",
+        "size_in_bytes": 1107
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/special/Gamma$1.class",
+        "path_type": "hardlink",
+        "sha256": "2a1b00583e3d492eb018254d5d88e8157dad3666f484ec3f86e5e1207c8912e3",
+        "sha256_in_prefix": "2a1b00583e3d492eb018254d5d88e8157dad3666f484ec3f86e5e1207c8912e3",
+        "size_in_bytes": 747
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/special/Gamma.class",
+        "path_type": "hardlink",
+        "sha256": "8cb1d3de81d733170423cc328198822f19429f6cc9d9740f579a05b08a39772d",
+        "sha256_in_prefix": "8cb1d3de81d733170423cc328198822f19429f6cc9d9740f579a05b08a39772d",
+        "size_in_bytes": 3380
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/util/ArithmeticUtils.class",
+        "path_type": "hardlink",
+        "sha256": "a3eeb0c792e4c404799dc1a66a14b53c2136d1011940025e14d9a22f99189187",
+        "sha256_in_prefix": "a3eeb0c792e4c404799dc1a66a14b53c2136d1011940025e14d9a22f99189187",
+        "size_in_bytes": 8669
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/util/ContinuedFraction.class",
+        "path_type": "hardlink",
+        "sha256": "e6892d2ad77208c255e951f0e4833af27e4e9f46e1c43dfd2b7565095fb3467d",
+        "sha256_in_prefix": "e6892d2ad77208c255e951f0e4833af27e4e9f46e1c43dfd2b7565095fb3467d",
+        "size_in_bytes": 2722
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/util/DoubleArray.class",
+        "path_type": "hardlink",
+        "sha256": "f17c226b7ad226a3402e8248e6fd2569527ee2bf272786e04dc1c85813cf8dba",
+        "sha256_in_prefix": "f17c226b7ad226a3402e8248e6fd2569527ee2bf272786e04dc1c85813cf8dba",
+        "size_in_bytes": 365
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/util/FastMath$ExpFracTable.class",
+        "path_type": "hardlink",
+        "sha256": "60f0768b160b9205377a0a20478180bbd34a63e2d54abb5e2e83a42a08ba7695",
+        "sha256_in_prefix": "60f0768b160b9205377a0a20478180bbd34a63e2d54abb5e2e83a42a08ba7695",
+        "size_in_bytes": 818
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/util/FastMath$ExpIntTable.class",
+        "path_type": "hardlink",
+        "sha256": "9c65b40c2785d43bed931da20ae83beabf9bd6c1c106caa790684c66e7a192c7",
+        "sha256_in_prefix": "9c65b40c2785d43bed931da20ae83beabf9bd6c1c106caa790684c66e7a192c7",
+        "size_in_bytes": 811
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/util/FastMath$lnMant.class",
+        "path_type": "hardlink",
+        "sha256": "128a83c75f00378c8fafdcc8ce8c5f7094ef52008ea974ccab1ba0eadbef63db",
+        "sha256_in_prefix": "128a83c75f00378c8fafdcc8ce8c5f7094ef52008ea974ccab1ba0eadbef63db",
+        "size_in_bytes": 658
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/util/FastMath.class",
+        "path_type": "hardlink",
+        "sha256": "5b290caf79f023844c328c8f2bba27b26e1bffb5964b48a1f26aa84ed404fa85",
+        "sha256_in_prefix": "5b290caf79f023844c328c8f2bba27b26e1bffb5964b48a1f26aa84ed404fa85",
+        "size_in_bytes": 36007
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/util/FastMathCalc.class",
+        "path_type": "hardlink",
+        "sha256": "4430ad34d0dcf403bd8f5bf599ec3e1d2b81244f1070a64788e81f3c48c544d5",
+        "sha256_in_prefix": "4430ad34d0dcf403bd8f5bf599ec3e1d2b81244f1070a64788e81f3c48c544d5",
+        "size_in_bytes": 8421
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/util/FastMathLiteralArrays.class",
+        "path_type": "hardlink",
+        "sha256": "73714c9b4f81c79ef12367fb53e018d4817ae98c983241699e7edcf2d53488dd",
+        "sha256_in_prefix": "73714c9b4f81c79ef12367fb53e018d4817ae98c983241699e7edcf2d53488dd",
+        "size_in_bytes": 149357
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/util/Incrementor$1.class",
+        "path_type": "hardlink",
+        "sha256": "0ff4fb56b10b3ea0c92f633e22e44cdc29bcfcf7b4ec70b86c1c31a1527318ab",
+        "sha256_in_prefix": "0ff4fb56b10b3ea0c92f633e22e44cdc29bcfcf7b4ec70b86c1c31a1527318ab",
+        "size_in_bytes": 819
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/util/Incrementor$MaxCountExceededCallback.class",
+        "path_type": "hardlink",
+        "sha256": "f38c1e87241b615e7886cde2eae6d456b93f6def938760f8774e37608489a68f",
+        "sha256_in_prefix": "f38c1e87241b615e7886cde2eae6d456b93f6def938760f8774e37608489a68f",
+        "size_in_bytes": 288
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/util/Incrementor.class",
+        "path_type": "hardlink",
+        "sha256": "dc56442439cb1a94750b7211ed106a0921f516db86431e2d0959c55567821709",
+        "sha256_in_prefix": "dc56442439cb1a94750b7211ed106a0921f516db86431e2d0959c55567821709",
+        "size_in_bytes": 1681
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/util/MathUtils.class",
+        "path_type": "hardlink",
+        "sha256": "0122cf2e029ce6324a327dff75c95366c393b061ca8657521d8db8d3681c035d",
+        "sha256_in_prefix": "0122cf2e029ce6324a327dff75c95366c393b061ca8657521d8db8d3681c035d",
+        "size_in_bytes": 3161
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/util/Precision.class",
+        "path_type": "hardlink",
+        "sha256": "5503f17c6c1c44a5f975544eabf4c1912e6a57ec64ee8c9c7a3ae113647e5a59",
+        "sha256_in_prefix": "5503f17c6c1c44a5f975544eabf4c1912e6a57ec64ee8c9c7a3ae113647e5a59",
+        "size_in_bytes": 5166
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/org/apache/commons/math3/util/ResizableDoubleArray.class",
+        "path_type": "hardlink",
+        "sha256": "fc21526250bbcb43745ad3d879b5d67dcc2edb19674826d4631a0e089be408a4",
+        "sha256_in_prefix": "fc21526250bbcb43745ad3d879b5d67dcc2edb19674826d4631a0e089be408a4",
+        "size_in_bytes": 9119
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/run_fastqc.bat",
+        "path_type": "hardlink",
+        "sha256": "3cfc3375f3c44b3367d5ba46d23167f640ca3252e5a5d134f68758023232d9e0",
+        "sha256_in_prefix": "3cfc3375f3c44b3367d5ba46d23167f640ca3252e5a5d134f68758023232d9e0",
+        "size_in_bytes": 104
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/sam-1.103.jar",
+        "path_type": "hardlink",
+        "sha256": "18300a8907fa04906b3a0e9978a35bce2c078bd5b1755b2bdfffeff3a0f7ba30",
+        "sha256_in_prefix": "18300a8907fa04906b3a0e9978a35bce2c078bd5b1755b2bdfffeff3a0f7ba30",
+        "size_in_bytes": 644848
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Analysis/AnalysisListener.class",
+        "path_type": "hardlink",
+        "sha256": "299af016ff47f05a6e5361b8dd0c55e8276f151e2f01750436e4be39be1786f9",
+        "sha256_in_prefix": "299af016ff47f05a6e5361b8dd0c55e8276f151e2f01750436e4be39be1786f9",
+        "size_in_bytes": 527
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Analysis/AnalysisQueue.class",
+        "path_type": "hardlink",
+        "sha256": "883dc291ca8ba306278b66ba1199e4e2afdba7b3f448a62261bcc0899d7b9403",
+        "sha256_in_prefix": "883dc291ca8ba306278b66ba1199e4e2afdba7b3f448a62261bcc0899d7b9403",
+        "size_in_bytes": 3136
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Analysis/AnalysisRunner.class",
+        "path_type": "hardlink",
+        "sha256": "53bc0de60b11ab39d07314def8c76b176eabc78c86a76a21b1071c1ae4215913",
+        "sha256_in_prefix": "53bc0de60b11ab39d07314def8c76b176eabc78c86a76a21b1071c1ae4215913",
+        "size_in_bytes": 3600
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Analysis/OfflineRunner.class",
+        "path_type": "hardlink",
+        "sha256": "e2ba92bb564cc3d155c394af97695dbd8305a008db328c1379ae182b5c92d288",
+        "sha256_in_prefix": "e2ba92bb564cc3d155c394af97695dbd8305a008db328c1379ae182b5c92d288",
+        "size_in_bytes": 6656
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Dialogs/AboutDialog$1.class",
+        "path_type": "hardlink",
+        "sha256": "c3d655822f4997e562acd978e89de2b8d42f1e1d67ff32106a3d4d4a6700b523",
+        "sha256_in_prefix": "c3d655822f4997e562acd978e89de2b8d42f1e1d67ff32106a3d4d4a6700b523",
+        "size_in_bytes": 878
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Dialogs/AboutDialog.class",
+        "path_type": "hardlink",
+        "sha256": "78039740bf12a5bb38d734d52ccc8476f722c16fbf74744f680a8b20a378700b",
+        "sha256_in_prefix": "78039740bf12a5bb38d734d52ccc8476f722c16fbf74744f680a8b20a378700b",
+        "size_in_bytes": 1813
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Dialogs/FastQCTitlePanel$SmoothJLabel.class",
+        "path_type": "hardlink",
+        "sha256": "fe211460b8df2c784e4e1f10d9fec476f908c0272eb25c28efee2d9b8f25cc0b",
+        "sha256_in_prefix": "fe211460b8df2c784e4e1f10d9fec476f908c0272eb25c28efee2d9b8f25cc0b",
+        "size_in_bytes": 1185
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Dialogs/FastQCTitlePanel.class",
+        "path_type": "hardlink",
+        "sha256": "bdcc5afbca0a39d96bd55d98a2313e282d2235934b6da34570c9bc7b0f9edaf3",
+        "sha256_in_prefix": "bdcc5afbca0a39d96bd55d98a2313e282d2235934b6da34570c9bc7b0f9edaf3",
+        "size_in_bytes": 3503
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Dialogs/WelcomePanel.class",
+        "path_type": "hardlink",
+        "sha256": "8dd1b7ceb2a152013be7e1a41223cec8999090c3b77cd19877ad7363dd8ca09d",
+        "sha256_in_prefix": "8dd1b7ceb2a152013be7e1a41223cec8999090c3b77cd19877ad7363dd8ca09d",
+        "size_in_bytes": 1252
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/FastQCApplication$1.class",
+        "path_type": "hardlink",
+        "sha256": "e0dcf46a726cc62fbf5f2bb639cf8449a7b79d30e8d1d1f719fa82b394396021",
+        "sha256_in_prefix": "e0dcf46a726cc62fbf5f2bb639cf8449a7b79d30e8d1d1f719fa82b394396021",
+        "size_in_bytes": 1026
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/FastQCApplication.class",
+        "path_type": "hardlink",
+        "sha256": "9c2e6da0f4cadb8c5df8e425ae4a62665ba888656ecaeb581179e3a31e13141d",
+        "sha256_in_prefix": "9c2e6da0f4cadb8c5df8e425ae4a62665ba888656ecaeb581179e3a31e13141d",
+        "size_in_bytes": 9759
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/FastQCConfig.class",
+        "path_type": "hardlink",
+        "sha256": "8997eddee80eccbd70b027ea25b81e60a46630409afe3656db0bfe78bce6a335",
+        "sha256_in_prefix": "8997eddee80eccbd70b027ea25b81e60a46630409afe3656db0bfe78bce6a335",
+        "size_in_bytes": 3757
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/FastQCMenuBar.class",
+        "path_type": "hardlink",
+        "sha256": "9fc275710d9aa0eb0134180338a16b41b0834acdb0a92048fd4578d5eb12f3fd",
+        "sha256_in_prefix": "9fc275710d9aa0eb0134180338a16b41b0834acdb0a92048fd4578d5eb12f3fd",
+        "size_in_bytes": 3778
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/FileFilters/BAMFileFilter.class",
+        "path_type": "hardlink",
+        "sha256": "46de5136e4a8805aa72a62433943c5d74999b47de00ab51e7ced3282c403eac4",
+        "sha256_in_prefix": "46de5136e4a8805aa72a62433943c5d74999b47de00ab51e7ced3282c403eac4",
+        "size_in_bytes": 600
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/FileFilters/CasavaFastQFileFilter.class",
+        "path_type": "hardlink",
+        "sha256": "4423cc0592c0e417e605afe03121e8fad400eea8daf147f5e669078ae07feb4f",
+        "sha256_in_prefix": "4423cc0592c0e417e605afe03121e8fad400eea8daf147f5e669078ae07feb4f",
+        "size_in_bytes": 794
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/FileFilters/FastQFileFilter.class",
+        "path_type": "hardlink",
+        "sha256": "a0fe41626644f8588a80acde1862efab7cfee879f15647a66ffabec20a6865f6",
+        "sha256_in_prefix": "a0fe41626644f8588a80acde1862efab7cfee879f15647a66ffabec20a6865f6",
+        "size_in_bytes": 590
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/FileFilters/GobyFileFilter.class",
+        "path_type": "hardlink",
+        "sha256": "0e99f85c993e6dc00109f33650dff2f057e220c844f60584626e0a7c758741c0",
+        "sha256_in_prefix": "0e99f85c993e6dc00109f33650dff2f057e220c844f60584626e0a7c758741c0",
+        "size_in_bytes": 600
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/FileFilters/MappedBAMFileFilter.class",
+        "path_type": "hardlink",
+        "sha256": "3919afa00c192fecaec433bdbac56bf052a5725ad6c7be2eda8d10e1eeaa0928",
+        "sha256_in_prefix": "3919afa00c192fecaec433bdbac56bf052a5725ad6c7be2eda8d10e1eeaa0928",
+        "size_in_bytes": 626
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/FileFilters/SequenceFileFilter.class",
+        "path_type": "hardlink",
+        "sha256": "08616c33811fbd21a9981cdadd5b109f855d91f395c80ce7592d32fa55f148fe",
+        "sha256_in_prefix": "08616c33811fbd21a9981cdadd5b109f855d91f395c80ce7592d32fa55f148fe",
+        "size_in_bytes": 1158
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Graphs/BaseGroup.class",
+        "path_type": "hardlink",
+        "sha256": "ee93fb646ad107346cfd3b9e474ad5659021ffc5f9c73277245a6abe74f05190",
+        "sha256_in_prefix": "ee93fb646ad107346cfd3b9e474ad5659021ffc5f9c73277245a6abe74f05190",
+        "size_in_bytes": 3279
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Graphs/LineGraph.class",
+        "path_type": "hardlink",
+        "sha256": "bb9fe1fdd193136a50ce3a7fd01d1182196b0d7800327b42e4eb09b375509ae8",
+        "sha256_in_prefix": "bb9fe1fdd193136a50ce3a7fd01d1182196b0d7800327b42e4eb09b375509ae8",
+        "size_in_bytes": 5221
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Graphs/QualityBoxPlot.class",
+        "path_type": "hardlink",
+        "sha256": "f7af28bd2d37f0ee38834ded9fd121a4f4d2df99f7978deaf5a3fc2899544f0b",
+        "sha256_in_prefix": "f7af28bd2d37f0ee38834ded9fd121a4f4d2df99f7978deaf5a3fc2899544f0b",
+        "size_in_bytes": 4137
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Graphs/TileGraph.class",
+        "path_type": "hardlink",
+        "sha256": "9ac46299fbc60ab78b78536784b330bfd89f1955f4cc29f0b0d1db9a7c9aea63",
+        "sha256_in_prefix": "9ac46299fbc60ab78b78536784b330bfd89f1955f4cc29f0b0d1db9a7c9aea63",
+        "size_in_bytes": 3540
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Help/HelpDialog.class",
+        "path_type": "hardlink",
+        "sha256": "bbb2781d8f8f5703a629eebfb33cf1ebd59938e4de462507efcfc917537007e4",
+        "sha256_in_prefix": "bbb2781d8f8f5703a629eebfb33cf1ebd59938e4de462507efcfc917537007e4",
+        "size_in_bytes": 3293
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Help/HelpIndexRoot$FileSorter.class",
+        "path_type": "hardlink",
+        "sha256": "51f4d7bd64cd978cbb76a618dba19684a8083a5a5fc8b8ba5f5fa467b22352d4",
+        "sha256_in_prefix": "51f4d7bd64cd978cbb76a618dba19684a8083a5a5fc8b8ba5f5fa467b22352d4",
+        "size_in_bytes": 1958
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Help/HelpIndexRoot.class",
+        "path_type": "hardlink",
+        "sha256": "ff2dda5796c1ec224a73b89ed18f4780549824278069c4e4350de9f03d734d63",
+        "sha256_in_prefix": "ff2dda5796c1ec224a73b89ed18f4780549824278069c4e4350de9f03d734d63",
+        "size_in_bytes": 2970
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Help/HelpPage.class",
+        "path_type": "hardlink",
+        "sha256": "9481ffd535752a485c2c7927176e68f78d50d784945f0a2912250150967775f4",
+        "sha256_in_prefix": "9481ffd535752a485c2c7927176e68f78d50d784945f0a2912250150967775f4",
+        "size_in_bytes": 2909
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Help/HelpPageDisplay$HelpEditor.class",
+        "path_type": "hardlink",
+        "sha256": "4a844b0e1756669897721fe5f38bbb311486ceff34417481be0f16700f2ba248",
+        "sha256_in_prefix": "4a844b0e1756669897721fe5f38bbb311486ceff34417481be0f16700f2ba248",
+        "size_in_bytes": 1204
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Help/HelpPageDisplay.class",
+        "path_type": "hardlink",
+        "sha256": "89118fb799ce93b2086af7245022af1dbb45a103c4cd21d74c5f39da368ca47b",
+        "sha256_in_prefix": "89118fb799ce93b2086af7245022af1dbb45a103c4cd21d74c5f39da368ca47b",
+        "size_in_bytes": 2288
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Help/HelpSearchPanel.class",
+        "path_type": "hardlink",
+        "sha256": "99469fb7700fbdf043b5d5f4d8e686829cb5e55caec63ef55c1ddc142505ae34",
+        "sha256_in_prefix": "99469fb7700fbdf043b5d5f4d8e686829cb5e55caec63ef55c1ddc142505ae34",
+        "size_in_bytes": 3878
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/AbstractQCModule.class",
+        "path_type": "hardlink",
+        "sha256": "f6d12f2bf85d9641ce0c4ce78393d8648d084fb206bde87637c9e6b18e59002f",
+        "sha256_in_prefix": "f6d12f2bf85d9641ce0c4ce78393d8648d084fb206bde87637c9e6b18e59002f",
+        "size_in_bytes": 5200
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/AdapterContent$Adapter.class",
+        "path_type": "hardlink",
+        "sha256": "75252eb05fe48a431a37f214a8abf24a6c379c852b044ceabedd810b3533a9f2",
+        "sha256_in_prefix": "75252eb05fe48a431a37f214a8abf24a6c379c852b044ceabedd810b3533a9f2",
+        "size_in_bytes": 1615
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/AdapterContent$ResultsTable.class",
+        "path_type": "hardlink",
+        "sha256": "72b02825138839326590ae7f5495a46ecb9eb390816c867c5d30007957bc734b",
+        "sha256_in_prefix": "72b02825138839326590ae7f5495a46ecb9eb390816c867c5d30007957bc734b",
+        "size_in_bytes": 1822
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/AdapterContent.class",
+        "path_type": "hardlink",
+        "sha256": "fd31ec0d7ed57ee4687a7db2d2b557f87cde3352351f4c033ae54291765a80bb",
+        "sha256_in_prefix": "fd31ec0d7ed57ee4687a7db2d2b557f87cde3352351f4c033ae54291765a80bb",
+        "size_in_bytes": 9057
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/BasicStats$ResultsTable.class",
+        "path_type": "hardlink",
+        "sha256": "6904118b6761eeb8e50258929648a1e791ccef332470d8adb36e9b0fa2fb79f6",
+        "sha256_in_prefix": "6904118b6761eeb8e50258929648a1e791ccef332470d8adb36e9b0fa2fb79f6",
+        "size_in_bytes": 3048
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/BasicStats.class",
+        "path_type": "hardlink",
+        "sha256": "d8dc7b46f6f04c5946e2ef792ff44030e89e703d2dc6b7925e0ed347577243f9",
+        "sha256_in_prefix": "d8dc7b46f6f04c5946e2ef792ff44030e89e703d2dc6b7925e0ed347577243f9",
+        "size_in_bytes": 4956
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/DuplicationLevel.class",
+        "path_type": "hardlink",
+        "sha256": "0540def9887970c383d7882bddb61d40819f5ed884ed2d090b2ad723cd7ba222",
+        "sha256_in_prefix": "0540def9887970c383d7882bddb61d40819f5ed884ed2d090b2ad723cd7ba222",
+        "size_in_bytes": 6810
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/GCModel/GCModel.class",
+        "path_type": "hardlink",
+        "sha256": "3de1b929b3c285953d4522985203e01fdd3890d77ed44b4901bd0e16df1f3f6a",
+        "sha256_in_prefix": "3de1b929b3c285953d4522985203e01fdd3890d77ed44b4901bd0e16df1f3f6a",
+        "size_in_bytes": 1499
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/GCModel/GCModelValue.class",
+        "path_type": "hardlink",
+        "sha256": "7cfdd1f2c47e8c34b9ba2c4c645e263d200847c9d9888e05affded4952e588bb",
+        "sha256_in_prefix": "7cfdd1f2c47e8c34b9ba2c4c645e263d200847c9d9888e05affded4952e588bb",
+        "size_in_bytes": 590
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/KmerContent$Kmer.class",
+        "path_type": "hardlink",
+        "sha256": "482e9d0f47a878c92b7c74f986bd5467d1521d818cf94ec0b077d208c22d161d",
+        "sha256_in_prefix": "482e9d0f47a878c92b7c74f986bd5467d1521d818cf94ec0b077d208c22d161d",
+        "size_in_bytes": 3064
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/KmerContent$ResultsTable.class",
+        "path_type": "hardlink",
+        "sha256": "e850c20957baebb95655e5e49a8b8b91269dda23b4bd9a9cbacd36fdd3f10d3b",
+        "sha256_in_prefix": "e850c20957baebb95655e5e49a8b8b91269dda23b4bd9a9cbacd36fdd3f10d3b",
+        "size_in_bytes": 2232
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/KmerContent.class",
+        "path_type": "hardlink",
+        "sha256": "3c6fdfedb785647b08dc03b5d387535a1b5df297270ca9d000c042385e4dbeb7",
+        "sha256_in_prefix": "3c6fdfedb785647b08dc03b5d387535a1b5df297270ca9d000c042385e4dbeb7",
+        "size_in_bytes": 10096
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/ModuleConfig.class",
+        "path_type": "hardlink",
+        "sha256": "e41f529cc9323b7c4554865492e9ad810bb5dc2a92a7599df3c768a9a60345b5",
+        "sha256_in_prefix": "e41f529cc9323b7c4554865492e9ad810bb5dc2a92a7599df3c768a9a60345b5",
+        "size_in_bytes": 5197
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/ModuleFactory.class",
+        "path_type": "hardlink",
+        "sha256": "4be38a993fad732bf806588a24ba364fc966ca9b118ab1091517a3f4f8d8a58a",
+        "sha256_in_prefix": "4be38a993fad732bf806588a24ba364fc966ca9b118ab1091517a3f4f8d8a58a",
+        "size_in_bytes": 1547
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/NContent.class",
+        "path_type": "hardlink",
+        "sha256": "f8a8a7df8e379f1a7b00b016eef51ced046ae079bfe18e0ea583cdc34c596a4a",
+        "sha256_in_prefix": "f8a8a7df8e379f1a7b00b016eef51ced046ae079bfe18e0ea583cdc34c596a4a",
+        "size_in_bytes": 4216
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/OverRepresentedSeqs$OverrepresentedSeq.class",
+        "path_type": "hardlink",
+        "sha256": "19eaf68c1a3672e23e3628adec39c38dbd311bba651d7164fff619502eedaf20",
+        "sha256_in_prefix": "19eaf68c1a3672e23e3628adec39c38dbd311bba651d7164fff619502eedaf20",
+        "size_in_bytes": 2064
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/OverRepresentedSeqs$ResultsTable.class",
+        "path_type": "hardlink",
+        "sha256": "b229364f91b84444055bc879a02455dc2657beba5fb9775d8b5d425ce4d2d9d4",
+        "sha256_in_prefix": "b229364f91b84444055bc879a02455dc2657beba5fb9775d8b5d425ce4d2d9d4",
+        "size_in_bytes": 2039
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/OverRepresentedSeqs.class",
+        "path_type": "hardlink",
+        "sha256": "8a098a53a72e013043098c10cb194d54092e26e20cca93d26a07490da2105fc4",
+        "sha256_in_prefix": "8a098a53a72e013043098c10cb194d54092e26e20cca93d26a07490da2105fc4",
+        "size_in_bytes": 6786
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/PerBaseQualityScores.class",
+        "path_type": "hardlink",
+        "sha256": "433c29162616d466111b8c80a7155ca9ef576217be125a323860fbf492ae2228",
+        "sha256_in_prefix": "433c29162616d466111b8c80a7155ca9ef576217be125a323860fbf492ae2228",
+        "size_in_bytes": 6611
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/PerBaseSequenceContent.class",
+        "path_type": "hardlink",
+        "sha256": "7908e4a091b44041503d779d9e4c93e94a2b00cae1077e1a3290f422d911992a",
+        "sha256_in_prefix": "7908e4a091b44041503d779d9e4c93e94a2b00cae1077e1a3290f422d911992a",
+        "size_in_bytes": 5228
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/PerSequenceGCContent.class",
+        "path_type": "hardlink",
+        "sha256": "a7203c66c084a210257200cc2be87224a86846d2b2e716883e014e22c09d4f76",
+        "sha256_in_prefix": "a7203c66c084a210257200cc2be87224a86846d2b2e716883e014e22c09d4f76",
+        "size_in_bytes": 5799
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/PerSequenceQualityScores.class",
+        "path_type": "hardlink",
+        "sha256": "387c36c39f395cbd041a7a98175d573758f0d6f4f9bb4fbfac73c37985c80231",
+        "sha256_in_prefix": "387c36c39f395cbd041a7a98175d573758f0d6f4f9bb4fbfac73c37985c80231",
+        "size_in_bytes": 5136
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/PerTileQualityScores.class",
+        "path_type": "hardlink",
+        "sha256": "6bebd57ef8100819aba65f2aff88e4dc7e289894768fedf0d13035cf93359b48",
+        "sha256_in_prefix": "6bebd57ef8100819aba65f2aff88e4dc7e289894768fedf0d13035cf93359b48",
+        "size_in_bytes": 8250
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/QCModule.class",
+        "path_type": "hardlink",
+        "sha256": "1e9c8b82b56338f599b31375b5ce1b9d2d29778c66c1a0e07da865c89db0978f",
+        "sha256_in_prefix": "1e9c8b82b56338f599b31375b5ce1b9d2d29778c66c1a0e07da865c89db0978f",
+        "size_in_bytes": 610
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Modules/SequenceLengthDistribution.class",
+        "path_type": "hardlink",
+        "sha256": "055a633c5e9034a1807d6709112fc4fbd41e4d020f167b478d5c79a941d39381",
+        "sha256_in_prefix": "055a633c5e9034a1807d6709112fc4fbd41e4d020f167b478d5c79a941d39381",
+        "size_in_bytes": 5244
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Report/HTMLReportArchive.class",
+        "path_type": "hardlink",
+        "sha256": "4ada471dcd5a80d8b328e89f05f8c3902dbb61a123bbb7a74f181bdd3f8831bc",
+        "sha256_in_prefix": "4ada471dcd5a80d8b328e89f05f8c3902dbb61a123bbb7a74f181bdd3f8831bc",
+        "size_in_bytes": 11948
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Report/stylesheet.txt",
+        "path_type": "hardlink",
+        "sha256": "a59cb91fe910c3f568394a32fee05a9471192c2c793a4aa666125d33277a6c83",
+        "sha256_in_prefix": "a59cb91fe910c3f568394a32fee05a9471192c2c793a4aa666125d33277a6c83",
+        "size_in_bytes": 943
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Resources/error.png",
+        "path_type": "hardlink",
+        "sha256": "b9c7d86bf2dd0d414244154de0ab2aab467f38f2454d2b3b760569f01ed01c2d",
+        "sha256_in_prefix": "b9c7d86bf2dd0d414244154de0ab2aab467f38f2454d2b3b760569f01ed01c2d",
+        "size_in_bytes": 1561
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Resources/fastqc_icon.png",
+        "path_type": "hardlink",
+        "sha256": "e63253011f67bd11f6a0da03813c419c040ff5950315148de291d1bcb0aab9a2",
+        "sha256_in_prefix": "e63253011f67bd11f6a0da03813c419c040ff5950315148de291d1bcb0aab9a2",
+        "size_in_bytes": 1197
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Resources/fastqc_icon.svg",
+        "path_type": "hardlink",
+        "sha256": "f9ddbb16e39320f3773013772a4815ba14d101bc716d6af1df5723d0a0fb47b5",
+        "sha256_in_prefix": "f9ddbb16e39320f3773013772a4815ba14d101bc716d6af1df5723d0a0fb47b5",
+        "size_in_bytes": 6625
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Resources/fastqc_icon_100.png",
+        "path_type": "hardlink",
+        "sha256": "1610bd9ab252f37553641a6d77d93db32193747aed1e781d1fb05237f00ee12a",
+        "sha256_in_prefix": "1610bd9ab252f37553641a6d77d93db32193747aed1e781d1fb05237f00ee12a",
+        "size_in_bytes": 3470
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Resources/tick.png",
+        "path_type": "hardlink",
+        "sha256": "e9ed21a3f0e4d704b70ae850a6a0116eb23f857ce314c32e20111892de3ff79d",
+        "sha256_in_prefix": "e9ed21a3f0e4d704b70ae850a6a0116eb23f857ce314c32e20111892de3ff79d",
+        "size_in_bytes": 1715
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Resources/warning.png",
+        "path_type": "hardlink",
+        "sha256": "24e92cafbeb094dc687a94fe73b5f0cc26b178fa124107eb66cfb96b4e0b8443",
+        "sha256_in_prefix": "24e92cafbeb094dc687a94fe73b5f0cc26b178fa124107eb66cfb96b4e0b8443",
+        "size_in_bytes": 1450
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Results/ResultsPanel$ModuleRenderer.class",
+        "path_type": "hardlink",
+        "sha256": "b7c93da3645e82766d73239a7e40ecb15fef1a70784c51198e318fb4cebffe16",
+        "sha256_in_prefix": "b7c93da3645e82766d73239a7e40ecb15fef1a70784c51198e318fb4cebffe16",
+        "size_in_bytes": 1872
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Results/ResultsPanel.class",
+        "path_type": "hardlink",
+        "sha256": "1eab4fd5a671a22a97672b6ea57d711b878d7e0d6dccc0c33465213105b2020a",
+        "sha256_in_prefix": "1eab4fd5a671a22a97672b6ea57d711b878d7e0d6dccc0c33465213105b2020a",
+        "size_in_bytes": 5253
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Sequence/BAMFile.class",
+        "path_type": "hardlink",
+        "sha256": "8713ffcb5eb869878d316ebd2aec4ee1b08b2c8e641e4bccc1978c2f98e35a7a",
+        "sha256_in_prefix": "8713ffcb5eb869878d316ebd2aec4ee1b08b2c8e641e4bccc1978c2f98e35a7a",
+        "size_in_bytes": 5244
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Sequence/Contaminant/Contaminant.class",
+        "path_type": "hardlink",
+        "sha256": "66aad04a9f1beb90aa955a203be170238f760a959a9aa9e575f9db253405ef13",
+        "sha256_in_prefix": "66aad04a9f1beb90aa955a203be170238f760a959a9aa9e575f9db253405ef13",
+        "size_in_bytes": 2893
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Sequence/Contaminant/ContaminantHit.class",
+        "path_type": "hardlink",
+        "sha256": "09c8fb89e5b99beeb7387fe83d640c19e5e181240070fae05d5391203088306f",
+        "sha256_in_prefix": "09c8fb89e5b99beeb7387fe83d640c19e5e181240070fae05d5391203088306f",
+        "size_in_bytes": 1710
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Sequence/Contaminant/ContaminentFinder.class",
+        "path_type": "hardlink",
+        "sha256": "8c142282be5311ffce7b3915b390445c6e1300270ff151886a758d4ee954291d",
+        "sha256_in_prefix": "8c142282be5311ffce7b3915b390445c6e1300270ff151886a758d4ee954291d",
+        "size_in_bytes": 3301
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Sequence/Fast5File.class",
+        "path_type": "hardlink",
+        "sha256": "b4e54230d6648556bcd951511afac188affb5314d50d4e8dfe4ddda06e910530",
+        "sha256_in_prefix": "b4e54230d6648556bcd951511afac188affb5314d50d4e8dfe4ddda06e910530",
+        "size_in_bytes": 2917
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Sequence/FastQFile.class",
+        "path_type": "hardlink",
+        "sha256": "97472bf5345e1e645f4e059f0d48b7c89f2b8a6fe47808c35c30e0a3de3bf277",
+        "sha256_in_prefix": "97472bf5345e1e645f4e059f0d48b7c89f2b8a6fe47808c35c30e0a3de3bf277",
+        "size_in_bytes": 6521
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Sequence/QualityEncoding/PhredEncoding.class",
+        "path_type": "hardlink",
+        "sha256": "12ecc2c27cde05993e85e6d1ecdbb0634c06ce934f1bcc426613bb2c7fa7a33b",
+        "sha256_in_prefix": "12ecc2c27cde05993e85e6d1ecdbb0634c06ce934f1bcc426613bb2c7fa7a33b",
+        "size_in_bytes": 2661
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Sequence/Sequence.class",
+        "path_type": "hardlink",
+        "sha256": "b8cd58fe7faf06324be722960fc3fab27c0f11a8d15fe3cdb3efabbe2a3b4cf6",
+        "sha256_in_prefix": "b8cd58fe7faf06324be722960fc3fab27c0f11a8d15fe3cdb3efabbe2a3b4cf6",
+        "size_in_bytes": 1690
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Sequence/SequenceFactory.class",
+        "path_type": "hardlink",
+        "sha256": "0a229684313387f2c4998e765378964b95a00a192874b0a5b654d3e2221fc550",
+        "sha256_in_prefix": "0a229684313387f2c4998e765378964b95a00a192874b0a5b654d3e2221fc550",
+        "size_in_bytes": 2443
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Sequence/SequenceFile.class",
+        "path_type": "hardlink",
+        "sha256": "a7e4efae79f8c2e1ffbdf8a3a49da02013c1da45aacfec48a9c5575334b0c726",
+        "sha256_in_prefix": "a7e4efae79f8c2e1ffbdf8a3a49da02013c1da45aacfec48a9c5575334b0c726",
+        "size_in_bytes": 437
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Sequence/SequenceFileGroup.class",
+        "path_type": "hardlink",
+        "sha256": "a679aeb22c3dca77020f84bf6145b1b1419c0b9c1fb6c8069f1eb343a892e5e6",
+        "sha256_in_prefix": "a679aeb22c3dca77020f84bf6145b1b1419c0b9c1fb6c8069f1eb343a892e5e6",
+        "size_in_bytes": 2543
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Sequence/SequenceFormatException.class",
+        "path_type": "hardlink",
+        "sha256": "c1c9092d80d4389a4b9346a4a0860308a857d80e0929a084b1472b886ed44878",
+        "sha256_in_prefix": "c1c9092d80d4389a4b9346a4a0860308a857d80e0929a084b1472b886ed44878",
+        "size_in_bytes": 423
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Statistics/NormalDistribution.class",
+        "path_type": "hardlink",
+        "sha256": "c99af1bbc6cf02afb9bc8523592d860100945f7e8e7df8bf04b2753154d70c5b",
+        "sha256_in_prefix": "c99af1bbc6cf02afb9bc8523592d860100945f7e8e7df8bf04b2753154d70c5b",
+        "size_in_bytes": 739
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Statistics/PearsonCorrelation.class",
+        "path_type": "hardlink",
+        "sha256": "738aad99dd1267c39938646029b2aaed231d2a0ab483842555b27c33c2ae39a5",
+        "sha256_in_prefix": "738aad99dd1267c39938646029b2aaed231d2a0ab483842555b27c33c2ae39a5",
+        "size_in_bytes": 1534
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Utilities/CasavaBasename.class",
+        "path_type": "hardlink",
+        "sha256": "258e76f9420ec9494cc531e7df79dd9b22385a0dc84445f5457d6549aafc0558",
+        "sha256_in_prefix": "258e76f9420ec9494cc531e7df79dd9b22385a0dc84445f5457d6549aafc0558",
+        "size_in_bytes": 2866
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Utilities/HotColdColourGradient.class",
+        "path_type": "hardlink",
+        "sha256": "bb0c3f47074548ce4cfaa8b64f423d4740353441771af1a7b896cf0c2cc00bfb",
+        "sha256_in_prefix": "bb0c3f47074548ce4cfaa8b64f423d4740353441771af1a7b896cf0c2cc00bfb",
+        "size_in_bytes": 2014
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Utilities/ImageToBase64.class",
+        "path_type": "hardlink",
+        "sha256": "1b1a59921e7ec0c69ac2e3b0e7799c1b2dfc99fec52863849dde3ae8882b72fd",
+        "sha256_in_prefix": "1b1a59921e7ec0c69ac2e3b0e7799c1b2dfc99fec52863849dde3ae8882b72fd",
+        "size_in_bytes": 1387
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Utilities/MultiMemberGZIPInputStream.class",
+        "path_type": "hardlink",
+        "sha256": "2a93b0ee0eb26c09e36130b32c5232a84fe53b60630559149cb1f45e37b1e219",
+        "sha256_in_prefix": "2a93b0ee0eb26c09e36130b32c5232a84fe53b60630559149cb1f45e37b1e219",
+        "size_in_bytes": 1968
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Utilities/NameFormatException.class",
+        "path_type": "hardlink",
+        "sha256": "0f7f63c10155ee7e9299f21e4688c31d521f0759f3c2c343439ac0bb19197385",
+        "sha256_in_prefix": "0f7f63c10155ee7e9299f21e4688c31d521f0759f3c2c343439ac0bb19197385",
+        "size_in_bytes": 349
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Utilities/NanoporeBasename.class",
+        "path_type": "hardlink",
+        "sha256": "157df24c6b235a070516f6e7831f03f75fee9ecfc724e3725979310ff366d04a",
+        "sha256_in_prefix": "157df24c6b235a070516f6e7831f03f75fee9ecfc724e3725979310ff366d04a",
+        "size_in_bytes": 2636
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Utilities/QualityCount.class",
+        "path_type": "hardlink",
+        "sha256": "6f6bf1ebcb3c8be9be6f080a8e2576c8cd4c45a73107bad7e70edfa0bd0fb5a0",
+        "sha256_in_prefix": "6f6bf1ebcb3c8be9be6f080a8e2576c8cd4c45a73107bad7e70edfa0bd0fb5a0",
+        "size_in_bytes": 1382
+      },
+      {
+        "_path": "opt/fastqc-0.11.8/uk/ac/babraham/FastQC/Utilities/RGB.class",
+        "path_type": "hardlink",
+        "sha256": "d2525cfdbd59bd76ef4a45c86c765a1a4230924509a3d1033e1c55c286e81c7d",
+        "sha256_in_prefix": "d2525cfdbd59bd76ef4a45c86c765a1a4230924509a3d1033e1c55c286e81c7d",
+        "size_in_bytes": 438
+      }
+    ],
+    "paths_version": 1
+  },
+  "requested_spec": "fastqc",
+  "sha256": "dfa81bb4b22ded595b512b88fb7e70de61aec4331bf7802fadcc4892e42f660a",
+  "size": 10044315,
+  "subdir": "osx-64",
+  "timestamp": 1544723122151,
+  "track_features": "",
+  "url": "https://conda.anaconda.org/bioconda/osx-64/fastqc-0.11.8-1.tar.bz2",
+  "version": "0.11.8"
+}

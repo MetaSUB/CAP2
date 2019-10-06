@@ -89,7 +89,7 @@ extern "C" {
 #else /* !HAVE_TERMIOS_H */
 
 /* #if HAVE_TERMIO_H */
-#if 0
+#if 1
 
 #undef  TERMIOS
 #define TERMIOS 1

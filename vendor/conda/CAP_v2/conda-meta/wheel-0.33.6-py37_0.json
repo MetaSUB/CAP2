@@ -1,13 +1,13 @@
 {
   "build": "py37_0",
   "build_number": 0,
-  "channel": "https://repo.anaconda.com/pkgs/main/osx-64",
+  "channel": "https://conda.anaconda.org/conda-forge/linux-64",
   "constrains": [],
   "depends": [
     "python >=3.7,<3.8.0a0",
     "setuptools"
   ],
-  "extracted_package_dir": "/Users/dcdanko/miniconda3/pkgs/wheel-0.33.6-py37_0",
+  "extracted_package_dir": "/home/dcdanko/miniconda3/pkgs/wheel-0.33.6-py37_0",
   "features": "",
   "files": [
     "bin/wheel",
@@ -46,12 +46,12 @@
   "fn": "wheel-0.33.6-py37_0.tar.bz2",
   "license": "MIT",
   "link": {
-    "source": "/Users/dcdanko/miniconda3/pkgs/wheel-0.33.6-py37_0",
+    "source": "/home/dcdanko/miniconda3/pkgs/wheel-0.33.6-py37_0",
     "type": 1
   },
-  "md5": "ffce119ac1e1789f5364d1bcdf40708c",
+  "md5": "a0017f93b2a11a4b55b0ac3d029a7389",
   "name": "wheel",
-  "package_tarball_full_path": "/Users/dcdanko/miniconda3/pkgs/wheel-0.33.6-py37_0.tar.bz2",
+  "package_tarball_full_path": "/home/dcdanko/miniconda3/pkgs/wheel-0.33.6-py37_0.tar.bz2",
   "paths_data": {
     "paths": [
       {
@@ -60,7 +60,7 @@
         "path_type": "hardlink",
         "prefix_placeholder": "/opt/anaconda1anaconda2anaconda3",
         "sha256": "a610b64038079c99d807d0accc36e2207fe932b8e1a89dddb752e787d556b2c6",
-        "sha256_in_prefix": "543f2bed70ff3ea42085a47f65e76fc56e5a4f97c5dd57ecb57b0b467d8a8daf",
+        "sha256_in_prefix": "cb9291ebfc157726e1ec491a58e52e8bbd353bcad7e42f0724c2180389779c60",
         "size_in_bytes": 239
       },
       {
@@ -73,9 +73,9 @@
       {
         "_path": "lib/python3.7/site-packages/wheel-0.33.6-py3.7.egg-info/SOURCES.txt",
         "path_type": "hardlink",
-        "sha256": "1efa3eadfa576ceaff063b8c9c4f5f98cb8b233fa7233dde8d7e2b264d96f2e8",
-        "sha256_in_prefix": "1efa3eadfa576ceaff063b8c9c4f5f98cb8b233fa7233dde8d7e2b264d96f2e8",
-        "size_in_bytes": 1615
+        "sha256": "b5352a9ae520b5264e953f9c8076afdad20f288cf512d824798f658827eacd6b",
+        "sha256_in_prefix": "b5352a9ae520b5264e953f9c8076afdad20f288cf512d824798f658827eacd6b",
+        "size_in_bytes": 1552
       },
       {
         "_path": "lib/python3.7/site-packages/wheel-0.33.6-py3.7.egg-info/dependency_links.txt",
@@ -283,12 +283,12 @@
     ],
     "paths_version": 1
   },
-  "requested_spec": "None",
-  "sha256": "61521877b225a69c3cb7790d430ecd63d6eeb760bff380ae42b1145114da6a4b",
-  "size": 41217,
-  "subdir": "osx-64",
-  "timestamp": 1569263355297,
+  "requested_spec": "wheel==0.33.6=py37_0",
+  "sha256": "f1ad6608e027fcfc11ab25260fe9c6555130ad6913807bec20979344245ad74d",
+  "size": 35555,
+  "subdir": "linux-64",
+  "timestamp": 1566142899543,
   "track_features": "",
-  "url": "https://repo.anaconda.com/pkgs/main/osx-64/wheel-0.33.6-py37_0.tar.bz2",
+  "url": "https://conda.anaconda.org/conda-forge/linux-64/wheel-0.33.6-py37_0.tar.bz2",
   "version": "0.33.6"
 }

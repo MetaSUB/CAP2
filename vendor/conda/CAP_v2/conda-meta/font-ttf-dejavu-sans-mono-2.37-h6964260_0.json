@@ -4,7 +4,7 @@
   "channel": "https://repo.anaconda.com/pkgs/main/noarch",
   "constrains": [],
   "depends": [],
-  "extracted_package_dir": "/Users/dcdanko/miniconda3/pkgs/font-ttf-dejavu-sans-mono-2.37-h6964260_0",
+  "extracted_package_dir": "/home/dcdanko/miniconda3/pkgs/font-ttf-dejavu-sans-mono-2.37-h6964260_0",
   "features": "",
   "files": [
     "fonts/DejaVuSans.ttf"
@@ -13,13 +13,13 @@
   "license": "BSD-3",
   "license_family": "BSD",
   "link": {
-    "source": "/Users/dcdanko/miniconda3/pkgs/font-ttf-dejavu-sans-mono-2.37-h6964260_0",
+    "source": "/home/dcdanko/miniconda3/pkgs/font-ttf-dejavu-sans-mono-2.37-h6964260_0",
     "type": 1
   },
   "md5": "360b9da9c7b19f853ad38181a4aa9452",
   "name": "font-ttf-dejavu-sans-mono",
   "noarch": "generic",
-  "package_tarball_full_path": "/Users/dcdanko/miniconda3/pkgs/font-ttf-dejavu-sans-mono-2.37-h6964260_0.tar.bz2",
+  "package_tarball_full_path": "/home/dcdanko/miniconda3/pkgs/font-ttf-dejavu-sans-mono-2.37-h6964260_0.tar.bz2",
   "package_type": "noarch_generic",
   "paths_data": {
     "paths": [
@@ -33,7 +33,7 @@
     ],
     "paths_version": 1
   },
-  "requested_spec": "None",
+  "requested_spec": "font-ttf-dejavu-sans-mono==2.37=h6964260_0",
   "sha256": "3687ef4c7fb2dc1fd9191d696249ea65bf64d5ec3041b66290ee9ed1d961b47a",
   "size": 395390,
   "subdir": "noarch",

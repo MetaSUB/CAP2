@@ -11,10 +11,6 @@
 #ifndef HEADER_ECERR_H
 # define HEADER_ECERR_H
 
-# ifndef HEADER_SYMHACKS_H
-#  include <openssl/symhacks.h>
-# endif
-
 # include <openssl/opensslconf.h>
 
 # ifndef OPENSSL_NO_EC

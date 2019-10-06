@@ -1,14 +1,14 @@
 {
   "build": "py37_0",
   "build_number": 0,
-  "channel": "https://repo.anaconda.com/pkgs/main/osx-64",
+  "channel": "https://conda.anaconda.org/conda-forge/linux-64",
   "constrains": [],
   "depends": [
     "python >=3.7,<3.8.0a0",
     "setuptools",
     "wheel"
   ],
-  "extracted_package_dir": "/Users/dcdanko/miniconda3/pkgs/pip-19.2.3-py37_0",
+  "extracted_package_dir": "/home/dcdanko/miniconda3/pkgs/pip-19.2.3-py37_0",
   "features": "",
   "files": [
     "bin/pip",
@@ -681,12 +681,12 @@
   "license": "MIT",
   "license_family": "MIT",
   "link": {
-    "source": "/Users/dcdanko/miniconda3/pkgs/pip-19.2.3-py37_0",
+    "source": "/home/dcdanko/miniconda3/pkgs/pip-19.2.3-py37_0",
     "type": 1
   },
-  "md5": "18f53a0b48fb87ace48198ec735a89da",
+  "md5": "b475ca5f9afba8ab1203a413caa8e9ad",
   "name": "pip",
-  "package_tarball_full_path": "/Users/dcdanko/miniconda3/pkgs/pip-19.2.3-py37_0.tar.bz2",
+  "package_tarball_full_path": "/home/dcdanko/miniconda3/pkgs/pip-19.2.3-py37_0.tar.bz2",
   "paths_data": {
     "paths": [
       {
@@ -695,7 +695,7 @@
         "path_type": "hardlink",
         "prefix_placeholder": "/opt/anaconda1anaconda2anaconda3",
         "sha256": "61f243a4ea5f4f4cb7a8644d8bb2b2f33528a603a976362a084952307c848d6b",
-        "sha256_in_prefix": "d92e1f1d08a397eacc4c5cb567fb4d52ab94f85cd7befb4addac5d9a44866c22",
+        "sha256_in_prefix": "52257fe39580eb38a382cbc3b37162d0b2e23761343a998de3f6d57ad0766cb0",
         "size_in_bytes": 243
       },
       {
@@ -799,15 +799,15 @@
       {
         "_path": "lib/python3.7/site-packages/pip/_internal/__pycache__/configuration.cpython-37.pyc",
         "path_type": "hardlink",
-        "sha256": "f63c456f7b8de256a476fb5effd68f467e27a9ec448657207c6f18dc148cc5eb",
-        "sha256_in_prefix": "f63c456f7b8de256a476fb5effd68f467e27a9ec448657207c6f18dc148cc5eb",
+        "sha256": "3f438847e47a3bcde6171bc517067ce7c9da6925c9abfab308f03741643fc682",
+        "sha256_in_prefix": "3f438847e47a3bcde6171bc517067ce7c9da6925c9abfab308f03741643fc682",
         "size_in_bytes": 10508
       },
       {
         "_path": "lib/python3.7/site-packages/pip/_internal/__pycache__/download.cpython-37.pyc",
         "path_type": "hardlink",
-        "sha256": "aa8e3565741354caf8500bf31dd9fdd26cbb6a47d5749163caa34d351cf0abd4",
-        "sha256_in_prefix": "aa8e3565741354caf8500bf31dd9fdd26cbb6a47d5749163caa34d351cf0abd4",
+        "sha256": "7b8b94bc4c77b8841bfefc667759c786c1ed7430dea40789401e2b9e277a21a7",
+        "sha256_in_prefix": "7b8b94bc4c77b8841bfefc667759c786c1ed7430dea40789401e2b9e277a21a7",
         "size_in_bytes": 25682
       },
       {
@@ -841,8 +841,8 @@
       {
         "_path": "lib/python3.7/site-packages/pip/_internal/__pycache__/pep425tags.cpython-37.pyc",
         "path_type": "hardlink",
-        "sha256": "b5fdc3ee096eadb0ff229a435ba26627695f35572db063ba4d814dd21e966ff2",
-        "sha256_in_prefix": "b5fdc3ee096eadb0ff229a435ba26627695f35572db063ba4d814dd21e966ff2",
+        "sha256": "731cff1bd8619633d302da320da0fd5e4e0d8b72ead9974c7c124dbe3e786734",
+        "sha256_in_prefix": "731cff1bd8619633d302da320da0fd5e4e0d8b72ead9974c7c124dbe3e786734",
         "size_in_bytes": 8276
       },
       {
@@ -1009,8 +1009,8 @@
       {
         "_path": "lib/python3.7/site-packages/pip/_internal/commands/__pycache__/debug.cpython-37.pyc",
         "path_type": "hardlink",
-        "sha256": "efc9ce979bcb2dc24e0db6ec563df9ac7a17839f32752d21aca5409ffa9c2c84",
-        "sha256_in_prefix": "efc9ce979bcb2dc24e0db6ec563df9ac7a17839f32752d21aca5409ffa9c2c84",
+        "sha256": "384007d1d61c97868666c211071a4aeb05b223d24621fe98892f29faef3554b3",
+        "sha256_in_prefix": "384007d1d61c97868666c211071a4aeb05b223d24621fe98892f29faef3554b3",
         "size_in_bytes": 3311
       },
       {
@@ -1597,8 +1597,8 @@
       {
         "_path": "lib/python3.7/site-packages/pip/_internal/utils/__pycache__/compat.cpython-37.pyc",
         "path_type": "hardlink",
-        "sha256": "97ccf73710eceb93c5ec90fdcedc74049d64ad0333faede37b56436e692bd72f",
-        "sha256_in_prefix": "97ccf73710eceb93c5ec90fdcedc74049d64ad0333faede37b56436e692bd72f",
+        "sha256": "2af4f441f98249bcaa62a09da9d353b0d21f427f5facf404f2b97cb90ee63383",
+        "sha256_in_prefix": "2af4f441f98249bcaa62a09da9d353b0d21f427f5facf404f2b97cb90ee63383",
         "size_in_bytes": 6953
       },
       {
@@ -1611,8 +1611,8 @@
       {
         "_path": "lib/python3.7/site-packages/pip/_internal/utils/__pycache__/encoding.cpython-37.pyc",
         "path_type": "hardlink",
-        "sha256": "15698fa3010bf95a96523bce12398784de82660017bf281e5a5f6ed5706b5d97",
-        "sha256_in_prefix": "15698fa3010bf95a96523bce12398784de82660017bf281e5a5f6ed5706b5d97",
+        "sha256": "cb4ca90ebf3a0af0d87e5e527cec00552ef35222aebdbd3ff2f93dfae5a0bd23",
+        "sha256_in_prefix": "cb4ca90ebf3a0af0d87e5e527cec00552ef35222aebdbd3ff2f93dfae5a0bd23",
         "size_in_bytes": 1230
       },
       {
@@ -1625,8 +1625,8 @@
       {
         "_path": "lib/python3.7/site-packages/pip/_internal/utils/__pycache__/glibc.cpython-37.pyc",
         "path_type": "hardlink",
-        "sha256": "db564c399845a1eb386e38357640a79356f20b48aa4327bbd097bb519f4331f5",
-        "sha256_in_prefix": "db564c399845a1eb386e38357640a79356f20b48aa4327bbd097bb519f4331f5",
+        "sha256": "7deac1e7a786ab6129eebdca911bb94bdac365a7e88acaefcf1b56544d05b4cf",
+        "sha256_in_prefix": "7deac1e7a786ab6129eebdca911bb94bdac365a7e88acaefcf1b56544d05b4cf",
         "size_in_bytes": 2210
       },
       {
@@ -1982,8 +1982,8 @@
       {
         "_path": "lib/python3.7/site-packages/pip/_vendor/__pycache__/six.cpython-37.pyc",
         "path_type": "hardlink",
-        "sha256": "2f9c9bbd10d04ce04c8adcbf3ccd7327310079455e547e02ddddf3ae902d3e57",
-        "sha256_in_prefix": "2f9c9bbd10d04ce04c8adcbf3ccd7327310079455e547e02ddddf3ae902d3e57",
+        "sha256": "ea64b001da25127797cc89cf4d9570e688c0d4f1c4a400319eb1f303908df3bf",
+        "sha256_in_prefix": "ea64b001da25127797cc89cf4d9570e688c0d4f1c4a400319eb1f303908df3bf",
         "size_in_bytes": 26368
       },
       {
@@ -2822,8 +2822,8 @@
       {
         "_path": "lib/python3.7/site-packages/pip/_vendor/colorama/__pycache__/ansitowin32.cpython-37.pyc",
         "path_type": "hardlink",
-        "sha256": "3b51664ac13742a3c2b7e9ab53e4917fc87326c16a1615f09c3d1c52b2786b34",
-        "sha256_in_prefix": "3b51664ac13742a3c2b7e9ab53e4917fc87326c16a1615f09c3d1c52b2786b34",
+        "sha256": "51a09a26217dde259bf2406776df4f6c038f6e5a780d87eaf3d1c9410e21086e",
+        "sha256_in_prefix": "51a09a26217dde259bf2406776df4f6c038f6e5a780d87eaf3d1c9410e21086e",
         "size_in_bytes": 7552
       },
       {
@@ -2899,8 +2899,8 @@
       {
         "_path": "lib/python3.7/site-packages/pip/_vendor/distlib/__pycache__/compat.cpython-37.pyc",
         "path_type": "hardlink",
-        "sha256": "aa94af06c58d630d9370f5713bb83ebf6b7b3d553e3873bf121090f03c7fb343",
-        "sha256_in_prefix": "aa94af06c58d630d9370f5713bb83ebf6b7b3d553e3873bf121090f03c7fb343",
+        "sha256": "09c9c22d5fd6c25f0bb4c051ed1628edd50827063977f664fa8479efd3aa71b2",
+        "sha256_in_prefix": "09c9c22d5fd6c25f0bb4c051ed1628edd50827063977f664fa8479efd3aa71b2",
         "size_in_bytes": 32006
       },
       {
@@ -4432,8 +4432,8 @@
       {
         "_path": "lib/python3.7/site-packages/pip/_vendor/requests/__pycache__/sessions.cpython-37.pyc",
         "path_type": "hardlink",
-        "sha256": "a70a9591708fb614136bfb2033a46e80a894f2a0ad94560fa5113f4b91851883",
-        "sha256_in_prefix": "a70a9591708fb614136bfb2033a46e80a894f2a0ad94560fa5113f4b91851883",
+        "sha256": "beb2a0d0d7a7d77d39a1c9898ad501097e5ad0fc68fdec847da831eb71181b60",
+        "sha256_in_prefix": "beb2a0d0d7a7d77d39a1c9898ad501097e5ad0fc68fdec847da831eb71181b60",
         "size_in_bytes": 19383
       },
       {
@@ -4453,8 +4453,8 @@
       {
         "_path": "lib/python3.7/site-packages/pip/_vendor/requests/__pycache__/utils.cpython-37.pyc",
         "path_type": "hardlink",
-        "sha256": "17427485e6ae6145d68d6b146ca49a383f25aceb49be0553c71db6b3b0ecd5e7",
-        "sha256_in_prefix": "17427485e6ae6145d68d6b146ca49a383f25aceb49be0553c71db6b3b0ecd5e7",
+        "sha256": "5cd8aeaf24ebb9b591d3e93c5eea3a5deea6c753c2d3deacd7d9d41cc2cf92b5",
+        "sha256_in_prefix": "5cd8aeaf24ebb9b591d3e93c5eea3a5deea6c753c2d3deacd7d9d41cc2cf92b5",
         "size_in_bytes": 21994
       },
       {
@@ -4866,8 +4866,8 @@
       {
         "_path": "lib/python3.7/site-packages/pip/_vendor/urllib3/packages/__pycache__/six.cpython-37.pyc",
         "path_type": "hardlink",
-        "sha256": "15641b25cfd71277376aee1009341748e81bf38151c42e964fd2bceb7f959e32",
-        "sha256_in_prefix": "15641b25cfd71277376aee1009341748e81bf38151c42e964fd2bceb7f959e32",
+        "sha256": "e551c8ff62185876908971456495f194238b9006e3767bfa27b9b0a87e8d5075",
+        "sha256_in_prefix": "e551c8ff62185876908971456495f194238b9006e3767bfa27b9b0a87e8d5075",
         "size_in_bytes": 24356
       },
       {
@@ -5349,12 +5349,12 @@
     ],
     "paths_version": 1
   },
-  "requested_spec": "None",
-  "sha256": "c6661cd1b3ac8def382d15c9e8f0f92397a0070ee7e0f62985713bc192de9fd5",
-  "size": 1953070,
-  "subdir": "osx-64",
-  "timestamp": 1569332309636,
+  "requested_spec": "pip==19.2.3=py37_0",
+  "sha256": "6b3a9d462a3d41426e6806ac41eb377534cf46512a84afa6373911d99a2e21e0",
+  "size": 1967003,
+  "subdir": "linux-64",
+  "timestamp": 1566738621084,
   "track_features": "",
-  "url": "https://repo.anaconda.com/pkgs/main/osx-64/pip-19.2.3-py37_0.tar.bz2",
+  "url": "https://conda.anaconda.org/conda-forge/linux-64/pip-19.2.3-py37_0.tar.bz2",
   "version": "19.2.3"
 }

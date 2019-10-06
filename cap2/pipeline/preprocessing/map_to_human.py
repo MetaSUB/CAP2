@@ -31,6 +31,7 @@ class RemoveHumanReads(luigi.Task):
 
     def output(self):
         bam = luigi.LocalTarget(join(self.out_dir, f'{self.sample_name}.human_alignment.bam'))
+        bam.makedirs()
         non_human_1 = luigi.LocalTarget(join(
             self.out_dir, f'{self.sample_name}.nonhuman_reads.R1.fastq.gz'
         ))
@@ -43,15 +44,16 @@ class RemoveHumanReads(luigi.Task):
         }
 
     def run(self):
-        subprocess.call(
-            [
+        cmd = ''.join((
                 self.pkg.bin,
-                '-x', self.db.bowtie2_index,
-                '-1', self.pe1,
-                '-2', self.pe2,
-                '--threads', self.cores,
-                '--very-sensitive',
+                ' -x ', self.db.bowtie2_index,
+                ' -1 ', self.pe1,
+                ' -2 ', self.pe2,
+                f' --un-conc-gz {self.out_dir}/{self.sample_name}.nonhuman_reads.R%.fastq.gz ',
+                ' --threads ', str(self.cores),
+                ' --very-sensitive ',
                 ' | samtools view -F 4 -b > ',
                 self.output()['bam'].path,
-            ]
-        )
+        ))
+        subprocess.call(cmd, shell=True)
+        

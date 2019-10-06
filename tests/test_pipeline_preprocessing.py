@@ -60,4 +60,4 @@ class TestPipelinePreprocessing(TestCase):
         self.assertTrue(isfile(instance.output()['bam'].path))
         self.assertTrue(isfile(instance.output()['nonhuman_reads'][0].path))
         self.assertTrue(isfile(instance.output()['nonhuman_reads'][1].path))
-        # rmtree('test_out')
+        rmtree('test_out')

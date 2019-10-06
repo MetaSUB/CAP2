@@ -1,7 +1,7 @@
 {
   "build": "1",
   "build_number": 1,
-  "channel": "https://conda.anaconda.org/bioconda/osx-64",
+  "channel": "https://conda.anaconda.org/bioconda/linux-64",
   "constrains": [],
   "depends": [
     "font-ttf-dejavu-sans-mono",
@@ -9,7 +9,7 @@
     "openjdk >=8.0.144",
     "perl"
   ],
-  "extracted_package_dir": "/Users/dcdanko/miniconda3/pkgs/fastqc-0.11.8-1",
+  "extracted_package_dir": "/home/dcdanko/miniconda3/pkgs/fastqc-0.11.8-1",
   "features": "",
   "files": [
     "bin/fastqc",
@@ -273,12 +273,12 @@
   "fn": "fastqc-0.11.8-1.tar.bz2",
   "license": "GPL >=3",
   "link": {
-    "source": "/Users/dcdanko/miniconda3/pkgs/fastqc-0.11.8-1",
+    "source": "/home/dcdanko/miniconda3/pkgs/fastqc-0.11.8-1",
     "type": 1
   },
-  "md5": "d6097e58b5481a5321e183757f71f691",
+  "md5": "48d97761c795eeb10f4eb3962f187601",
   "name": "fastqc",
-  "package_tarball_full_path": "/Users/dcdanko/miniconda3/pkgs/fastqc-0.11.8-1.tar.bz2",
+  "package_tarball_full_path": "/home/dcdanko/miniconda3/pkgs/fastqc-0.11.8-1.tar.bz2",
   "paths_data": {
     "paths": [
       {
@@ -866,9 +866,9 @@
         "file_mode": "text",
         "path_type": "hardlink",
         "prefix_placeholder": "/opt/anaconda1anaconda2anaconda3",
-        "sha256": "aa011b2b946faafd11f2252898c69a1fc39f89d37887f83b2247385d6c3b6748",
-        "sha256_in_prefix": "8869101a435709cf94caa2bf30586e373dbc4aea81db55528d5f248b103d24af",
-        "size_in_bytes": 7859
+        "sha256": "e0f50d1f1b91607744afe0cdadeffdcb94201775ce2ff171da9d7d500860c1b9",
+        "sha256_in_prefix": "6eb7c30aa6a858e8df8bc02398ed630c9e255c3bf9ed318de9871cdabab8ee5b",
+        "size_in_bytes": 7650
       },
       {
         "_path": "opt/fastqc-0.11.8/fastqc",
@@ -2084,12 +2084,12 @@
     ],
     "paths_version": 1
   },
-  "requested_spec": "fastqc",
-  "sha256": "dfa81bb4b22ded595b512b88fb7e70de61aec4331bf7802fadcc4892e42f660a",
-  "size": 10044315,
-  "subdir": "osx-64",
-  "timestamp": 1544723122151,
+  "requested_spec": "fastqc==0.11.8=1",
+  "sha256": "58bb8715566743a87553b3addb8529e0caf60624c5dd4187cdac7bfc569b870a",
+  "size": 10043493,
+  "subdir": "linux-64",
+  "timestamp": 1544708496108,
   "track_features": "",
-  "url": "https://conda.anaconda.org/bioconda/osx-64/fastqc-0.11.8-1.tar.bz2",
+  "url": "https://conda.anaconda.org/bioconda/linux-64/fastqc-0.11.8-1.tar.bz2",
   "version": "0.11.8"
 }

@@ -27,7 +27,10 @@ class MicaUniref90(luigi.Task):
         self.out_dir = self.config.out_dir
         self.db = Uniref90(config_filename=config_filename)
         self.reads = CleanReads(
-            sample_name=sample_name, pe1=pe1, pe2=pe2, config_filename=config_filename
+            sample_name=self.sample_name,
+            pe1=self.pe1,
+            pe2=self.pe2,
+            config_filename=self.config_filename
         )
 
     def requires(self):
@@ -51,7 +54,7 @@ class MicaUniref90(luigi.Task):
             f'-d {self.db.diamond_index} '
             f'-q {self.reads.output()["clean_reads"][0]} '
             '--block-size 6 '
-            f'| gzip > {self.output()['m8'].path} '
+            f'| gzip > {self.output()["m8"].path} '
         )
         subprocess.call(cmd, shell=True)
 
@@ -103,7 +106,7 @@ class Humann2(luigi.Task):
         covs = odir + '/*pathcoverage.tsv'
         cmd = (
             f'{self.pkg.bin} '
-            f'--input {self.alignment.output()['m8'].path} '
+            f'--input {self.alignment.output()["m8"].path} '
             f'--output {self.sample_name}_humann2 ; '
             'mv ' + genes + ' ' + self.output()['genes'].path + '; '
             'mv ' + abunds + ' ' + self.output()['path_abunds'].path + '; '

@@ -27,7 +27,10 @@ class KrakenUniq(luigi.Task):
         self.out_dir = self.config.out_dir
         self.db = TaxonomicDB()
         self.reads = CleanReads(
-            sample_name=sample_name, pe1=pe1, pe2=pe2, config_filename=config_filename
+            sample_name=self.sample_name,
+            pe1=self.pe1,
+            pe2=self.pe2,
+            config_filename=self.config_filename
         )
 
     def requires(self):

@@ -6,7 +6,7 @@ from os.path import join, dirname, basename
 from ..config import PipelineConfig
 from ..utils.conda import CondaPackage
 from ..databases.taxonomic_db import TaxonomicDB
-from ..preprocessing.map_to_human import RemoveHumanReads
+from ..preprocessing.clean_reads import CleanReads
 
 
 class KrakenUniq(luigi.Task):
@@ -26,7 +26,7 @@ class KrakenUniq(luigi.Task):
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
         self.db = TaxonomicDB()
-        self.reads = RemoveHumanReads(
+        self.reads = CleanReads(
             sample_name=sample_name, pe1=pe1, pe2=pe2, config_filename=config_filename
         )
 
@@ -57,8 +57,8 @@ class KrakenUniq(luigi.Task):
             '--paired '
             '--preload '
             f'--db {self.db.krakenuniq_db} '
-            f'{self.reads.output()["nonhuman_reads"][0].path} '
-            f'{self.reads.output()["nonhuman_reads"][1].path} '
+            f'{self.reads.output()["clean_reads"][0].path} '
+            f'{self.reads.output()["clean_reads"][1].path} '
             f'> {read_assignments}'
         )
         subprocess.call(cmd, shell=True)

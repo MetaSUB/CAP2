@@ -5,7 +5,7 @@ from os.path import join, dirname, basename
 
 from ..config import PipelineConfig
 from ..utils.conda import CondaPackage
-from ..preprocessing.map_to_human import RemoveHumanReads
+from ..preprocessing.clean_reads import CleanReads
 
 
 class Sakeima(luigi.Task):
@@ -24,7 +24,7 @@ class Sakeima(luigi.Task):
         )
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
-        self.reads = RemoveHumanReads(
+        self.reads = CleanReads(
             sample_name=sample_name, pe1=pe1, pe2=pe2, config_filename=config_filename
         )
 

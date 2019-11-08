@@ -9,7 +9,7 @@ from cap2.pipeline.short_read.krakenuniq import KrakenUniq
 from cap2.pipeline.short_read.humann2 import MicaUniref90, Humann2
 from cap2.pipeline.short_read.mash import Mash
 from cap2.pipeline.short_read.hmp_comparison import HmpComparison
-from cap2.pipeline,short_read.microbe_census import MicrobeCensus
+from cap2.pipeline.short_read.microbe_census import MicrobeCensus
 
 RAW_READS_1 = join(dirname(__file__), 'data/zymo_pos_cntrl.r1.fq.gz')
 RAW_READS_2 = join(dirname(__file__), 'data/zymo_pos_cntrl.r2.fq.gz')

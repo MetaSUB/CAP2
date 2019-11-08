@@ -24,7 +24,7 @@ class RemoveHumanReads(luigi.Task):
         )
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
-        self.db = HumanRemovalDB()
+        self.db = HumanRemovalDB(config_filename=self.config_filename)
 
     def requires(self):
         return self.pkg, self.db

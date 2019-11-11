@@ -43,6 +43,7 @@ class TestPipelinePreprocessing(TestCase):
             cores=1
         )
         luigi.build([instance], local_scheduler=True)
+        print(instance.output())
         self.assertTrue(isfile(instance.output()['zip_output'].path))
         self.assertTrue(isfile(instance.output()['report'].path))
         # rmtree('test_out')
@@ -57,6 +58,7 @@ class TestPipelinePreprocessing(TestCase):
         )
         instance.db = DummyHumanRemovalDB()
         luigi.build([instance], local_scheduler=True)
+        print(instance.output())
         self.assertTrue(isfile(instance.output()['bam'].path))
         self.assertTrue(isfile(instance.output()['nonhuman_reads'][0].path))
         self.assertTrue(isfile(instance.output()['nonhuman_reads'][1].path))

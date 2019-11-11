@@ -15,12 +15,15 @@ class Uniref90(luigi.Task):
         super().__init__(*args, **kwargs)
         self.pkg = CondaPackage(
             package="diamond",
-            executable="diamond makedb",
+            executable="diamond",
             channel="bioconda"
         )
         self.config = PipelineConfig(self.config_filename)
         self.db_dir = self.config.db_dir
         self.fasta = join(self.db_dir, 'uniref90', 'uniref90.faa.gz')
+
+    def requires(self):
+        return self.pkg
 
     @property
     def diamond_index(self):
@@ -34,7 +37,7 @@ class Uniref90(luigi.Task):
         }
 
     def run(self):
-        cmd = self.pkg.bin
+        cmd = self.pkg.bin + ' makedb'
         cmd += f' --in {self.fasta} -d {self.diamond_index[:-5]}'
         print(cmd)
         subprocess.call(cmd, shell=True)

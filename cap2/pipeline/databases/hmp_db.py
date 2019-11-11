@@ -18,13 +18,16 @@ class HmpDB(luigi.Task):
         super().__init__(*args, **kwargs)
         self.pkg = CondaPackage(
             package="mash",
-            executable="mash sketch",
+            executable="mash",
             channel="bioconda"
         )
         self.config = PipelineConfig(self.config_filename)
         self.db_dir = self.config.db_dir
         self.fastqs = list(glob(join(self.db_dir, 'hmp') + '/**.fastq.gz'))
         self.sketch_size = MASH_SKETCH_SIZE
+
+    def requires(self):
+        return self.pkg
 
     @property
     def mash_sketch(self):
@@ -41,7 +44,7 @@ class HmpDB(luigi.Task):
         self.build_mash_index_sketch()
 
     def build_mash_index_sketch(self):
-        cmd = self.pkg.bin
+        cmd = self.pkg.bin + ' sketch'
         cmd += f' -s {self.sketch_size} -o {self.mash_sketch[:-4]} '
         cmd += ' '.join(self.fastqs)
         subprocess.call(cmd, shell=True)

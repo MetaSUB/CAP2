@@ -29,10 +29,10 @@ class TestDatabases(TestCase):
 
     def test_build_taxonomic_db(self):
         instance = TaxonomicDB(config_filename=TEST_CONFIG)
-        instance.kraken_db_dir = ''
-        # luigi.build([instance], local_scheduler=True)
-        # self.assertTrue(isfile(instance.output().path))
-        # rmtree('test_db')
+        instance.kraken_db_dir = data_file('krakenuniq')
+        luigi.build([instance], local_scheduler=True)
+        self.assertTrue(isfile(instance.output()['krakenuniq_db_taxa'].path))
+        rmtree('test_db')
 
     def test_build_hmp_db(self):
         instance = HmpDB(config_filename=TEST_CONFIG)

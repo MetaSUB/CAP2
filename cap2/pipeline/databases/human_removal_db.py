@@ -27,6 +27,9 @@ class HumanRemovalDB(luigi.Task):
         self.db_dir = self.config.db_dir
         self.fastas = list(glob(join(self.db_dir, 'hg38') + '/*.fa.gz'))
 
+    def requires(self):
+        return self.pkg
+
     @property
     def bowtie2_index(self):
         return join(self.db_dir, 'human_removal.bt2')

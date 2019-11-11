@@ -1,5 +1,7 @@
 
 import luigi
+from os.path import join
+import subprocess
 
 from cap2.pipeline.constants import MASH_SKETCH_SIZE
 from ..config import PipelineConfig
@@ -21,13 +23,14 @@ class HmpDB(luigi.Task):
         self.config = PipelineConfig(self.config_filename)
         self.db_dir = self.config.db_dir
         self.fastqs = []
+        self.sketch_size = MASH_SKETCH_SIZE 
 
     @property
     def mash_sketch(self):
-        return 'hmp_mash_sketch.msh'
+        return join(self.db_dir, 'hmp_mash_sketch.msh')
 
     def output(self):
-        sketch = luigi.LocalTarget(join(self.db_dir, self.mash_sketch))
+        sketch = luigi.LocalTarget(self.mash_sketch)
         sketch.makedirs()
         return {
             'hmp_sketch': sketch,
@@ -38,6 +41,6 @@ class HmpDB(luigi.Task):
 
     def build_mash_index_sketch(self):
         cmd = self.pkg.bin
-        cmd += f' -s {MASH_SKETCH_SIZE} -o {hmp_mash_sketch[:-3]} '
-        cmd += ' '.join(fastqs)
+        cmd += f' -s {self.sketch_size} -o {self.mash_sketch[:-4]} '
+        cmd += ' '.join(self.fastqs)
         subprocess.call(cmd, shell=True)

@@ -40,8 +40,9 @@ class TestDatabases(TestCase):
             data_file('hmp/left_retroauricular_crease/SRS024620/SRS024620.denovo_duplicates_marked.trimmed.1.fastq.gz'),
             data_file('hmp/palatine_tonsils/SRS014474/SRS014474.denovo_duplicates_marked.trimmed.1.fastq.gz'),
         ]
+        instance.sketch_size = 100
         luigi.build([instance], local_scheduler=True)
-        self.assertTrue(isfile(instance.output().path))
+        self.assertTrue(isfile(instance.output()['hmp_sketch'].path))
         rmtree('test_db')
 
     def test_build_uniref90_db(self):

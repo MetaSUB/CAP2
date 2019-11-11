@@ -46,6 +46,7 @@ class TestPipelinePreprocessing(TestCase):
         luigi.build([instance], local_scheduler=True)
         print(os.listdir(os.getcwd()))
         print(os.listdir('test_out'))
+        print(os.listdir('/root/project/tests/data/'))
         print(instance.output()['zip_output'].path)
         print(instance.output()['report'].path)
         self.assertTrue(isfile(instance.output()['zip_output'].path))

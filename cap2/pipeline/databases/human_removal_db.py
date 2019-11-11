@@ -1,5 +1,7 @@
 
 import luigi
+from os.path import join
+import subprocess
 
 from ..config import PipelineConfig
 from ..utils.conda import CondaPackage
@@ -26,13 +28,13 @@ class HumanRemovalDB(luigi.Task):
 
     @property
     def bowtie2_index(self):
-        return 'human_removal.bt2'
+        return join(self.db_dir, 'human_removal.bt2')
 
     def output(self):
-        index = luigi.LocalTarget(join(self.db_dir, self.bowtie2_index + '.1.bt2'))
+        index = luigi.LocalTarget(self.bowtie2_index + '.1.bt2')
         index.makedirs()
         return {
-            'bt2_index': index,
+            'bt2_index_1': index,
         }
 
     def build_bowtie2_index_from_fasta(self):
@@ -40,6 +42,7 @@ class HumanRemovalDB(luigi.Task):
             self.pkg.bin,
             f' --threads {self.cores} ',
             ','.join(self.fastas),
+            ' ',
             self.bowtie2_index
         ))
         subprocess.call(cmd, shell=True)

@@ -1,5 +1,7 @@
 # CAP2
 
+[![CircleCI](https://circleci.com/gh/MetaSUB/CAP2.svg?style=svg)](https://circleci.com/gh/MetaSUB/CAP2)
+
 This repository contains code for the second version of the MetaSUB Core Analysis Pipeline. This pipeline is not complete.
 
 ## Major Changes and Goals

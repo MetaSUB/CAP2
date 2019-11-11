@@ -1,4 +1,8 @@
 name: CAP_v2
 channels:
   - defaults
-
+dependencies:
+  - samtools
+  - mash
+  - diamond
+  - bowtie2

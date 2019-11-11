@@ -17,12 +17,12 @@ class CountRawReads(luigi.Task):
             f'{self.sample_name}.read_counts.csv'
         ))
         target.makedirs()
-        return target
+        return {'read_counts': target}
 
     def run(self):
         count = 0
         with gopen(self.in_filename) as i:
             for line in i:
                 count += 1
-        with open(self.output().path, 'a') as o:
+        with open(self.output()['read_counts'].path, 'a') as o:
             print(f'raw_reads,{count / 4}', file=o)

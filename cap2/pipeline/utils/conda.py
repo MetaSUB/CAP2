@@ -59,7 +59,8 @@ class CondaEnv(luigi.Task):
     def contains(self, package):
         try:
             with open(self.spec_file, 'r') as f:
-                deps = yaml.load(f)['dependencies']
+                deps = yaml.load(f)
+                deps = deps.get('dependencies', [])
 
             while True:
                 try:

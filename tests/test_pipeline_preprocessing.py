@@ -30,8 +30,8 @@ class TestPipelinePreprocessing(TestCase):
     def test_invoke_count_raw_reads(self):
         instance = CountRawReads(in_filename=RAW_READS_1, sample_name='test_sample', config_filename=TEST_CONFIG)
         luigi.build([instance], local_scheduler=True)
-        self.assertTrue(isfile(instance.output().fn))
-        text = open(instance.output().path).read()
+        self.assertTrue(isfile(instance.output()['read_counts'].path))
+        text = open(instance.output()['read_counts'].path).read()
         self.assertIn('raw_reads,1000', text)
         rmtree('test_out')
 

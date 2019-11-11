@@ -26,36 +26,36 @@ python -m pytest tests
 
 | Stage      | Step             | Command Written | Tests Written | Tests Passing |
 | ---------- | ---------------- | --------------- | ------------- | ------------- |
-| QC         | remove adapters  |                 |               |               |
-| QC         | remove dupes     |                 |               |               |
+| QC         | count reads      | x               | x             | x             |
 | QC         | host removal     | x               | x             |               |
 | QC         | fastqc           | x               | x             |               |
-| QC         | count reads      | x               | x             | x             |
 | QC         | error correction |                 |               |               |
 | QC         | contam removal   |                 |               |               |
 | QC         | id contams       |                 |               |               |
 | QC         | id controls      |                 |               |               |
 | QC         | score controls   |                 |               |               |
+| QC         | remove adapters  |                 |               |               |
+| QC         | remove dupes     |                 |               |               |
 |            |                  |                 |               |               |
-| Short Read | read stats       |                 |               |               |
 | Short Read | MASH Sketch      | x               | x             | x             |
-| Short Read | SAKEIMA Sketch   |                 |               |               |
 | Short Read | HMP Similarity   | x               | x             | x             |
-| Short Read | EMP Similarity   |                 |               |               |
-| Short Read | MetaSUB Sim.     |                 |               |               |
-| Short Read | Microbe Census   | x               | x             |               |
-| Short Read | MegaRes Align    |                 |               |               |
-| Short Read | CARD Align       |                 |               |               |
 | Short Read | Uniref90 Align   | x               | x             | x             |
+| Short Read | Microbe Census   | x               | x             |               |
 | Short Read | HUMAnN2          | x               |               |               |
 | Short Read | KrakenUniq       | x               |               |               |
 | Short Read | Strain Calling   |                 |               |               |
 | Short Read | GRiD             |                 |               |               |
+| Short Read | EMP Similarity   |                 |               |               |
+| Short Read | MetaSUB Sim.     |                 |               |               |
+| Short Read | MegaRes Align    |                 |               |               |
+| Short Read | CARD Align       |                 |               |               |
+| Short Read | SAKEIMA Sketch   |                 |               |               |
+| Short Read | read stats       |                 |               |               |
 |            |                  |                 |               |               |
 | DB         | Uniref90         | x               | x             | x             |
-| DB         | KrakenUniq       | x               |               |               |
 | DB         | host removal     | x               | x             | x             |
 | DB         | HMP Similarity   | x               | x             | x             |
+| DB         | KrakenUniq       | x               |               |               |
 |            |                  |                 |               |               |
 
 

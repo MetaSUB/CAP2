@@ -15,6 +15,7 @@ setuptools.setup(
         'pandas',
         'numpy',
         'luigi',
+        'PyYaml',
     ],
     classifiers=[
         'Intended Audience :: Developers',

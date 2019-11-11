@@ -91,9 +91,9 @@ class CondaEnv(luigi.Task):
         ]
         logger.info('installing: {} with {}'.format(package, ' '.join(cmd)))
         try:
-            subprocess.call(cmd)
+            subprocess.call(' '.join(cmd), shell=True)
         except:
-            print(f'Subprocess failed: {cmd}', file=sys.stderr)
+            print(f'Subprocess failed from {os.getcwd()}: {cmd}', file=sys.stderr)
             raise
         self.save_spec()
 

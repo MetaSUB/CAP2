@@ -33,7 +33,7 @@ class TestPipelinePreprocessing(TestCase):
         self.assertTrue(isfile(instance.output()['read_counts'].path))
         text = open(instance.output()['read_counts'].path).read()
         self.assertIn('raw_reads,1000', text)
-        rmtree('test_out')
+        # rmtree('test_out')
 
     def test_invoke_fastqc(self):
         instance = FastQC(
@@ -45,7 +45,7 @@ class TestPipelinePreprocessing(TestCase):
         luigi.build([instance], local_scheduler=True)
         self.assertTrue(isfile(instance.output()['zip_output'].path))
         self.assertTrue(isfile(instance.output()['report'].path))
-        rmtree('test_out')
+        # rmtree('test_out')
 
     def test_invoke_remove_human_reads(self):
         instance = RemoveHumanReads(
@@ -60,4 +60,4 @@ class TestPipelinePreprocessing(TestCase):
         self.assertTrue(isfile(instance.output()['bam'].path))
         self.assertTrue(isfile(instance.output()['nonhuman_reads'][0].path))
         self.assertTrue(isfile(instance.output()['nonhuman_reads'][1].path))
-        rmtree('test_out')
+        # rmtree('test_out')

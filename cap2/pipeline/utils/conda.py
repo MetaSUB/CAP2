@@ -1,5 +1,6 @@
 import luigi
 import os
+import sys
 import subprocess
 import logging
 import yaml
@@ -89,9 +90,11 @@ class CondaEnv(luigi.Task):
             package, '-y'
         ]
         logger.info('installing: {} with {}'.format(package, ' '.join(cmd)))
-        subprocess.call(
-            cmd
-        )
+        try:
+            subprocess.call(cmd)
+        except:
+            print(f'Subprocess failed: {cmd}', file=sys.stderr)
+            raise
         self.save_spec()
 
     def run(self):

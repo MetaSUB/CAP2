@@ -40,7 +40,7 @@ class Mash(luigi.Task):
             join(self.out_dir, f'{self.sample_name}.mash.sketch.msh')
         )
         sketch.makedirs()
-        return sketch
+        return {'10M_mash_sketch': sketch}
 
     def run(self):
         cmd = (

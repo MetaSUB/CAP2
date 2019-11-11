@@ -25,7 +25,7 @@ class HmpComparison(luigi.Task):
         )
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
-        self.db = HmpDB()
+        self.db = HmpDB(config_filename=self.config_filename)
         self.mash = Mash(
             sample_name=self.sample_name,
             pe1=self.pe1,
@@ -41,13 +41,13 @@ class HmpComparison(luigi.Task):
             join(self.out_dir, f'{self.sample_name}.mash.hmp_dists.tsv')
         )
         dists.makedirs()
-        return dists
+        return {'hmp_dists': dists}
 
     def run(self):
         cmd = (
             f'{self.pkg.bin} '
             f'{self.db.mash_sketch} '
-            f'{self.mash.output().path} '
-            f'> {self.output().path}'
+            f'{self.mash.output()["10M_mash_sketch"].path} '
+            f'> {self.output()["hmp_dists"].path}'
         )
         subprocess.call(cmd, shell=True)

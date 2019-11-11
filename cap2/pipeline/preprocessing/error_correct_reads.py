@@ -47,4 +47,8 @@ class ErrorCorrectReads(luigi.Task):
         }
 
     def run(self):
-        pass
+        r1, r2 = self.nonhuman_reads.output()['nonhuman_reads']
+        cmd = self.pkg.bin
+        cmd += f' --only-correction --meta -1 {r1} -2 {r2}'
+        cmd += f' -t {self.cores} -o {self.sample_name}.error_correction_out'
+        self.subprocess.call(cmd, shell=True)

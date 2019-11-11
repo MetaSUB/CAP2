@@ -38,7 +38,7 @@ class CleanReads(luigi.Task):
 
     def output(self):
         return {
-            'clean_reads': self.ec_reads.output()['ec_reads'],
+            'clean_reads': self.ec_reads.output()['error_corrected_reads'],
         }
 
     def run(self):

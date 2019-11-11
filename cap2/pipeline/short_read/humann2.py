@@ -25,7 +25,7 @@ class MicaUniref90(luigi.Task):
         )
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
-        self.db = Uniref90(config_filename=config_filename)
+        self.db = Uniref90(config_filename=self.config_filename)
         self.reads = CleanReads(
             sample_name=self.sample_name,
             pe1=self.pe1,
@@ -76,7 +76,10 @@ class Humann2(luigi.Task):
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
         self.alignment = MicaUniref90(
-            sample_name=sample_name, pe1=pe1, pe2=pe2, config_filename=config_filename
+            sample_name=self.sample_name,
+            pe1=self.pe1,
+            pe2=self.pe2,
+            config_filename=self.config_filename
         )
 
     def requires(self):

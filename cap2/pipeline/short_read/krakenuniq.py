@@ -25,7 +25,7 @@ class KrakenUniq(luigi.Task):
         )
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
-        self.db = TaxonomicDB()
+        self.db = TaxonomicDB(config_filename=self.config_filename)
         self.reads = CleanReads(
             sample_name=self.sample_name,
             pe1=self.pe1,

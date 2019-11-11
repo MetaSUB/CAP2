@@ -4,11 +4,19 @@ jobs:
 
   test_package:
     docker:
-      - image: circleci/python:3.6.3-jessie
+      - image: ubuntu:bionic
 
     steps:
       - checkout
-
+      - run:
+          name: Setup Miniconda
+          command: |
+            apt update
+            apt install -y wget
+            cd $HOME
+            wget "https://repo.anaconda.com/miniconda/Miniconda3-4.7.10-Linux-x86_64.sh" -O miniconda.sh
+            printf '%s' "8a324adcc9eaf1c09e22a992bb6234d91a94146840ee6b11c114ecadafc68121  miniconda.sh" | sha256sum -c
+            bash miniconda.sh -b -p $HOME/miniconda
       # Download and cache dependencies
       - restore_cache:
           keys:
@@ -19,6 +27,7 @@ jobs:
       - run:
           name: Install Python Dependencies
           command: |
+            export PATH="$HOME/miniconda/bin:$PATH"
             python3 -m venv venv
             . venv/bin/activate
             pip install -r requirements.txt
@@ -30,6 +39,7 @@ jobs:
       - run:
           name: Build package
           command: |
+            export PATH="$HOME/miniconda/bin:$PATH"
             . venv/bin/activate
             pip install -e .
             python -m pytest --color=yes tests -s

@@ -22,6 +22,43 @@ python setup.py develop
 python -m pytest tests
 ```
 
+## Tools and Status
+
+| Stage      | Step             | Command Written | Tests Written | Tests Passing |
+| ---------- | ---------------- | --------------- | ------------- | ------------- |
+| QC         | remove adapters  |                 |               |               |
+| QC         | remove dupes     |                 |               |               |
+| QC         | host removal     | x               | x             |               |
+| QC         | fastqc           | x               | x             |               |
+| QC         | count reads      | x               | x             | x             |
+| QC         | error correction |                 |               |               |
+| QC         | contam removal   |                 |               |               |
+| QC         | id contams       |                 |               |               |
+| QC         | id controls      |                 |               |               |
+| QC         | score controls   |                 |               |               |
+|            |                  |                 |               |               |
+| Short Read | read stats       |                 |               |               |
+| Short Read | MASH Sketch      | x               | x             | x             |
+| Short Read | SAKEIMA Sketch   |                 |               |               |
+| Short Read | HMP Similarity   | x               | x             | x             |
+| Short Read | EMP Similarity   |                 |               |               |
+| Short Read | MetaSUB Sim.     |                 |               |               |
+| Short Read | Microbe Census   | x               | x             |               |
+| Short Read | MegaRes Align    |                 |               |               |
+| Short Read | CARD Align       |                 |               |               |
+| Short Read | Uniref90 Align   | x               | x             | x             |
+| Short Read | HUMAnN2          | x               |               |               |
+| Short Read | KrakenUniq       | x               |               |               |
+| Short Read | Strain Calling   |                 |               |               |
+| Short Read | GRiD             |                 |               |               |
+|            |                  |                 |               |               |
+| DB         | Uniref90         | x               | x             | x             |
+| DB         | KrakenUniq       | x               |               |               |
+| DB         | host removal     | x               | x             | x             |
+| DB         | HMP Similarity   | x               | x             | x             |
+|            |                  |                 |               |               |
+
+
 ## License
 
 MIT License

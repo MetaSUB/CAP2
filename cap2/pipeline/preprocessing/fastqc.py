@@ -46,12 +46,13 @@ class FastQC(luigi.Task):
 
     def run(self):
         # fixme: redirect output to loggers
-        cmd = [
+        cmd = ' '.join([
             self.pkg.bin,
             '-t', str(self.cores),
             self.in_filename,
             '-o',
             dirname(self.output()['report'].path)
-        ]
-        subprocess.call(cmd)
+        ])
+        print(cmd)
+        subprocess.call(cmd, shell=True)
         self._done = True

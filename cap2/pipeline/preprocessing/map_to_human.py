@@ -55,5 +55,6 @@ class RemoveHumanReads(luigi.Task):
                 ' | samtools view -F 4 -b > ',
                 self.output()['bam'].path,
         ))
+        print(cmd)
         subprocess.call(cmd, shell=True)
         

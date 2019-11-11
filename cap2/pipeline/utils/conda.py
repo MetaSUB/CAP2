@@ -26,7 +26,7 @@ class CondaEnv(luigi.Task):
             self.spec_dir, '{}.yml'.format(self.name)
         ))
         print(os.getcwd())
-        assert self.has_spec()ß
+        assert self.has_spec()
         if not os.path.isdir(self.spec_dir):
             os.makedirs(self.spec_dir)
         if not os.path.isdir(self.path):

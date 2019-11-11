@@ -19,6 +19,8 @@ jobs:
       - run:
           name: Install Python Dependencies
           command: |
+            python3 -m venv venv
+            . venv/bin/activate
             pip install -r requirements.txt
       - save_cache:
           paths:

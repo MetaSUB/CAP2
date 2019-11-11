@@ -42,7 +42,7 @@ jobs:
             export PATH="$HOME/miniconda/bin:$PATH"
             . venv/bin/activate
             pip install -e .
-            python -m pytest --color=yes tests -s
+            python -m pytest --color=yes tests
 
 workflows:
   version: 2

@@ -54,7 +54,7 @@ class MicaUniref90(luigi.Task):
             '--block-size 6 '
             f'| gzip > {self.output()["m8"].path} '
         )
-        subprocess.call(cmd, shell=True)
+        subprocess.check_call(cmd, shell=True)
 
 
 class Humann2(luigi.Task):
@@ -114,4 +114,4 @@ class Humann2(luigi.Task):
             'mv ' + covs + ' ' + self.output()['path_covs'].path + '; '
             f'rm -r {self.sample_name}_humann2;'
         )
-        subprocess.call(cmd, shell=True)
+        subprocess.check_call(cmd, shell=True)

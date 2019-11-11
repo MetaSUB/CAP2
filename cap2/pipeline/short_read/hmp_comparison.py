@@ -50,4 +50,4 @@ class HmpComparison(luigi.Task):
             f'{self.mash.output()["10M_mash_sketch"].path} '
             f'> {self.output()["hmp_dists"].path}'
         )
-        subprocess.call(cmd, shell=True)
+        subprocess.check_call(cmd, shell=True)

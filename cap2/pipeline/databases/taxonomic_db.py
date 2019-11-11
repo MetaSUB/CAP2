@@ -44,4 +44,4 @@ class TaxonomicDB(luigi.Task):
         cmd += f' --db {self.kraken_db_dir} --threads {self.cores} '
         cmd += ' --taxids-for-genomes --taxids-for-sequences --kmer-len 31 '
         print(cmd)
-        subprocess.call(cmd, shell=True)
+        subprocess.check_call(cmd, shell=True)

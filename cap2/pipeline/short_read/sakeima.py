@@ -45,4 +45,4 @@ class Sakeima(luigi.Task):
         cmd = (
             f'{self.pkg.bin} '
         )
-        subprocess.call(cmd, shell=True)
+        subprocess.check_call(cmd, shell=True)

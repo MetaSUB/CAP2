@@ -49,7 +49,7 @@ class HumanRemovalDB(luigi.Task):
             ' ',
             self.bowtie2_index
         ))
-        subprocess.call(cmd, shell=True)
+        subprocess.check_call(cmd, shell=True)
 
     def run(self):
         self.build_bowtie2_index_from_fasta()

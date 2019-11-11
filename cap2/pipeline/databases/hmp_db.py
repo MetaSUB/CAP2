@@ -47,4 +47,4 @@ class HmpDB(luigi.Task):
         cmd = self.pkg.bin + ' sketch'
         cmd += f' -s {self.sketch_size} -o {self.mash_sketch[:-4]} '
         cmd += ' '.join(self.fastqs)
-        subprocess.call(cmd, shell=True)
+        subprocess.check_call(cmd, shell=True)

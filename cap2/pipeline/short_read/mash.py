@@ -49,4 +49,4 @@ class Mash(luigi.Task):
             f'-o {self.output()["10M_mash_sketch"].path[:-4]} '
             f'{self.reads.output()["clean_reads"][0].path}'
         )
-        subprocess.call(cmd, shell=True)
+        subprocess.check_call(cmd, shell=True)

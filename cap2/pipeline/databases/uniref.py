@@ -40,4 +40,4 @@ class Uniref90(luigi.Task):
         cmd = self.pkg.bin + ' makedb'
         cmd += f' --in {self.fasta} -d {self.diamond_index[:-5]}'
         print(cmd)
-        subprocess.call(cmd, shell=True)
+        subprocess.check_call(cmd, shell=True)

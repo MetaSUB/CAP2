@@ -64,4 +64,4 @@ class KrakenUniq(luigi.Task):
             f'{self.reads.output()["clean_reads"][1].path} '
             f'> {read_assignments}'
         )
-        subprocess.call(cmd, shell=True)
+        subprocess.check_call(cmd, shell=True)

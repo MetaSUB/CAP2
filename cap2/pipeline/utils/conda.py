@@ -26,6 +26,8 @@ class CondaEnv(luigi.Task):
         )
         if not os.path.isdir(self.spec_dir):
             os.makedirs(self.spec_dir)
+        if not os.path.isdir(self.path):
+            os.makedirs(self.path)
 
     @property
     def bin(self):

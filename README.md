@@ -27,8 +27,8 @@ python -m pytest tests
 | Stage      | Step             | Command Written | Tests Written | Tests Passing |
 | ---------- | ---------------- | --------------- | ------------- | ------------- |
 | QC         | count reads      | x               | x             | x             |
-| QC         | host removal     | x               | x             |               |
-| QC         | fastqc           | x               | x             |               |
+| QC         | host removal     | x               | x             | x             |
+| QC         | fastqc           | x               | x             | x             |
 | QC         | error correction |                 |               |               |
 | QC         | contam removal   |                 |               |               |
 | QC         | id contams       |                 |               |               |
@@ -57,6 +57,11 @@ python -m pytest tests
 | DB         | HMP Similarity   | x               | x             | x             |
 | DB         | KrakenUniq       | x               |               |               |
 |            |                  |                 |               |               |
+
+## Notes
+
+ - `samtools` needed to be manually installed on my mac
+ - several tests still failing on CircleCI but passing on my laptop, not clear why. Myabe something to do with perl
 
 
 ## License

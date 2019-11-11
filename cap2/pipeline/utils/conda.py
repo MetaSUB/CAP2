@@ -94,7 +94,7 @@ class CondaEnv(luigi.Task):
         ]
         logger.info('installing: {} with {}'.format(package, ' '.join(cmd)))
         try:
-            subprocess.call(' '.join(cmd), shell=True)
+            subprocess.check_call(' '.join(cmd), shell=True)
         except:
             print(f'Subprocess failed from {os.getcwd()}: {cmd}', file=sys.stderr)
             raise
@@ -110,14 +110,14 @@ class CondaEnv(luigi.Task):
                 self.spec_file, '-p', self.path, "python={}".format(self.python),
             ]
             logger.info('init conda env: {}'.format(' '.join(cmd)))
-            subprocess.call(cmd)
+            subprocess.check_call(cmd)
         else:
             cmd = [
                 'conda', 'create', '-p', self.path, "python={}".format(self.python), '-y'
             ]
             logger.info('init conda env: {}'.format(' '.join(cmd)))
             try:
-                subprocess.call(' '.join(cmd), shell=True)
+                subprocess.check_call(' '.join(cmd), shell=True)
             except:
                 print(f'Subprocess failed from {os.getcwd()}: {cmd}', file=sys.stderr)
                 raise

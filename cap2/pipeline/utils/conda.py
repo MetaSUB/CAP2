@@ -22,9 +22,11 @@ class CondaEnv(luigi.Task):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.path = os.path.join(self.base_path, self.name)
-        self.spec_file = os.path.join(
+        self.spec_file = os.path.abspath(os.path.join(
             self.spec_dir, '{}.yml'.format(self.name)
-        )
+        ))
+        print(os.getcwd())
+        assert self.has_spec()ß
         if not os.path.isdir(self.spec_dir):
             os.makedirs(self.spec_dir)
         if not os.path.isdir(self.path):

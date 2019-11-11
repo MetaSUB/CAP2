@@ -44,8 +44,9 @@ class CondaEnv(luigi.Task):
 
     def save_spec(self):
         proc = subprocess.Popen(
-            ['conda', 'env', 'export', '--name', self.name],
-            stdout=subprocess.PIPE
+            ' '.join(['conda', 'env', 'export', '--name', self.name]),
+            stdout=subprocess.PIPE,
+            shell=True
         )
         stdout = proc.communicate()[0]
 

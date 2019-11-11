@@ -113,7 +113,11 @@ class CondaEnv(luigi.Task):
                 'conda', 'create', '-p', self.path, "python={}".format(self.python), '-y'
             ]
             logger.info('init conda env: {}'.format(' '.join(cmd)))
-            subprocess.call(cmd)
+            try:
+                subprocess.call(' '.join(cmd), shell=True)
+            except:
+                print(f'Subprocess failed from {os.getcwd()}: {cmd}', file=sys.stderr)
+                raise
             self.save_spec()
 
     def complete(self):

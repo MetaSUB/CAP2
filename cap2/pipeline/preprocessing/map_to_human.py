@@ -62,5 +62,5 @@ class RemoveHumanReads(luigi.Task):
                 self.output()['bam'].path,
         ))
         print(cmd)
-        subprocess.call(cmd, shell=True)
+        subprocess.check_call(cmd, shell=True)
         

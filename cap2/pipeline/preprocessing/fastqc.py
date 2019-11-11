@@ -54,5 +54,5 @@ class FastQC(luigi.Task):
             dirname(self.output()['report'].path)
         ])
         print(cmd)
-        subprocess.call(cmd, shell=True)
+        subprocess.check_call(cmd, shell=True)
         self._done = True

@@ -1,6 +1,7 @@
 
 import luigi
 from os.path import join
+from glob import glob
 import subprocess
 
 from cap2.pipeline.constants import MASH_SKETCH_SIZE
@@ -22,8 +23,8 @@ class HmpDB(luigi.Task):
         )
         self.config = PipelineConfig(self.config_filename)
         self.db_dir = self.config.db_dir
-        self.fastqs = []
-        self.sketch_size = MASH_SKETCH_SIZE 
+        self.fastqs = list(glob(join(self.db_dir, 'hmp') + '/**.fastq.gz'))
+        self.sketch_size = MASH_SKETCH_SIZE
 
     @property
     def mash_sketch(self):

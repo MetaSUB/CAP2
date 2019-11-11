@@ -1,6 +1,7 @@
 
 import luigi
 from os.path import join
+from glob import glob
 import subprocess
 
 from ..config import PipelineConfig
@@ -24,7 +25,7 @@ class HumanRemovalDB(luigi.Task):
         )
         self.config = PipelineConfig(self.config_filename)
         self.db_dir = self.config.db_dir
-        self.fastas = []
+        self.fastas = list(glob(join(self.db_dir, 'hg38') + '/*.fa.gz'))
 
     @property
     def bowtie2_index(self):

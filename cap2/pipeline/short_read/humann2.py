@@ -46,8 +46,6 @@ class MicaUniref90(luigi.Task):
         }
 
     def run(self):
-        report_path = self.output()['report'].path
-        read_assignments = self.output['read_assignments'].path
         cmd = (
             f'{self.pkg.bin} blastx '
             f'--threads {self.cores} '

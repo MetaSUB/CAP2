@@ -19,8 +19,8 @@ class HmpComparison(luigi.Task):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.pkg = CondaPackage(
-            package="krakenuniq",
-            executable="krakenuniq",
+            package="mash",
+            executable="mash",
             channel="bioconda"
         )
         self.config = PipelineConfig(self.config_filename)

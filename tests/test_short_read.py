@@ -30,20 +30,20 @@ class DummyHmpDB(luigi.ExternalTask):
 
     @property
     def mash_sketch(self):
-        return join(dirname(__file__), 'data/')
+        return join(dirname(__file__), 'dbs/hmp_mash_sketch.msh')
 
     def output(self):
-        return luigi.LocalTarget(join(dirname(__file__), 'data/'))
+        return {'hmp_sketch': luigi.LocalTarget(self.mash_sketch)}
 
 
 class DummyUnirefDB(luigi.ExternalTask):
 
     @property
     def diamond_index(self):
-        return join(dirname(__file__), 'data/')
+        return join(dirname(__file__), 'dbs/uniref90.dmnd')
 
     def output(self):
-        return luigi.LocalTarget(join(dirname(__file__), 'data/'))
+        return {'diamond_index': luigi.LocalTarget(self.diamond_index)}
 
 
 class DummyAlignUniref90(luigi.ExternalTask):
@@ -60,9 +60,23 @@ class DummyAlignUniref90(luigi.ExternalTask):
 class DummyMash(luigi.ExternalTask):
 
     def output(self):
-        return luigi.LocalTarget(
-            join(self.out_dir, f'{self.sample_name}.uniref90.m8.gz')
-        )
+        return {
+            '10M_mash_sketch': luigi.LocalTarget(
+                join(dirname(__file__), f'data/zymo_pos_cntrl.mash.sketch.msh')
+            ),
+        }
+
+
+class DummyCleanReads(luigi.ExternalTask):
+
+    @property
+    def reads(self):
+        return [RAW_READS_1, RAW_READS_2]
+
+    def output(self):
+        return {
+            'clean_reads': [luigi.LocalTarget(el) for el in self.reads],
+        }
 
 
 class TestShortRead(TestCase):
@@ -87,8 +101,9 @@ class TestShortRead(TestCase):
             config_filename=TEST_CONFIG
         )
         instance.db = DummyUnirefDB()
+        instance.reads = DummyCleanReads()
         luigi.build([instance], local_scheduler=True)
-        # self.assertTrue(isfile(instance.output()['m8'].path))
+        self.assertTrue(isfile(instance.output()['m8'].path))
 
     def test_invoke_hmp_comparison(self):
         instance = HmpComparison(
@@ -100,7 +115,7 @@ class TestShortRead(TestCase):
         instance.db = DummyHmpDB()
         instance.mash = DummyMash()
         luigi.build([instance], local_scheduler=True)
-        # self.assertTrue(isfile(instance.output()['hmp_dists'].path))
+        self.assertTrue(isfile(instance.output()['hmp_dists'].path))
 
     def test_invoke_humann2(self):
         instance = Humann2(
@@ -122,8 +137,9 @@ class TestShortRead(TestCase):
             sample_name='test_sample',
             config_filename=TEST_CONFIG
         )
+        instance.reads = DummyCleanReads()
         luigi.build([instance], local_scheduler=True)
-        # self.assertTrue(isfile(instance.output()['10M_mash_sketch'].path))
+        self.assertTrue(isfile(instance.output()['10M_mash_sketch'].path))
 
     def test_invoke_microbe_census(self):
         instance = MicrobeCensus(

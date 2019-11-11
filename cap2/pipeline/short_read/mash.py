@@ -46,7 +46,7 @@ class Mash(luigi.Task):
         cmd = (
             f'{self.pkg.bin} '
             f'sketch -s {MASH_SKETCH_SIZE} '
-            f'-o {self.output().path} '
+            f'-o {self.output()["10M_mash_sketch"].path[:-4]} '
             f'{self.reads.output()["clean_reads"][0].path}'
         )
         subprocess.call(cmd, shell=True)

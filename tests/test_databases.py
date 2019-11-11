@@ -47,7 +47,7 @@ class TestDatabases(TestCase):
 
     def test_build_uniref90_db(self):
         instance = Uniref90(config_filename=TEST_CONFIG)
-        instance.fastas = [data_file('uniref90/uniref90.sample.fasta.gz')]
-        # luigi.build([instance], local_scheduler=True)
-        # self.assertTrue(isfile(instance.output().path))
-        # rmtree('test_db')
+        instance.fasta = data_file('uniref90/uniref90.sample.fasta.gz')
+        luigi.build([instance], local_scheduler=True)
+        self.assertTrue(isfile(instance.output()['diamond_index'].path))
+        rmtree('test_db')

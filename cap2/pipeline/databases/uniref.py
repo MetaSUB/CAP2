@@ -36,4 +36,5 @@ class Uniref90(luigi.Task):
     def run(self):
         cmd = self.pkg.bin
         cmd += f' --in {self.fasta} -d {self.diamond_index[:-5]}'
+        print(cmd)
         subprocess.call(cmd, shell=True)

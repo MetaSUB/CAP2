@@ -1,0 +1,39 @@
+version: 2
+
+jobs:
+
+  test_package:
+    docker:
+      - image: circleci/python:3.6.3-jessie
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "requirements.txt" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+
+      - run:
+          name: Install Python Dependencies
+          command: |
+            pip install -r requirements.txt
+      - save_cache:
+          paths:
+            - ./venv
+          key: v1-dependencies-{{ checksum "requirements.txt" }}
+
+      - run:
+          name: Build package
+          command: |
+            . venv/bin/activate
+            pip install -e .
+            python -m pytest --color=yes tests -s
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - test_package

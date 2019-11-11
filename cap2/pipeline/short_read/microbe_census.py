@@ -18,7 +18,7 @@ class MicrobeCensus(luigi.Task):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.pkg = CondaPackage(
-            package="microbe_census",
+            package="microbecensus",
             executable="microbe_census",
             channel="bioconda"
         )

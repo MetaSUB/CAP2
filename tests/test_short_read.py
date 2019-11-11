@@ -3,7 +3,7 @@ import luigi
 
 from shutil import rmtree
 from os.path import join, dirname, isfile, isdir
-from unittest import TestCase
+from unittest import TestCase, skip
 
 from cap2.pipeline.short_read.krakenuniq import KrakenUniq
 from cap2.pipeline.short_read.humann2 import MicaUniref90, Humann2
@@ -50,7 +50,7 @@ class DummyAlignUniref90(luigi.ExternalTask):
 
     def output(self):
         m8 = luigi.LocalTarget(
-            join(self.out_dir, f'{self.sample_name}.uniref90.m8.gz')
+            join(dirname(__file__), 'data/test_sample.uniref90.m8.gz')
         )
         return {
             'm8': m8,
@@ -81,6 +81,7 @@ class DummyCleanReads(luigi.ExternalTask):
 
 class TestShortRead(TestCase):
 
+    @skip(reason="krakenuniq creates dependency conflict")
     def test_invoke_krakenuniq(self):
         instance = KrakenUniq(
             pe1=RAW_READS_1,
@@ -90,8 +91,8 @@ class TestShortRead(TestCase):
         )
         instance.db = DummyTaxonomicDB()
         luigi.build([instance], local_scheduler=True)
-        # self.assertTrue(isfile(instance.output()['report'].path))
-        # self.assertTrue(isfile(instance.output()['read_assignments'].path))
+        self.assertTrue(isfile(instance.output()['report'].path))
+        self.assertTrue(isfile(instance.output()['read_assignments'].path))
 
     def test_invoke_align_uniref90(self):
         instance = MicaUniref90(
@@ -117,6 +118,7 @@ class TestShortRead(TestCase):
         luigi.build([instance], local_scheduler=True)
         self.assertTrue(isfile(instance.output()['hmp_dists'].path))
 
+    @skip(reason="humann2 not available for python>3.3")
     def test_invoke_humann2(self):
         instance = Humann2(
             pe1=RAW_READS_1,
@@ -126,9 +128,9 @@ class TestShortRead(TestCase):
         )
         instance.alignment = DummyAlignUniref90()
         luigi.build([instance], local_scheduler=True)
-        # self.assertTrue(isfile(instance.output()['genes'].path))
-        # self.assertTrue(isfile(instance.output()['path_abunds'].path))
-        # self.assertTrue(isfile(instance.output()['path_covs'].path))
+        self.assertTrue(isfile(instance.output()['genes'].path))
+        self.assertTrue(isfile(instance.output()['path_abunds'].path))
+        self.assertTrue(isfile(instance.output()['path_covs'].path))
 
     def test_invoke_mash(self):
         instance = Mash(
@@ -141,6 +143,7 @@ class TestShortRead(TestCase):
         luigi.build([instance], local_scheduler=True)
         self.assertTrue(isfile(instance.output()['10M_mash_sketch'].path))
 
+    @skip(reason="microbecensus creates dependency conflict")
     def test_invoke_microbe_census(self):
         instance = MicrobeCensus(
             pe1=RAW_READS_1,
@@ -148,5 +151,6 @@ class TestShortRead(TestCase):
             sample_name='test_sample',
             config_filename=TEST_CONFIG
         )
+        instance.reads = DummyCleanReads()
         luigi.build([instance], local_scheduler=True)
-        # self.assertTrue(isfile(instance.output()['report'].path))
+        self.assertTrue(isfile(instance.output()['report'].path))

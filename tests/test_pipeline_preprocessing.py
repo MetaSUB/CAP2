@@ -1,5 +1,6 @@
 
 import luigi
+import os
 
 from shutil import rmtree
 from os.path import join, dirname, isfile, isdir
@@ -43,6 +44,8 @@ class TestPipelinePreprocessing(TestCase):
             cores=1
         )
         luigi.build([instance], local_scheduler=True)
+        print(os.listdir(os.getcwd()))
+        print(os.listdir('test_out'))
         print(instance.output()['zip_output'].path)
         print(instance.output()['report'].path)
         self.assertTrue(isfile(instance.output()['zip_output'].path))
@@ -59,6 +62,8 @@ class TestPipelinePreprocessing(TestCase):
         )
         instance.db = DummyHumanRemovalDB()
         luigi.build([instance], local_scheduler=True)
+        print(os.listdir(os.getcwd()))
+        print(os.listdir('test_out'))
         print(instance.output()['bam'].path)
         print(instance.output()['nonhuman_reads'][0].path)
         self.assertTrue(isfile(instance.output()['bam'].path))

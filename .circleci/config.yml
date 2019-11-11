@@ -30,6 +30,7 @@ jobs:
       - run:
           name: Build package
           command: |
+            mkdir -p vendor/conda/CAP_v2
             . venv/bin/activate
             pip install -e .
             python -m pytest --color=yes tests -s

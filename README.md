@@ -49,13 +49,18 @@ python -m pytest tests
 | Short Read | EMP Similarity   |                 |               |               |
 | Short Read | MetaSUB Sim.     |                 |               |               |
 | Short Read | Groot AMR        | x               | x             |               |
-| Short Read | SAKEIMA Sketch   |                 |               |               |
 |            |                  |                 |               |               |
 | DB         | Uniref90         | x               | x             | x             |
 | DB         | host removal     | x               | x             | x             |
 | DB         | HMP Similarity   | x               | x             | x             |
 | DB         | KrakenUniq       | x               |               |               |
 |            |                  |                 |               |               |
+| Contig     | Deep BGC         |                 |               |               |
+| Contig     | Taxonomy         |                 |               |               |
+| Contig     | PlasFlow         |                 |               |               |
+| Contig     | AMR Id           |                 |               |               |
+| Contig     | MetaBAT2         |                 |               |               |
+| Contig     | Genome Binning   |                 |               |               |
 
 ## Notes
 

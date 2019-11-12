@@ -25,4 +25,4 @@ class CountRawReads(luigi.Task):
             for line in i:
                 count += 1
         with open(self.output()['read_counts'].path, 'a') as o:
-            print(f'raw_reads,{count / 4}', file=o)
+            print(f'{self.sample_name},raw_reads,{count / 4}', file=o)

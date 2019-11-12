@@ -10,6 +10,7 @@ from cap2.pipeline.short_read.humann2 import MicaUniref90, Humann2
 from cap2.pipeline.short_read.mash import Mash
 from cap2.pipeline.short_read.hmp_comparison import HmpComparison
 from cap2.pipeline.short_read.microbe_census import MicrobeCensus
+from cap2.pipeline.short_read.read_stats import ReadStats
 
 RAW_READS_1 = join(dirname(__file__), 'data/zymo_pos_cntrl.r1.fq.gz')
 RAW_READS_2 = join(dirname(__file__), 'data/zymo_pos_cntrl.r2.fq.gz')
@@ -105,6 +106,18 @@ class TestShortRead(TestCase):
         instance.reads = DummyCleanReads()
         luigi.build([instance], local_scheduler=True)
         self.assertTrue(isfile(instance.output()['m8'].path))
+
+    def test_invoke_read_stats(self):
+        instance = ReadStats(
+            pe1=RAW_READS_1,
+            pe2=RAW_READS_2,
+            sample_name='test_sample',
+            config_filename=TEST_CONFIG
+        )
+        instance.reads = DummyCleanReads()
+        instance.dropout = 1
+        luigi.build([instance], local_scheduler=True)
+        self.assertTrue(isfile(instance.output()['report'].path))
 
     def test_invoke_hmp_comparison(self):
         instance = HmpComparison(

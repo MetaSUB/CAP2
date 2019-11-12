@@ -40,6 +40,7 @@ python -m pytest tests
 | Short Read | MASH Sketch      | x               | x             | x             |
 | Short Read | HMP Similarity   | x               | x             | x             |
 | Short Read | Uniref90 Align   | x               | x             | x             |
+| Short Read | read stats       | x               | x             | x             |
 | Short Read | Microbe Census   | x               | x             |               |
 | Short Read | HUMAnN2          | x               |               |               |
 | Short Read | KrakenUniq       | x               |               |               |
@@ -50,7 +51,6 @@ python -m pytest tests
 | Short Read | MegaRes Align    |                 |               |               |
 | Short Read | CARD Align       |                 |               |               |
 | Short Read | SAKEIMA Sketch   |                 |               |               |
-| Short Read | read stats       |                 |               |               |
 |            |                  |                 |               |               |
 | DB         | Uniref90         | x               | x             | x             |
 | DB         | host removal     | x               | x             | x             |

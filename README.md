@@ -48,8 +48,7 @@ python -m pytest tests
 | Short Read | GRiD             |                 |               |               |
 | Short Read | EMP Similarity   |                 |               |               |
 | Short Read | MetaSUB Sim.     |                 |               |               |
-| Short Read | MegaRes Align    |                 |               |               |
-| Short Read | CARD Align       |                 |               |               |
+| Short Read | Groot AMR        | x               | x             |               |
 | Short Read | SAKEIMA Sketch   |                 |               |               |
 |            |                  |                 |               |               |
 | DB         | Uniref90         | x               | x             | x             |

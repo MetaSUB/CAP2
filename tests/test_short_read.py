@@ -11,6 +11,7 @@ from cap2.pipeline.short_read.mash import Mash
 from cap2.pipeline.short_read.hmp_comparison import HmpComparison
 from cap2.pipeline.short_read.microbe_census import MicrobeCensus
 from cap2.pipeline.short_read.read_stats import ReadStats
+from cap2.pipeline.short_read.amrs import GrootAMR
 
 RAW_READS_1 = join(dirname(__file__), 'data/zymo_pos_cntrl.r1.fq.gz')
 RAW_READS_2 = join(dirname(__file__), 'data/zymo_pos_cntrl.r2.fq.gz')
@@ -45,6 +46,16 @@ class DummyUnirefDB(luigi.ExternalTask):
 
     def output(self):
         return {'diamond_index': luigi.LocalTarget(self.diamond_index)}
+
+
+class DummyGrootDB(luigi.ExternalTask):
+
+    @property
+    def groot_index(self):
+        return join(dirname(__file__), 'dbs/groot_index')
+
+    def output(self):
+        return {'groot_index': luigi.LocalTarget(self.groot_index)}
 
 
 class DummyAlignUniref90(luigi.ExternalTask):
@@ -94,6 +105,18 @@ class TestShortRead(TestCase):
         luigi.build([instance], local_scheduler=True)
         self.assertTrue(isfile(instance.output()['report'].path))
         self.assertTrue(isfile(instance.output()['read_assignments'].path))
+
+    def test_invoke_groot_amr(self):
+        instance = GrootAMR(
+            pe1=RAW_READS_1,
+            pe2=RAW_READS_2,
+            sample_name='test_sample',
+            config_filename=TEST_CONFIG
+        )
+        instance.db = DummyGrootDB()
+        instance.reads = DummyCleanReads()
+        luigi.build([instance], local_scheduler=True)
+        self.assertTrue(isfile(instance.output()['alignment'].path))
 
     def test_invoke_align_uniref90(self):
         instance = MicaUniref90(

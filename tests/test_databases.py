@@ -8,6 +8,7 @@ from cap2.pipeline.databases.human_removal_db import HumanRemovalDB
 from cap2.pipeline.databases.hmp_db import HmpDB
 from cap2.pipeline.databases.taxonomic_db import TaxonomicDB
 from cap2.pipeline.databases.uniref import Uniref90
+from cap2.pipeline.databases.amr_db import GrootDB
 
 
 def data_file(fname):
@@ -25,6 +26,13 @@ class TestDatabases(TestCase):
         instance.fastas = [GENOME_SAMPLE]
         luigi.build([instance], local_scheduler=True)
         self.assertTrue(isfile(instance.output()['bt2_index_1'].path))
+        rmtree('test_db')
+
+    def test_build_groot_db(self):
+        instance = GrootDB(config_filename=TEST_CONFIG)
+        instance.msas = data_file('groot_amrs')
+        luigi.build([instance], local_scheduler=True)
+        self.assertTrue(isdir(instance.output()['groot_index'].path))
         rmtree('test_db')
 
     @skip(reason="krakenuniq creates dependency conflict")

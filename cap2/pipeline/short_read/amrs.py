@@ -6,7 +6,50 @@ from os.path import join, dirname, basename
 from ..config import PipelineConfig
 from ..utils.conda import CondaPackage
 from ..preprocessing.clean_reads import CleanReads
-from ..databases.amr_db import MegaResDB, CardDB
+from ..databases.amr_db import GrootDB, MegaResDB, CardDB
+
+
+class GrootAMR(luigi.Task):
+    sample_name = luigi.Parameter()
+    pe1 = luigi.Parameter()
+    pe2 = luigi.Parameter()
+    config_filename = luigi.Parameter()
+    cores = luigi.IntParameter(default=1)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.pkg = CondaPackage(
+            package="groot",
+            executable="groot",
+            channel="bioconda"
+        )
+        self.config = PipelineConfig(self.config_filename)
+        self.out_dir = self.config.out_dir
+        self.db = GrootDB(config_filename=self.config_filename)
+        self.reads = CleanReads(
+            sample_name=self.sample_name,
+            pe1=self.pe1,
+            pe2=self.pe2,
+            config_filename=self.config_filename
+        )
+
+    def requires(self):
+        return self.pkg, self.db, self.reads
+
+    def output(self):
+        mytarget = lambda el: luigi.LocalTarget(join(self.out_dir, el))
+        return {
+            'alignment': mytarget(f'{self.sample_name}.groot.alignment.bam'),
+        }
+
+    def run(self):
+        align_cmd = f'{self.pkg.bin} align '
+        align_cmd += f'-i {self.db.groot_index} -f {self.reads.reads[0]},{self.reads.reads[1]} '
+        align_cmd += f'-p {self.cores} > {self.output()["alignment"].path}'
+        report_cmd = f'{self.pkg.bin} report -i {self.output()["alignment"].path} '
+        report_cmd += '--lowCov --plotCov'
+        rm_cmd = f'rm {self.output()["alignment"].path}'
+        subprocess.check_call(align_cmd + ' && ' + report_cmd + ' | ' + rm_cmd, shell=True)
 
 
 class MegaRes(luigi.Task):

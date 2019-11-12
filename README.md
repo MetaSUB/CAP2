@@ -55,10 +55,11 @@ python -m pytest tests
 | DB         | HMP Similarity   | x               | x             | x             |
 | DB         | KrakenUniq       | x               |               |               |
 |            |                  |                 |               |               |
+| Contig     | Progdigal        | x               |               |               |
 | Contig     | Deep BGC         |                 |               |               |
 | Contig     | Taxonomy         |                 |               |               |
 | Contig     | PlasFlow         |                 |               |               |
-| Contig     | AMR Id           |                 |               |               |
+| Contig     | AMR Id           | x               |               |               |
 | Contig     | MetaBAT2         |                 |               |               |
 | Contig     | Genome Binning   |                 |               |               |
 

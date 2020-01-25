@@ -28,6 +28,7 @@ class TestDatabases(TestCase):
         self.assertTrue(isfile(instance.output()['bt2_index_1'].path))
         rmtree('test_db')
 
+    @skip(reason='Groot not complete')
     def test_build_groot_db(self):
         instance = GrootDB(config_filename=TEST_CONFIG)
         instance.msas = data_file('groot_amrs')

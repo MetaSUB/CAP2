@@ -29,7 +29,7 @@ python -m pytest tests
 | QC         | count reads      | x               | x             | x             |
 | QC         | host removal     | x               | x             | x             |
 | QC         | fastqc           | x               | x             | x             |
-| QC         | error correction |                 |               |               |
+| QC         | error correction | x               | x             | x             |
 | QC         | contam removal   |                 |               |               |
 | QC         | id contams       |                 |               |               |
 | QC         | id controls      |                 |               |               |

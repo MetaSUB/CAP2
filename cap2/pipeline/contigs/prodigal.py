@@ -5,10 +5,11 @@ from os.path import join, dirname, basename
 
 from ..config import PipelineConfig
 from ..utils.conda import CondaPackage
+from ..utils.cap_task import CapTask
 from ..assembly.clean_contigs import CleanContigs
 
 
-class Prodigal(luigi.Task):
+class Prodigal(CapTask):
     """Predict ORFs from assembled contigs."""
     sample_name = luigi.Parameter()
     pe1 = luigi.Parameter()
@@ -40,10 +41,9 @@ class Prodigal(luigi.Task):
         return self.pkg, self.contigs
 
     def output(self):
-        mytarget = lambda el: luigi.LocalTarget(join(self.out_dir, el))
         return {
-            'gene_table': mytarget(f'{self.sample_name}.prodigal.genes.tsv'),
-            'protein_fasta': mytarget(f'{self.sample_name}.prodigal.proteins.faa'),
+            'gene_table': self.get_target(self.sample_name, 'prodigal', 'genes', 'tsv'),
+            'protein_fasta': self.get_target(self.sample_name, 'prodigal', 'proteins', 'faa'),
         }
 
     def run(self):

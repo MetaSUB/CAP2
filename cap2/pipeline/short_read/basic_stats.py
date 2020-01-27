@@ -2,17 +2,13 @@ import luigi
 import subprocess
 from os.path import join, dirname, basename
 
+from ..utils.cap_task import CapTask
 from ..config import PipelineConfig
 from ..utils.conda import CondaPackage
 from ..preprocessing.clean_reads import CleanReads
 
 
-class BasicReadStats(luigi.Task):
-    sample_name = luigi.Parameter()
-    pe1 = luigi.Parameter()
-    pe2 = luigi.Parameter()
-    config_filename = luigi.Parameter()
-    cores = luigi.IntParameter(default=1)
+class BasicReadStats(CapTask):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

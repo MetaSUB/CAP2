@@ -11,11 +11,6 @@ from .map_to_human import RemoveHumanReads
 
 
 class ErrorCorrectReads(CapTask):
-    sample_name = luigi.Parameter()
-    pe1 = luigi.Parameter()
-    pe2 = luigi.Parameter()
-    config_filename = luigi.Parameter()
-    cores = luigi.IntParameter(default=1)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

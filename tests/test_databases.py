@@ -20,14 +20,6 @@ TEST_CONFIG = data_file('test_config.yaml')
 
 
 class TestDatabases(TestCase):
-
-    def test_build_human_removal_db(self):
-        instance = HumanRemovalDB(config_filename=TEST_CONFIG)
-        instance.fastas = [GENOME_SAMPLE]
-        luigi.build([instance], local_scheduler=True)
-        self.assertTrue(isfile(instance.output()['bt2_index_1'].path))
-        rmtree('test_db')
-
     @skip(reason='Groot not complete')
     def test_build_groot_db(self):
         instance = GrootDB(config_filename=TEST_CONFIG)

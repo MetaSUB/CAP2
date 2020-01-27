@@ -1,7 +1,6 @@
 
 import setuptools
 
-setuptools
 setuptools.setup(
     name='cap2',
     version='0.1.0',
@@ -17,14 +16,15 @@ setuptools.setup(
         'luigi',
         'PyYaml',
     ],
+    entry_points={
+        'console_scripts': [
+            'cap2=cap2.cli:main',
+        ]
+    },
     classifiers=[
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
         'Programming Language :: Python :: 3',
     ],
-    package_data={'capalyzer': [
-        'packet_parser/ncbi_tree/*.dmp.gz',
-        'packet_parser/microbe-directory.csv',
-    ]},
 )

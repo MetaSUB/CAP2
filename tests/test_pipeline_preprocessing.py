@@ -43,7 +43,13 @@ class DummyHumanRemovedReads(luigi.ExternalTask):
 class TestPipelinePreprocessing(TestCase):
 
     def test_invoke_count_raw_reads(self):
-        instance = CountRawReads(in_filename=RAW_READS_1, sample_name='test_sample', config_filename=TEST_CONFIG)
+        instance = CountRawReads(
+            pe1=RAW_READS_1,
+            pe2=RAW_READS_2,
+            sample_name='test_sample',
+            config_filename=TEST_CONFIG,
+            cores=1
+        )
         luigi.build([instance], local_scheduler=True)
         self.assertTrue(isfile(instance.output()['read_counts'].path))
         text = open(instance.output()['read_counts'].path).read()
@@ -52,7 +58,8 @@ class TestPipelinePreprocessing(TestCase):
 
     def test_invoke_fastqc(self):
         instance = FastQC(
-            in_filename=RAW_READS_1,
+            pe1=RAW_READS_1,
+            pe2=RAW_READS_2,
             sample_name='test_sample',
             config_filename=TEST_CONFIG,
             cores=1
@@ -88,4 +95,7 @@ class TestPipelinePreprocessing(TestCase):
         luigi.build([instance], local_scheduler=True)
         self.assertTrue(isfile(instance.output()['error_corrected_reads'][0].path))
         self.assertTrue(isfile(instance.output()['error_corrected_reads'][1].path))
-        rmtree('test_sample.error_correction_out')
+        try:
+            rmtree('test_sample.error_correction_out')
+        except:
+            pass

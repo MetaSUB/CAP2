@@ -3,20 +3,16 @@ import luigi
 import subprocess
 from os.path import join, dirname, basename
 
+from ..utils.cap_task import CapTask
 from ..config import PipelineConfig
 from ..utils.conda import CondaPackage
 from .error_correct_reads import ErrorCorrectReads
 
 
-class CleanReads(luigi.Task):
+class CleanReads(CapTask):
     """This class represents the culmination of the
     preprocessing pipeline.
-    """ 
-    sample_name = luigi.Parameter()
-    pe1 = luigi.Parameter()
-    pe2 = luigi.Parameter()
-    config_filename = luigi.Parameter()
-    cores = luigi.IntParameter(default=1)
+    """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

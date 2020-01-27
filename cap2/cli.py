@@ -10,7 +10,7 @@ def main():
     pass
 
 
-@click.command('short-reads')
+@main.command('short-reads')
 @click.argument('config', type=click.Path())
 @click.argument('manifest', type=click.File('r'))
 def cap_short_read(config, manifest):

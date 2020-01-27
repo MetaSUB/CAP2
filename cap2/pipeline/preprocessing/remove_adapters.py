@@ -3,15 +3,12 @@ import luigi
 import subprocess
 from os.path import join, dirname, basename
 
+from ..utils.cap_task import CapTask
 from ..config import PipelineConfig
 from ..utils.conda import CondaPackage
 
 
-class FastQC(luigi.Task):
-    in_filename = luigi.Parameter()
-    sample_name = luigi.Parameter()
-    config_filename = luigi.Parameter()
-    cores = luigi.IntParameter(default=1)
+class FastQC(CapTask):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -25,11 +22,11 @@ class FastQC(luigi.Task):
 
     @property
     def _report(self):
-        return basename(self.in_filename).split('.f')[0] + '_fastqc.html'
+        return basename(self.pe1).split('.f')[0] + '_fastqc.html'
 
     @property
     def _zip_output(self):
-        return basename(self.in_filename).split('.f')[0] + '_fastqc.zip'
+        return basename(self.pe1).split('.f')[0] + '_fastqc.zip'
 
     def requires(self):
         return self.pkg
@@ -49,9 +46,8 @@ class FastQC(luigi.Task):
         cmd = [
             self.pkg.bin,
             '-t', str(self.cores),
-            self.in_filename,
+            self.pe1,
             '-o',
             dirname(self.output()['report'].path)
         ]
         subprocess.call(cmd)
-        self._done = True

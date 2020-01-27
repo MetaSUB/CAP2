@@ -6,6 +6,7 @@ from os.path import join, dirname, basename
 from Bio import SeqIO
 from gzip import open as gopen
 
+from ..utils.cap_task import CapTask
 from ..config import PipelineConfig
 from ..preprocessing.clean_reads import CleanReads
 
@@ -40,12 +41,7 @@ def stats_one_fastq(fastq, dropout):
     }
 
 
-class ReadStats(luigi.Task):
-    sample_name = luigi.Parameter()
-    pe1 = luigi.Parameter()
-    pe2 = luigi.Parameter()
-    config_filename = luigi.Parameter()
-    cores = luigi.IntParameter(default=1)
+class ReadStats(CapTask):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

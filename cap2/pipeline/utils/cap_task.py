@@ -35,9 +35,8 @@ class CapTask(luigi.Task):
         )
 
     def run_cmd(self, cmd):
-        try:
-            job = subprocess.check_call(cmd, shell=True)
-        except subprocess.CalledProcessError:
+        job = subprocess.run(cmd, shell=True)
+        if job.returncode != 0:
             msg = f'''
             cmd_failed: "{cmd}"
             return_code: {job.returncode}
@@ -45,4 +44,4 @@ class CapTask(luigi.Task):
             stderr: "{job.stderr}"
             '''
             print(msg, file=stderr)
-            raise
+            job.check_returncode()  # raises CalledProcessError

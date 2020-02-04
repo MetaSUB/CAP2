@@ -50,7 +50,7 @@ class RemoveHumanReads(CapTask):
                 ' -x ', self.db.bowtie2_index,
                 ' -1 ', self.pe1,
                 ' -2 ', self.pe2,
-                f' --conc-gz {self.out_dir}/{self.sample_name}.remove_human.human_reads.R%.fastq.gz ',
+                f' --al-conc-gz {self.out_dir}/{self.sample_name}.remove_human.human_reads.R%.fastq.gz ',
                 f' --un-conc-gz {self.out_dir}/{self.sample_name}.remove_human.nonhuman_reads.R%.fastq.gz ',
                 ' --threads ', str(self.cores),
                 ' --very-sensitive ',

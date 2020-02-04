@@ -3,6 +3,7 @@ import luigi
 import subprocess
 from os.path import join, dirname, basename
 from yaml import load
+from shutil import rmtree
 
 from ..config import PipelineConfig
 from ..utils.conda import CondaPackage
@@ -43,7 +44,8 @@ class ErrorCorrectReads(CapTask):
         r1, r2 = self.nonhuman_reads.output()['nonhuman_reads']
         cmd = self.pkg.bin
         cmd += f' --only-error-correction --meta -1 {r1.path} -2 {r2.path}'
-        cmd += f' -t {self.cores} -o {self.sample_name}.error_correction_out'
+        outdir = f'{self.sample_name}.error_correction_out'
+        cmd += f' -t {self.cores} -o {outdir}'
         subprocess.check_call(cmd, shell=True)  # runs error correction but leaves output in a dir
         config_path = f'{self.sample_name}.error_correction_out/corrected/corrected.yaml'
         spades_out = load(open(config_path).read())
@@ -54,3 +56,4 @@ class ErrorCorrectReads(CapTask):
         paths = self.output()['error_corrected_reads']
         cmd = f'mv {ec_r1[0]} {paths[0].path} && mv {ec_r2[0]} {paths[1].path}'
         subprocess.check_call(cmd, shell=True)
+        rmtree(outdir)

@@ -31,17 +31,17 @@ class RemoveHumanReads(CapTask):
         return self.pkg, self.samtools, self.db
 
     def output(self):
-        bam = luigi.LocalTarget(join(self.out_dir, f'{self.sample_name}.human_alignment.bam'))
-        bam.makedirs()
-        non_human_1 = luigi.LocalTarget(join(
-            self.out_dir, f'{self.sample_name}.nonhuman_reads.R1.fastq.gz'
-        ))
-        non_human_2 = luigi.LocalTarget(join(
-            self.out_dir, f'{self.sample_name}.nonhuman_reads.R2.fastq.gz'
-        ))
+        trgt = lambda a, b: self.get_target(self.sample_name, 'remove_human', a, b)
         return {
-            'bam': bam,
-            'nonhuman_reads': [non_human_1, non_human_2],
+            'bam': trgt('human_alignment', 'bam'),
+            'nonhuman_reads': [
+                trgt('nonhuman_reads', 'R1.fastq.gz'),
+                trgt('nonhuman_reads', 'R2.fastq.gz')
+            ],
+            'human_reads': [
+                trgt('human_reads', 'R1.fastq.gz'),
+                trgt('human_reads', 'R2.fastq.gz')
+            ],
         }
 
     def run(self):
@@ -50,8 +50,8 @@ class RemoveHumanReads(CapTask):
                 ' -x ', self.db.bowtie2_index,
                 ' -1 ', self.pe1,
                 ' -2 ', self.pe2,
-                f' --conc-gz {self.out_dir}/{self.sample_name}.human_reads.R%.fastq.gz ',
-                f' --un-conc-gz {self.out_dir}/{self.sample_name}.nonhuman_reads.R%.fastq.gz ',
+                f' --conc-gz {self.out_dir}/{self.sample_name}.remove_human.human_reads.R%.fastq.gz ',
+                f' --un-conc-gz {self.out_dir}/{self.sample_name}.remove_human.nonhuman_reads.R%.fastq.gz ',
                 ' --threads ', str(self.cores),
                 ' --very-sensitive ',
                 f' | {self.samtools.bin} view -F 4 -b > ',

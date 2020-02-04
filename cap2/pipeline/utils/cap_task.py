@@ -36,13 +36,13 @@ class CapTask(luigi.Task):
 
     def run_cmd(self, cmd):
         try:
-            subprocess.check_call(cmd, shell=True)
+            job = subprocess.check_call(cmd, shell=True)
         except subprocess.CalledProcessError:
             msg = f'''
             cmd_failed: "{cmd}"
-            return_code: {cmd.returncode}
-            stdout: "{cmd.stdout}"
-            stderr: "{cmd.stderr}"
+            return_code: {job.returncode}
+            stdout: "{job.stdout}"
+            stderr: "{job.stderr}"
             '''
             print(msg, file=stderr)
             raise

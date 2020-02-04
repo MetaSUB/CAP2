@@ -8,6 +8,9 @@ class Sample:
         self.r1 = read1
         self.r2 = read2
 
+    def as_tuple(self):
+        return self.sample_name, self.r1, self.r2
+
     @classmethod
     def samples_from_manifest(cls, manifest):
         samples = []

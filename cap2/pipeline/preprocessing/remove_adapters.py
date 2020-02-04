@@ -41,7 +41,7 @@ class FastQC(CapTask):
             'zip_output': zip_out,
         }
 
-    def run(self):
+    def _run(self):
         # fixme: redirect output to loggers
         cmd = [
             self.pkg.bin,
@@ -50,4 +50,4 @@ class FastQC(CapTask):
             '-o',
             dirname(self.output()['report'].path)
         ]
-        subprocess.call(cmd)
+        self.run_cmd(cmd)

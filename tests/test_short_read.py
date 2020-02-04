@@ -152,7 +152,7 @@ class TestShortRead(TestCase):
         instance.db = DummyHmpDB()
         instance.mash = DummyMash()
         luigi.build([instance], local_scheduler=True)
-        self.assertTrue(isfile(instance.output()['hmp_dists'].path))
+        self.assertTrue(isfile(instance.output()['mash'].path))
 
     @skip(reason="humann2 not available for python>3.3")
     def test_invoke_humann2(self):

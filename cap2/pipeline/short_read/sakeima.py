@@ -27,18 +27,17 @@ class Sakeima(CapTask):
             config_filename=self.config_filename
         )
 
+    def module_name(self):
+        return 'sakeima'
+
     def requires(self):
         return self.pkg, self.reads
 
     def output(self):
-        sketch = luigi.LocalTarget(
-            join(self.out_dir, f'{self.sample_name}.sakeima.sketch')
-        )
-        skecth.makedirs()
-        return sketch
+        return {'sketch': self.get_target('sketch', 'jf')}
 
-    def run(self):
+    def _run(self):
         cmd = (
             f'{self.pkg.bin} '
         )
-        subprocess.check_call(cmd, shell=True)
+        self.run_cmd(cmd)

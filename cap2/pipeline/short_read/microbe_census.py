@@ -27,19 +27,18 @@ class MicrobeCensus(CapTask):
             config_filename=self.config_filename
         )
 
+    def module_name(self):
+        return 'microbe_census'
+
     def requires(self):
         return self.pkg, self.reads
 
     def output(self):
-        report = luigi.LocalTarget(
-            join(self.out_dir, f'{self.sample_name}.microbe_census.report.tsv')
-        )
-        report.makedirs()
         return {
-            'report': report,
+            'report': self.get_target('report', 'tsv'),
         }
 
-    def run(self):
+    def _run(self):
         cmd = (
             f'{self.pkg.bin} '
             f'-t {self.cores} '
@@ -47,4 +46,4 @@ class MicrobeCensus(CapTask):
             f'{self.reads.output()["clean_reads"][1].path} '
             f'{self.output()["report"].path}'
         )
-        subprocess.check_call(cmd, shell=True)
+        self.run_cmd(cmd)

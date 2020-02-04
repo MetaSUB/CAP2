@@ -41,7 +41,7 @@ class FastQC(CapTask):
             'zip_output': zip_out,
         }
 
-    def run(self):
+    def _run(self):
         # fixme: redirect output to loggers
         cmd = ' '.join([
             self.pkg._env.bin + '/perl',  # fastqc uses system perl which we do not assume access to

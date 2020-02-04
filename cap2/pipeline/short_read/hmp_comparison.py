@@ -29,21 +29,20 @@ class HmpComparison(CapTask):
             config_filename=self.config_filename
         )
 
+    def module_name(self):
+        return 'hmp_comparison'
+
     def requires(self):
         return self.pkg, self.db, self.mash
 
     def output(self):
-        dists = luigi.LocalTarget(
-            join(self.out_dir, f'{self.sample_name}.mash.hmp_dists.tsv')
-        )
-        dists.makedirs()
-        return {'hmp_dists': dists}
+        return {'mash': self.get_target('mash', 'tsv')}
 
-    def run(self):
+    def _run(self):
         cmd = (
             f'{self.pkg.bin} '
             f'{self.db.mash_sketch} '
             f'{self.mash.output()["10M_mash_sketch"].path} '
-            f'> {self.output()["hmp_dists"].path}'
+            f'> {self.output()["mash"].path}'
         )
-        subprocess.check_call(cmd, shell=True)
+        self.run_cmd(cmd)

@@ -32,21 +32,24 @@ class ErrorCorrectReads(CapTask):
     def requires(self):
         return self.pkg, self.nonhuman_reads
 
+    def module_name(self):
+        return 'error_corrected_reads'
+
     def output(self):
         return {
             'error_corrected_reads': [
-                self.get_target(self.sample_name, 'error_corrected_reads', 'R1', 'fastq.gz'),
-                self.get_target(self.sample_name, 'error_corrected_reads', 'R2', 'fastq.gz'),
+                self.get_target('R1', 'fastq.gz'),
+                self.get_target('R2', 'fastq.gz'),
             ],
         }
 
-    def run(self):
+    def _run(self):
         r1, r2 = self.nonhuman_reads.output()['nonhuman_reads']
         cmd = self.pkg.bin
         cmd += f' --only-error-correction --meta -1 {r1.path} -2 {r2.path}'
         outdir = f'{self.sample_name}.error_correction_out'
         cmd += f' -t {self.cores} -o {outdir}'
-        subprocess.check_call(cmd, shell=True)  # runs error correction but leaves output in a dir
+        self.run_cmd(cmd)  # runs error correction but leaves output in a dir
         config_path = f'{self.sample_name}.error_correction_out/corrected/corrected.yaml'
         spades_out = load(open(config_path).read())
         ec_r1 = spades_out[0]['left reads']
@@ -55,5 +58,5 @@ class ErrorCorrectReads(CapTask):
         assert len(ec_r2) == 1
         paths = self.output()['error_corrected_reads']
         cmd = f'mv {ec_r1[0]} {paths[0].path} && mv {ec_r2[0]} {paths[1].path}'
-        subprocess.check_call(cmd, shell=True)
+        self.run_cmd(cmd)
         rmtree(outdir)

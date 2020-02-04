@@ -29,16 +29,18 @@ class GrootAMR(CapTask):
             config_filename=self.config_filename
         )
 
+    def module_name(self):
+        return 'groot'
+
     def requires(self):
         return self.pkg, self.db, self.reads
 
     def output(self):
-        mytarget = lambda el: luigi.LocalTarget(join(self.out_dir, el))
         return {
-            'alignment': mytarget(f'{self.sample_name}.groot.alignment.bam'),
+            'alignment': self.get_target('alignment', 'bam'),
         }
 
-    def run(self):
+    def _run(self):
         align_cmd = f'{self.pkg.bin} align '
         align_cmd += f'-i {self.db.groot_index} -f {self.reads.reads[0]},{self.reads.reads[1]} '
         align_cmd += f'-p {self.cores} > {self.output()["alignment"].path}'
@@ -73,20 +75,23 @@ class MegaRes(CapTask):
             config_filename=self.config_filename
         )
 
+    def module_name(self):
+        return 'megares'
+
     def requires(self):
         return self.pkg, self.aligner, self.db, self.reads
 
     def output(self):
         mytarget = lambda el: luigi.LocalTarget(join(self.out_dir, el))
         return {
-            'sam': mytarget(f'{self.sample_name}.megares.sam.sam'),
-            'gene': mytarget(f'{self.sample_name}.megares.gene.tsv'),
-            'group': mytarget(f'{self.sample_name}.megares.group.tsv'),
-            'classus': mytarget(f'{self.sample_name}.megares.classus.tsv'),
-            'mech': mytarget(f'{self.sample_name}.megares.mech.tsv'),
+            'sam': self.get_target('sam', 'sam'),
+            'gene': self.get_target('gene', 'tsv'),
+            'group': self.get_target('group', 'tsv'),
+            'classus': self.get_target('classus', 'tsv'),
+            'mech': self.get_target('mech', 'tsv'),
         }
 
-    def run(self):
+    def _run(self):
         sam_file = self.output()["sam"].path
         cmd1 = (
             f'{self.aligner.bin} '

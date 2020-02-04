@@ -20,15 +20,14 @@ class BasicReadStats(CapTask):
             config_filename=self.config_filename
         )
 
+    def module_name(self):
+        return 'basic_stats'
+
     def requires(self):
         return self.reads
 
     def output(self):
-        stats = luigi.LocalTarget(
-            join(self.out_dir, f'{self.sample_name}.basic_stats.stats.yaml')
-        )
-        stats.makedirs()
-        return {'stats': stats}
+        return {'stats': self.get_target('stats', 'yaml')}
 
-    def run(self):
+    def _run(self):
         pass

@@ -28,21 +28,20 @@ class Mash(CapTask):
             config_filename=self.config_filename
         )
 
+    def module_name(self):
+        return 'mash'
+
     def requires(self):
         return self.pkg, self.reads
 
     def output(self):
-        sketch = luigi.LocalTarget(
-            join(self.out_dir, f'{self.sample_name}.mash.sketch.msh')
-        )
-        sketch.makedirs()
-        return {'10M_mash_sketch': sketch}
+        return {'10M_mash_sketch': self.get_target('sketch', 'msh')}
 
-    def run(self):
+    def _run(self):
         cmd = (
             f'{self.pkg.bin} '
             f'sketch -s {MASH_SKETCH_SIZE} '
             f'-o {self.output()["10M_mash_sketch"].path[:-4]} '
             f'{self.reads.output()["clean_reads"][0].path}'
         )
-        subprocess.check_call(cmd, shell=True)
+        self.run_cmd(cmd)

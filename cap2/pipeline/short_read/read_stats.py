@@ -55,19 +55,18 @@ class ReadStats(CapTask):
         )
         self.dropout = 1 / 1000
 
+    def module_name(self):
+        return 'read_stats'
+
     def requires(self):
         return self.reads
 
     def output(self):
-        report = luigi.LocalTarget(
-            join(self.out_dir, f'{self.sample_name}.read_stats.report.csv')
-        )
-        report.makedirs()
         return {
-            'report': report,
+            'report': self.get_target('report', 'csv'),
         }
 
-    def run(self):
+    def _run(self):
         tbl = pd.DataFrame.from_dict({
             (self.sample_name, 'read_1'): stats_one_fastq(self.reads.reads[0], self.dropout),
             (self.sample_name, 'read_2'): stats_one_fastq(self.reads.reads[1], self.dropout),

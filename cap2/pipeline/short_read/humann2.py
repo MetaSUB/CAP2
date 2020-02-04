@@ -29,19 +29,18 @@ class MicaUniref90(CapTask):
             config_filename=self.config_filename
         )
 
+    def module_name(self):
+        return 'diamond'
+
     def requires(self):
         return self.pkg, self.db, self.reads
 
     def output(self):
-        m8 = luigi.LocalTarget(
-            join(self.out_dir, f'{self.sample_name}.uniref90.m8.gz')
-        )
-        m8.makedirs()
         return {
-            'm8': m8,
+            'm8': self.get_target('uniref90', 'm8.gz'),
         }
 
-    def run(self):
+    def _run(self):
         cmd = (
             f'{self.pkg.bin} blastx '
             f'--threads {self.cores} '
@@ -50,7 +49,7 @@ class MicaUniref90(CapTask):
             '--block-size 6 '
             f'| gzip > {self.output()["m8"].path} '
         )
-        subprocess.check_call(cmd, shell=True)
+        self.run_cmd(cmd)
 
 
 class Humann2(CapTask):
@@ -71,27 +70,20 @@ class Humann2(CapTask):
             config_filename=self.config_filename
         )
 
+    def module_name(self):
+        return 'humann2'
+
     def requires(self):
         return self.pkg, self.alignment
 
     def output(self):
-        genes = luigi.LocalTarget(
-            join(self.out_dir, f'{self.sample_name}.humann2.genes.tsv')
-        )
-        path_abunds = luigi.LocalTarget(
-            join(self.out_dir, f'{self.sample_name}.humann2.path_abunds.tsv')
-        )
-        path_covs = luigi.LocalTarget(
-            join(self.out_dir, f'{self.sample_name}.humann2.path_covs.tsv')
-        )
-        genes.makedirs()
         return {
-            'genes': genes,
-            'path_abunds': path_abunds,
-            'path_covs': path_covs,
+            'genes': self.get_target('genes', 'tsv'),
+            'path_abunds': self.get_target('path_abunds', 'tsv'),
+            'path_covs': self.get_target('path_covs', 'tsv'),
         }
 
-    def run(self):
+    def _run(self):
         odir = params.sample_name + '_humann2'
         genes = odir + '/*genefamilies.tsv'
         abunds = odir + '/*pathabundance.tsv'
@@ -105,4 +97,4 @@ class Humann2(CapTask):
             'mv ' + covs + ' ' + self.output()['path_covs'].path + '; '
             f'rm -r {self.sample_name}_humann2;'
         )
-        subprocess.check_call(cmd, shell=True)
+        self.run_cmd(cmd)

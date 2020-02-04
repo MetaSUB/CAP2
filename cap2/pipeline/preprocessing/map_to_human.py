@@ -30,21 +30,23 @@ class RemoveHumanReads(CapTask):
     def requires(self):
         return self.pkg, self.samtools, self.db
 
+    def module_name(self):
+        return 'remove_human'
+
     def output(self):
-        trgt = lambda a, b: self.get_target(self.sample_name, 'remove_human', a, b)
         return {
-            'bam': trgt('human_alignment', 'bam'),
+            'bam': self.get_target('human_alignment', 'bam'),
             'nonhuman_reads': [
-                trgt('nonhuman_reads', 'R1.fastq.gz'),
-                trgt('nonhuman_reads', 'R2.fastq.gz')
+                self.get_target('nonhuman_reads', 'R1.fastq.gz'),
+                self.get_target('nonhuman_reads', 'R2.fastq.gz')
             ],
             'human_reads': [
-                trgt('human_reads', 'R1.fastq.gz'),
-                trgt('human_reads', 'R2.fastq.gz')
+                self.get_target('human_reads', 'R1.fastq.gz'),
+                self.get_target('human_reads', 'R2.fastq.gz')
             ],
         }
 
-    def run(self):
+    def _run(self):
         cmd = ''.join((
                 self.pkg.bin,
                 ' -x ', self.db.bowtie2_index,

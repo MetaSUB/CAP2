@@ -9,15 +9,16 @@ from ..config import PipelineConfig
 
 class CountRawReads(CapTask):
 
-    def output(self):
-        target = luigi.LocalTarget(join(
-            PipelineConfig(self.config_filename).out_dir,
-            f'{self.sample_name}.read_counts.csv'
-        ))
-        target.makedirs()
-        return {'read_counts': target}
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-    def run(self):
+    def output(self):
+        return {'read_counts': self.get_target('read_counts', 'csv')}
+
+    def module_name(self):
+        return 'count_raw_reads'
+
+    def _run(self):
         count = 0
         with gopen(self.pe1) as i:
             for line in i:

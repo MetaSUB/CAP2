@@ -29,22 +29,19 @@ class KrakenUniq(CapTask):
             config_filename=self.config_filename
         )
 
+    def module_name(self):
+        return 'krakenuniq'
+
     def requires(self):
         return self.pkg, self.db, self.reads
 
     def output(self):
-        report = luigi.LocalTarget(
-            join(self.out_dir, f'{self.sample_name}.report.tsv')
-        )
-        read_assignments = luigi.LocalTarget(
-            join(self.out_dir, f'{self.sample_name}.read_assignments.tsv')
-        )
         return {
-            'report': report,
-            'read_assignments': read_assignments,
+            'report': self.get_target('report', 'tsv'),
+            'read_assignments': self.get_target('read_assignments', 'tsv'),
         }
 
-    def run(self):
+    def _run(self):
         report_path = self.output()['report'].path
         read_assignments = self.output['read_assignments'].path
         cmd = (
@@ -60,4 +57,4 @@ class KrakenUniq(CapTask):
             f'{self.reads.output()["clean_reads"][1].path} '
             f'> {read_assignments}'
         )
-        subprocess.check_call(cmd, shell=True)
+        self.run_cmd(cmd)

@@ -80,6 +80,8 @@ class TestPipelinePreprocessing(TestCase):
         )
         instance.db = DummyHumanRemovalDB()
         luigi.build([instance], local_scheduler=True)
+        print(os.listdir('.'))
+        print(os.listdir('test_out'))
         self.assertTrue(isfile(instance.output()['bam'].path))
         self.assertTrue(isfile(instance.output()['nonhuman_reads'][0].path))
         self.assertTrue(isfile(instance.output()['nonhuman_reads'][1].path))

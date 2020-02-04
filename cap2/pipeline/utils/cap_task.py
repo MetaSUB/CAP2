@@ -1,6 +1,8 @@
 
 import luigi
+import subprocess
 
+from sys import stderr
 from os.path import join
 
 
@@ -31,3 +33,16 @@ class CapTask(luigi.Task):
             config_filename=config_path,
             cores=cores
         )
+
+    def run_cmd(self, cmd):
+        try:
+            subprocess.check_call(cmd, shell=True)
+        except subprocess.CalledProcessError:
+            msg = f'''
+            cmd_failed: "{cmd}"
+            return_code: {cmd.returncode}
+            stdout: "{cmd.stdout}"
+            stderr: "{cmd.stderr}"
+            '''
+            print(msg, file=stderr)
+            raise

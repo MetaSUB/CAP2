@@ -50,6 +50,4 @@ class FastQC(CapTask):
             '-o',
             dirname(self.output()['report'].path)
         ])
-        print(cmd)
-        subprocess.check_call(cmd, shell=True)
-        self._done = True
+        self.run_cmd(cmd)

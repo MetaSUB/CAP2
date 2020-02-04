@@ -36,6 +36,11 @@ class CondaEnv(luigi.Task):
     def bin(self):
         return os.path.join(self.path, "bin")
 
+    def add_to_path(self):
+        """Add the bin folder to PATH if not already present."""
+        if self.bin not in os.environ['PATH']:
+            os.environ['PATH'] = os.environ['PATH'] + f':{self.bin}'
+
     def get_path(self, tool):
         return os.path.join(self.bin, tool)
 
@@ -99,6 +104,7 @@ class CondaEnv(luigi.Task):
             print(f'Subprocess failed from {os.getcwd()}: {cmd}', file=sys.stderr)
             raise
         self.save_spec()
+        self.add_to_path()
 
     def run(self):
         """

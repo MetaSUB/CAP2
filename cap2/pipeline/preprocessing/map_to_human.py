@@ -54,7 +54,7 @@ class RemoveHumanReads(CapTask):
                 f' --un-conc-gz {self.out_dir}/{self.sample_name}.nonhuman_reads.R%.fastq.gz ',
                 ' --threads ', str(self.cores),
                 ' --very-sensitive ',
-                ' | samtools view -F 4 -b > ',
+                f' | {self.samtools.bin} view -F 4 -b > ',
                 self.output()['bam'].path,
         ))
         self.run_cmd(cmd)

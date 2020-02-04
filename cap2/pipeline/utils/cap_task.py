@@ -35,7 +35,7 @@ class CapTask(luigi.Task):
         )
 
     def run_cmd(self, cmd):
-        job = subprocess.run(cmd, shell=True)
+        job = subprocess.run(cmd, shell=True, capture_output=True)
         if job.returncode != 0:
             msg = f'''
             cmd_failed: "{cmd}"

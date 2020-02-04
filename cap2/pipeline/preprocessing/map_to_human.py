@@ -57,5 +57,6 @@ class RemoveHumanReads(CapTask):
                 ' | samtools view -F 4 -b > ',
                 self.output()['bam'].path,
         ))
+        print(cmd)
         subprocess.check_call(cmd, shell=True)
         

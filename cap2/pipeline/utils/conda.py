@@ -15,7 +15,7 @@ class SpecificationError(Exception):
 class CondaEnv(luigi.Task):
     base_path = luigi.Parameter(default="vendor/conda")
     name = luigi.Parameter()
-    python = luigi.IntParameter(default=3)
+    python = luigi.Parameter(default='3.7')
 
     spec_dir = luigi.Parameter(default="config/envs")
 

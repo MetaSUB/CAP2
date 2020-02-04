@@ -15,6 +15,7 @@ setuptools.setup(
         'numpy',
         'luigi',
         'PyYaml',
+        'biopython',
     ],
     entry_points={
         'console_scripts': [

@@ -38,7 +38,7 @@ def cap_db(threads, config):
 @click.argument('config', type=click.Path())
 @click.argument('manifest', type=click.File('r'))
 def cap_qc(config, manifest):
-    """Run the CAP2 short read pipeline and preprocessing pipeline.
+    """Run the CAP2 qc pipeline.
 
     Config is a yaml file specifying these keys:
         out_dir: <directory where output should go>
@@ -49,6 +49,23 @@ def cap_qc(config, manifest):
     """
     samples = Sample.samples_from_manifest(manifest)
     run_qc_stage(samples, config)
+
+
+@run.command('pre')
+@click.argument('config', type=click.Path())
+@click.argument('manifest', type=click.File('r'))
+def cap_pre(config, manifest):
+    """Run the CAP2 preprocessing pipeline.
+
+    Config is a yaml file specifying these keys:
+        out_dir: <directory where output should go>
+        db_dir: <directory where databases are currently stored>
+
+    Manifest is a three column file with rows of form:
+    <sample name>   <read1 filepath>    <read2 filepath>
+    """
+    samples = Sample.samples_from_manifest(manifest)
+    run_preprocessing_stage(samples, config)
 
 
 @run.command('short-reads')

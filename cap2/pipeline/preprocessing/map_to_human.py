@@ -23,7 +23,7 @@ class RemoveHumanReads(CapTask):
             package="samtools",
             executable="samtools",
             channel="bioconda",
-            config_filename=config_filename,
+            config_filename=self.config_filename,
         )
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir

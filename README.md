@@ -22,6 +22,21 @@ python setup.py develop
 python -m pytest tests
 ```
 
+### Configuration
+
+By default CAP2 downloads all necessary programs and databases when it is run. For users running CAP2 multiple times on the same system it will be beneficial to set up configuration so that downloads only occur once.
+
+Configuration consists of setting three environmental variables. These shoudl go in your `.bashrc` or equivalent.
+
+```
+CAP2_DB_DIR=<some local path...>
+CAP2_CONDA_SPEC_DIR=<some local path...>
+CAP2_CONDA_BASE_PATH=<some local path...>
+```
+
+You can also use a yaml configuration file. See `cap2/config.py` for details and all options.
+
+
 ## Tools and Status
 
 | Stage      | Step             | Command Written | Tests Written | Tests Passing |

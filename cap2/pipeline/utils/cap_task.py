@@ -7,6 +7,7 @@ from os.path import join
 
 from ..config import PipelineConfig
 
+
 class CapTask(luigi.Task):
     """Base class for CAP2 tasks.
 
@@ -28,7 +29,7 @@ class CapTask(luigi.Task):
 
     def get_target(self, field_name, ext):
         filename = f'{self.sample_name}.{self.module_name()}.{field_name}.{ext}'
-        filepath = join(self.config.out_dir, filename)
+        filepath = join(self.config.out_dir, self.sample_name, filename)
         target = luigi.LocalTarget(filepath)
         target.makedirs()
         return target

@@ -22,7 +22,7 @@ def run():
 
 @run.command('db')
 @click.option('-t', '--threads', default=1)
-@click.argument('config', type=click.Path())
+@click.option('-c', '--config', type=click.Path(), default='')
 def cap_db(threads, config):
     """Run the CAP2 database pipeline.
 
@@ -31,11 +31,11 @@ def cap_db(threads, config):
         db_dir: <directory where databases are currently stored>
         db_mode: "build"|"download" (defaults to download)
     """
-    run_db_stage(config, cores=threads)
+    run_db_stage(config_path=config, cores=threads)
 
 
 @run.command('qc')
-@click.argument('config', type=click.Path())
+@click.option('-c', '--config', type=click.Path(), default='')
 @click.argument('manifest', type=click.File('r'))
 def cap_qc(config, manifest):
     """Run the CAP2 qc pipeline.
@@ -48,11 +48,11 @@ def cap_qc(config, manifest):
     <sample name>   <read1 filepath>    <read2 filepath>
     """
     samples = Sample.samples_from_manifest(manifest)
-    run_qc_stage(samples, config)
+    run_qc_stage(samples, config_path=config)
 
 
 @run.command('pre')
-@click.argument('config', type=click.Path())
+@click.option('-c', '--config', type=click.Path(), default='')
 @click.argument('manifest', type=click.File('r'))
 def cap_pre(config, manifest):
     """Run the CAP2 preprocessing pipeline.
@@ -65,11 +65,11 @@ def cap_pre(config, manifest):
     <sample name>   <read1 filepath>    <read2 filepath>
     """
     samples = Sample.samples_from_manifest(manifest)
-    run_preprocessing_stage(samples, config)
+    run_preprocessing_stage(samples, config_path=config)
 
 
 @run.command('short-reads')
-@click.argument('config', type=click.Path())
+@click.option('-c', '--config', type=click.Path(), default='')
 @click.argument('manifest', type=click.File('r'))
 def cap_short_read(config, manifest):
     """Run the CAP2 short read pipeline and preprocessing pipeline.
@@ -82,7 +82,7 @@ def cap_short_read(config, manifest):
     <sample name>   <read1 filepath>    <read2 filepath>
     """
     samples = Sample.samples_from_manifest(manifest)
-    run_short_read_stage(samples, config)
+    run_short_read_stage(samples, config_path=config)
 
 
 if __name__ == '__main__':

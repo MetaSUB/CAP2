@@ -13,7 +13,7 @@ def run_db_stage(config_path, **kwargs):
         instances.append(
             module(
                 config_filename=config_path,
-                cores=kwargs.get('cores', 1)
+                cores=kwargs.pop('cores', 1)
             )
         )
     luigi.build(instances, local_scheduler=True, **kwargs)

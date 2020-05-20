@@ -36,12 +36,12 @@ def cap_db(threads, config):
     run_db_stage(config_path=config, cores=threads)
 
 
-@run.command('stage')
+@run.command('pipeline')
 @click.option('-t', '--threads', default=1)
 @click.option('-c', '--config', type=click.Path(), default='')
 @click.option('-s', '--stage', type=click.Choice(STAGES.keys()), default=DEFAULT_STAGE)
 @click.argument('manifest', type=click.File('r'))
-def cap_stage(threads, config, stage, manifest):
+def cap_pipeline(threads, config, stage, manifest):
     """Run  a stage of the CAP2 pipeline.
 
     Manifest is a three column file with rows of form:

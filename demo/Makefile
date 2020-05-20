@@ -4,6 +4,6 @@ qc:
 
 
 clean:
-	rm -r demo_db
-	rm -r demo_out
-	rm -r vendor
+	-rm -r demo_db
+	-rm -r demo_out
+	-rm -r vendor

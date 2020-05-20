@@ -21,7 +21,7 @@ class Uniref90(luigi.Task):
         )
         self.config = PipelineConfig(self.config_filename)
         self.db_dir = self.config.db_dir
-        self.fasta = join(self.db_dir, 'uniref90', 'uniref90.faa.gz')
+        self.fasta = join(self.db_dir, 'uniref90', 'uniref90.fasta.gz')
 
     def requires(self):
         return self.pkg

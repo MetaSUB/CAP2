@@ -16,6 +16,7 @@ setuptools.setup(
         'luigi',
         'PyYaml',
         'biopython',
+        'click',
     ],
     entry_points={
         'console_scripts': [

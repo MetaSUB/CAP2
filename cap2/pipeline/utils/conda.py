@@ -25,10 +25,17 @@ class CondaEnv(luigi.Task):
         self.spec_file = os.path.abspath(os.path.join(
             self.spec_dir, '{}.yml'.format(self.name)
         ))
-        print(os.getcwd())
-        assert self.has_spec()
         if not os.path.isdir(self.spec_dir):
             os.makedirs(self.spec_dir)
+        if not os.path.isfile(self.spec_file):
+            with open(self.spec_file, 'w') as f:
+                f.write(
+                    '''
+                    name: CAP_v2
+                    channels:
+                      - defaults
+                    '''
+                )
         if not os.path.isdir(self.path):
             os.makedirs(self.path)
 
@@ -43,11 +50,6 @@ class CondaEnv(luigi.Task):
 
     def get_path(self, tool):
         return os.path.join(self.bin, tool)
-
-    def has_spec(self):
-        return os.path.isfile(
-            self.spec_file
-        )
 
     def save_spec(self):
         proc = subprocess.Popen(

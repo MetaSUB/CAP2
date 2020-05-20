@@ -51,5 +51,11 @@ class HumanRemovalDB(luigi.Task):
         ))
         subprocess.check_call(cmd, shell=True)
 
+    def download_bowtie2_index_from_s3(self):
+        pass
+
     def run(self):
-        self.build_bowtie2_index_from_fasta()
+        if self.config.db_mode == PipelineConfig.DB_MODE_BUILD:
+            self.build_bowtie2_index_from_fasta()
+        else:
+            self.download_bowtie2_index_from_s3()

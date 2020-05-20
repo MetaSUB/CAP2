@@ -48,15 +48,15 @@ class RemoveHumanReads(CapTask):
 
     def _run(self):
         cmd = ''.join((
-                self.pkg.bin,
-                ' -x ', self.db.bowtie2_index,
-                ' -1 ', self.pe1,
-                ' -2 ', self.pe2,
-                f' --al-conc-gz {self.out_dir}/{self.sample_name}.remove_human.human_reads.R%.fastq.gz ',
-                f' --un-conc-gz {self.out_dir}/{self.sample_name}.remove_human.nonhuman_reads.R%.fastq.gz ',
-                ' --threads ', str(self.cores),
-                ' --very-sensitive ',
-                f' | {self.samtools.bin} view -F 4 -b > ',
-                self.output()['bam'].path,
+            self.pkg.bin,
+            ' -x ', self.db.bowtie2_index,
+            ' -1 ', self.pe1,
+            ' -2 ', self.pe2,
+            f' --al-conc-gz {self.out_dir}/{self.sample_name}.remove_human.human_reads.R%.fastq.gz ',
+            f' --un-conc-gz {self.out_dir}/{self.sample_name}.remove_human.nonhuman_reads.R%.fastq.gz ',
+            ' --threads ', str(self.cores),
+            ' --very-sensitive ',
+            f' | {self.samtools.bin} view -F 4 -b > ',
+            self.output()['bam'].path,
         ))
         self.run_cmd(cmd)

@@ -10,3 +10,8 @@ MODULES = [
     RemoveHumanReads,
     ErrorCorrectReads,
 ]
+
+QC_MODULES = [
+    CountRawReads,
+    FastQC,
+]

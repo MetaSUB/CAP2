@@ -66,7 +66,14 @@ python -m pytest tests
 ## Notes
 
  - `samtools` needed to be manually installed on my mac
- - several tests still failing on CircleCI but passing on my laptop, not clear why. Myabe something to do with perl
+ - several tests still failing on CircleCI but passing on my laptop, not clear why. Maybe something to do with perl
+ 
+## Missing Features
+
+ - Needs some way to download databases
+ - Accept remote Luigi scheduler
+ - MultiQC in QC pipeline
+ - shared/param conda env
 
 
 ## License

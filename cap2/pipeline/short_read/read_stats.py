@@ -51,7 +51,7 @@ class ReadStats(CapTask):
             sample_name=self.sample_name,
             pe1=self.pe1,
             pe2=self.pe2,
-            config_filename=self.config_filename
+            config_filename=self.config_filename,
         )
         self.dropout = 1 / 1000
 

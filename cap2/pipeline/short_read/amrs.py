@@ -17,7 +17,8 @@ class GrootAMR(CapTask):
         self.pkg = CondaPackage(
             package="groot",
             executable="groot",
-            channel="bioconda"
+            channel="bioconda",
+            config_filename=self.config_filename,
         )
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
@@ -58,12 +59,14 @@ class MegaRes(CapTask):
         self.pkg = CondaPackage(
             package="resistome_analyzer",
             executable="resistome_analyzer",
-            channel="bioconda"
+            channel="bioconda",
+            config_filename=self.config_filename,
         )
         self.aligner = CondaPackage(
             package="bowtie2",
             executable="bowtie2",
-            channel="bioconda"
+            channel="bioconda",
+            config_filename=self.config_filename,
         )
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
@@ -129,7 +132,8 @@ class CARD(CapTask):
         self.pkg = CondaPackage(
             package="megares",
             executable="megares",
-            channel="bioconda"
+            channel="bioconda",
+            config_filename=self.config_filename,
         )
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir

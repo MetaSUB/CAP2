@@ -4,6 +4,7 @@ import sys
 import subprocess
 import logging
 import yaml
+from ..config import PipelineConfig
 
 logger = logging.getLogger('luigi-interface')
 
@@ -148,7 +149,9 @@ class CondaPackage(luigi.Task):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._env = CondaEnv(name=self.env, python=self.python, config_filename=config_filename)
+        self._env = CondaEnv(
+            name=self.env, python=self.python, config_filename=self.config_filename
+        )
         self.bin = os.path.join(
             self._env.bin, self.executable
         )

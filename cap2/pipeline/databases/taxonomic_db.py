@@ -18,7 +18,8 @@ class TaxonomicDB(luigi.Task):
         self.pkg = CondaPackage(
             package="krakenuniq",
             executable="krakenuniq-build",
-            channel="bioconda"
+            channel="bioconda",
+            config_filename=self.config_filename,
         )
         self.config = PipelineConfig(self.config_filename)
         self.db_dir = self.config.db_dir

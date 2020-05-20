@@ -15,7 +15,8 @@ class FastQC(CapTask):
         self.pkg = CondaPackage(
             package="fastqc",
             executable="fastqc",
-            channel="bioconda"
+            channel="bioconda",
+            config_filename=self.config_filename,
         )
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir

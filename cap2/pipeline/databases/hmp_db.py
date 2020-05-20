@@ -32,7 +32,7 @@ class HmpDB(luigi.Task):
 
     @property
     def mash_sketch(self):
-        return join(self.db_dir, 'hmp_mash_sketch.msh')
+        return join(self.db_dir, 'hmp', 'hmp_mash_sketch.msh')
 
     def output(self):
         sketch = luigi.LocalTarget(self.mash_sketch)

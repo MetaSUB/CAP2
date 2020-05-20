@@ -28,7 +28,7 @@ class Uniref90(luigi.Task):
 
     @property
     def diamond_index(self):
-        return join(self.db_dir, 'uniref90.dmnd')
+        return join(self.db_dir, 'uniref90', 'uniref90.dmnd')
 
     def output(self):
         diamond_index = luigi.LocalTarget(self.diamond_index)

@@ -33,7 +33,7 @@ class HumanRemovalDB(luigi.Task):
 
     @property
     def bowtie2_index(self):
-        return join(self.db_dir, 'human_removal.bt2')
+        return join(self.db_dir, 'hg38', 'human_removal.bt2')
 
     def output(self):
         index = luigi.LocalTarget(self.bowtie2_index + '.1.bt2')

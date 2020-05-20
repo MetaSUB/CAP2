@@ -60,7 +60,8 @@ class Humann2(CapTask):
         self.pkg = CondaPackage(
             package="humann2",
             executable="humann2",
-            channel="bioconda"
+            channel="bioconda",
+            config_filename=self.config_filename,
         )
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir

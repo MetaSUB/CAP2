@@ -11,8 +11,10 @@ def run_db_stage(config_path, **kwargs):
     instances = []
     for module in DB_MODULES:
         instances.append(
-            config_filename=config_path,
-            cores=kwargs.get('cores', 1)
+            module(
+                config_filename=config_path,
+                cores=kwargs.get('cores', 1)
+            )
         )
     luigi.build(instances, local_scheduler=True, **kwargs)
 

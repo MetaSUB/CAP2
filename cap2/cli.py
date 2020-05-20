@@ -6,7 +6,10 @@ from .api import (
     run_modules,
 )
 from .sample import Sample
-from .constants import STAGES
+from .constants import (
+    DEFAULT_STAGE,
+    STAGES,
+)
 
 
 @click.group()
@@ -36,14 +39,10 @@ def cap_db(threads, config):
 @run.command('stage')
 @click.option('-t', '--threads', default=1)
 @click.option('-c', '--config', type=click.Path(), default='')
-@click.argument('stage', type=click.Choice(STAGES.keys()))
+@click.option('-s', '--stage', type=click.Choice(STAGES.keys()), default=DEFAULT_STAGE)
 @click.argument('manifest', type=click.File('r'))
 def cap_stage(threads, config, stage, manifest):
     """Run  a stage of the CAP2 pipeline.
-
-    Config is a yaml file specifying these keys:
-        out_dir: <directory where output should go>
-        db_dir: <directory where databases are currently stored>
 
     Manifest is a three column file with rows of form:
     <sample name>   <read1 filepath>    <read2 filepath>

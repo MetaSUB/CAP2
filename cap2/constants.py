@@ -9,3 +9,4 @@ STAGES = {
     'pre': PRE_MODULES,
     'reads': SHORT_READ_MODULES,
 }
+DEFAULT_STAGE = 'qc'

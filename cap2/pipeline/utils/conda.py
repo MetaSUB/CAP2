@@ -13,14 +13,15 @@ class SpecificationError(Exception):
 
 
 class CondaEnv(luigi.Task):
-    base_path = luigi.Parameter(default="vendor/conda")
     name = luigi.Parameter()
     python = luigi.Parameter(default='3.7')
-
-    spec_dir = luigi.Parameter(default="config/envs")
+    config_filename = luigi.Parameter()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.config = PipelineConfig(self.config_filename)
+        self.spec_dir = self.config.conda_spec_dir
+        self.base_path = self.config.conda_base_path
         self.path = os.path.join(self.base_path, self.name)
         self.spec_file = os.path.abspath(os.path.join(
             self.spec_dir, '{}.yml'.format(self.name)
@@ -138,9 +139,8 @@ class CondaEnv(luigi.Task):
 
 class CondaPackage(luigi.Task):
     package = luigi.Parameter()
-
+    config_filename = luigi.Parameter()
     executable = luigi.Parameter()
-
     channel = luigi.Parameter(default="anaconda")
     env = luigi.Parameter(default="CAP_v2")
     version = luigi.Parameter(default="None")
@@ -148,7 +148,7 @@ class CondaPackage(luigi.Task):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._env = CondaEnv(name=self.env, python=self.python)
+        self._env = CondaEnv(name=self.env, python=self.python, config_filename=config_filename)
         self.bin = os.path.join(
             self._env.bin, self.executable
         )

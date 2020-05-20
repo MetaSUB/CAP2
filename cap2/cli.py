@@ -3,11 +3,10 @@ import click
 
 from .api import (
     run_db_stage,
-    run_qc_stage,
-    run_preprocessing_stage,
-    run_short_read_stage,
+    run_modules,
 )
 from .sample import Sample
+from .constants import STAGES
 
 
 @click.group()
@@ -34,11 +33,13 @@ def cap_db(threads, config):
     run_db_stage(config_path=config, cores=threads)
 
 
-@run.command('qc')
+@run.command('stage')
+@click.option('-t', '--threads', default=1)
 @click.option('-c', '--config', type=click.Path(), default='')
+@click.argument('stage', type=click.Choice(STAGES.keys()))
 @click.argument('manifest', type=click.File('r'))
-def cap_qc(config, manifest):
-    """Run the CAP2 qc pipeline.
+def cap_stage(threads, config, stage, manifest):
+    """Run  a stage of the CAP2 pipeline.
 
     Config is a yaml file specifying these keys:
         out_dir: <directory where output should go>
@@ -48,41 +49,7 @@ def cap_qc(config, manifest):
     <sample name>   <read1 filepath>    <read2 filepath>
     """
     samples = Sample.samples_from_manifest(manifest)
-    run_qc_stage(samples, config_path=config)
-
-
-@run.command('pre')
-@click.option('-c', '--config', type=click.Path(), default='')
-@click.argument('manifest', type=click.File('r'))
-def cap_pre(config, manifest):
-    """Run the CAP2 preprocessing pipeline.
-
-    Config is a yaml file specifying these keys:
-        out_dir: <directory where output should go>
-        db_dir: <directory where databases are currently stored>
-
-    Manifest is a three column file with rows of form:
-    <sample name>   <read1 filepath>    <read2 filepath>
-    """
-    samples = Sample.samples_from_manifest(manifest)
-    run_preprocessing_stage(samples, config_path=config)
-
-
-@run.command('short-reads')
-@click.option('-c', '--config', type=click.Path(), default='')
-@click.argument('manifest', type=click.File('r'))
-def cap_short_read(config, manifest):
-    """Run the CAP2 short read pipeline and preprocessing pipeline.
-
-    Config is a yaml file specifying these keys:
-        out_dir: <directory where output should go>
-        db_dir: <directory where databases are currently stored>
-
-    Manifest is a three column file with rows of form:
-    <sample name>   <read1 filepath>    <read2 filepath>
-    """
-    samples = Sample.samples_from_manifest(manifest)
-    run_short_read_stage(samples, config_path=config)
+    run_modules(samples, STAGES[stage], config_path=config, cores=threads)
 
 
 if __name__ == '__main__':

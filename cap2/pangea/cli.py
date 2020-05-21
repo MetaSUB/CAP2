@@ -35,10 +35,11 @@ def set_config(email, password, org_name, grp_name, bucket_name, s3_endpoint, s3
 @click.option('--s3-profile', default='default')
 @click.option('-e', '--email', default=environ.get('PANGEA_USER', None))
 @click.option('-p', '--password', default=environ.get('PANGEA_PASS', None))
+@click.option('-w', '--workers', default=1)
 @click.argument('org_name')
 @click.argument('grp_name')
 @click.argument('bucket_name')
-def cli_run_group(endpoint, s3_endpoint, s3_profile, email, password,
+def cli_run_group(endpoint, s3_endpoint, s3_profile, email, password, workers,
                   org_name, grp_name, bucket_name):
     set_config(email, password, org_name, grp_name, bucket_name, s3_endpoint, s3_profile)
     group = PangeaGroup(grp_name, email, password, endpoint, org_name)
@@ -62,7 +63,7 @@ def cli_run_group(endpoint, s3_endpoint, s3_profile, email, password,
     mqc_task.wrapped.fastqcs = fqc_tasks
     tasks.append(mqc_task)
 
-    luigi.build(tasks, local_scheduler=True)
+    luigi.build(tasks, local_scheduler=True, workers=workers)
 
 
 @run.command('sample')

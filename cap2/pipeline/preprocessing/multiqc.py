@@ -16,21 +16,10 @@ class MultiQC(CapGroupTask):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # self.pkg = CondaPackage(
-        #     package="multiqc==1.8",
-        #     executable="multiqc",
-        #     channel="bioconda",
-        #     config_filename=self.config_filename,
-        # )
-        self.fastqcs = [
-            FastQC(
-                pe1=sample_tuple[1],
-                pe2=sample_tuple[2],
-                sample_name=sample_tuple[0],
-                config_filename=self.config_filename,
-            )
-            for sample_tuple in self.samples
-        ]
+
+    @property
+    def fastqcs(self):
+        return self.module_req_list(FastQC)
 
     def requires(self):
         return self.fastqcs

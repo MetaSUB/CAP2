@@ -148,12 +148,26 @@ class PangeaGroupLoadTask(PangeaBaseLoadTask, CapGroupTask):
         super().__init__(*args, **kwargs)
         assert self.grp_name == self.group_name
         self.pangea_obj = self.grp
+        self.requires_reads = {}
 
     @property
     def wrapped(self):
-        return self.wrapped_module.from_samples(
+        instance = self.wrapped_module.from_samples(
             self.group_name, self.samples, self.config_filename
         )
+        instance._make_req_module = self._make_req_module
+        return instance
+
+    def _make_req_module(self, module_type, pe1, pe2, sample_name, config_filename):
+        task = PangeaLoadTask(
+            pe1=pe1,
+            pe2=pe2,
+            sample_name=sample_name,
+            config_filename=config_filename,
+        )
+        task.wrapped_module = module_type
+        task.requires_reads = self.requires_reads.get(module_type, False)
+        return task
 
     def requires(self):
         if self.results_available():

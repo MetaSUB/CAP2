@@ -76,6 +76,9 @@ class CapGroupTask(BaseCapTask):
     group_name = luigi.Parameter()
     samples = luigi.TupleParameter()
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
     def get_target(self, field_name, ext):
         name = self.group_name.lower().replace(' ', '_') 
         filename = f'{name}.{self.module_name()}.{field_name}.{ext}'
@@ -83,6 +86,23 @@ class CapGroupTask(BaseCapTask):
         target = luigi.LocalTarget(filepath)
         target.makedirs()
         return target
+
+    def _make_req_module(self, module_type, pe1, pe2, sample_name, config_filename):
+        return module_type(
+            pe1=pe1,
+            pe2=pe2,
+            sample_name=sample_name,
+            config_filename=config_filename,
+        )
+
+    def module_req_list(self, module_type):
+        reqs = [
+            self._make_req_module(
+                module_type, sample_tuple[1], sample_tuple[2], sample_tuple[0], self.config_filename
+            )
+            for sample_tuple in self.samples
+        ]
+        return reqs
 
     @classmethod
     def from_samples(cls, group_name, samples, config_path='', cores=1):

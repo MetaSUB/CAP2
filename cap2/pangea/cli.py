@@ -46,25 +46,13 @@ def cli_run_group(scheduler_host, scheduler_port,
                   org_name, grp_name, bucket_name):
     set_config(email, password, org_name, grp_name, bucket_name, s3_endpoint, s3_profile)
     group = PangeaGroup(grp_name, email, password, endpoint, org_name)
-
-    fqc_tasks = []
-    for sample in group.pangea_samples():
-        click.echo(f'Processing sample {sample.name}...', err=True)
-        task = PangeaLoadTask(
-            pe1=sample.r1,
-            pe2=sample.r2,
-            sample_name=sample.name,
-        )
-        task.wrapped_module = FastQC
-        task.requires_reads = True
-        fqc_tasks.append(task)
-        click.echo('done.', err=True)
-
     tasks = []
+
     mqc_task = PangeaGroupLoadTask.from_samples(grp_name, group.cap_samples())
     mqc_task.wrapped_module = MultiQC
-    mqc_task.wrapped.fastqcs = fqc_tasks
+    mqc.requires_reads[FastQC] = True
     tasks.append(mqc_task)
+
     if not scheduler_host:
         luigi.build(tasks, local_scheduler=True, workers=workers)
     else:

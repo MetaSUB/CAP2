@@ -30,6 +30,8 @@ def set_config(email, password, org_name, grp_name, bucket_name, s3_endpoint, s3
 
 
 @run.command('group')
+@click.option('--scheduler-host', default=None)
+@click.option('--scheduler-port', default=8082)
 @click.option('--endpoint', default='https://pangea.gimmebio.com')
 @click.option('--s3-endpoint', default='https://s3.wasabisys.com')
 @click.option('--s3-profile', default='default')
@@ -39,7 +41,8 @@ def set_config(email, password, org_name, grp_name, bucket_name, s3_endpoint, s3
 @click.argument('org_name')
 @click.argument('grp_name')
 @click.argument('bucket_name')
-def cli_run_group(endpoint, s3_endpoint, s3_profile, email, password, workers,
+def cli_run_group(scheduler_host, scheduler_port,
+                  endpoint, s3_endpoint, s3_profile, email, password, workers,
                   org_name, grp_name, bucket_name):
     set_config(email, password, org_name, grp_name, bucket_name, s3_endpoint, s3_profile)
     group = PangeaGroup(grp_name, email, password, endpoint, org_name)
@@ -62,9 +65,12 @@ def cli_run_group(endpoint, s3_endpoint, s3_profile, email, password, workers,
     mqc_task.wrapped_module = MultiQC
     mqc_task.wrapped.fastqcs = fqc_tasks
     tasks.append(mqc_task)
-
-    luigi.build(tasks, local_scheduler=True, workers=workers)
-
+    if not scheduler_host:
+        luigi.build(tasks, local_scheduler=True, workers=workers)
+    else:
+        luigi.build(
+            tasks, scheduler_host=scheduler_host, scheduler_port=scheduler_port, workers=workers
+        )
 
 @run.command('sample')
 @click.option('--endpoint', default='https://pangea.gimmebio.com')

@@ -4,7 +4,7 @@ import click
 from .pangea.cli import pangea
 from .api import (
     run_db_stage,
-    run_modules,
+    run_stage,
 )
 from .sample import Sample
 from .constants import (
@@ -52,7 +52,7 @@ def cap_pipeline(threads, config, stage, manifest):
     <sample name>   <read1 filepath>    <read2 filepath>
     """
     samples = Sample.samples_from_manifest(manifest)
-    run_modules(samples, STAGES[stage], config_path=config, cores=threads)
+    run_stage(samples, stage, config_path=config, cores=threads)
 
 
 if __name__ == '__main__':

@@ -17,6 +17,7 @@ setuptools.setup(
         'PyYaml',
         'biopython',
         'click',
+        'multiqc==1.8',  # hackish, tbd if I'm okay with this
     ],
     entry_points={
         'console_scripts': [

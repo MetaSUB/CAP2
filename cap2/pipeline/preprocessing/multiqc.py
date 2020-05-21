@@ -57,7 +57,7 @@ class MultiQC(CapGroupTask):
             'multiqc',
             '-f',
             '--no-data-dir',
-            f'-i {self.group_name}',
+            f'-i \'{self.group_name}\'',
             f'-n {self.output()["report"].path}',
             f'-c {conf_file.name} ',
             f'-l {file_list.name} ',

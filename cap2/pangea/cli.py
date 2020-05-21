@@ -4,9 +4,9 @@ import luigi
 
 from os import environ
 
-from .load_task import PangeaLoadTask
+from .load_task import PangeaLoadTask, PangeaGroupLoadTask
 from .pangea_sample import PangeaSample, PangeaGroup
-from ..pipeline.preprocessing import FastQC
+from ..pipeline.preprocessing import FastQC, MultiQC
 
 
 @click.group()
@@ -42,10 +42,10 @@ def cli_run_group(endpoint, s3_endpoint, s3_profile, email, password,
                   org_name, grp_name, bucket_name):
     set_config(email, password, org_name, grp_name, bucket_name, s3_endpoint, s3_profile)
     group = PangeaGroup(grp_name, email, password, endpoint, org_name)
-    tasks = []
-    for sample in group.samples():
+
+    fqc_tasks = []
+    for sample in group.pangea_samples():
         click.echo(f'Processing sample {sample.name}...', err=True)
-        # sample.download()
         task = PangeaLoadTask(
             pe1=sample.r1,
             pe2=sample.r2,
@@ -53,8 +53,15 @@ def cli_run_group(endpoint, s3_endpoint, s3_profile, email, password,
         )
         task.wrapped_module = FastQC
         task.requires_reads = True
-        tasks.append(task)
+        fqc_tasks.append(task)
         click.echo('done.', err=True)
+
+    tasks = []
+    mqc_task = PangeaGroupLoadTask.from_samples(grp_name, group.cap_samples())
+    mqc_task.wrapped_module = MultiQC
+    mqc_task.wrapped.fastqcs = fqc_tasks
+    tasks.append(mqc_task)
+
     luigi.build(tasks, local_scheduler=True)
 
 

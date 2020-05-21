@@ -11,11 +11,10 @@ from pangea_api import (
 from sys import stderr
 from os.path import join, isfile
 
+from ..sample import Sample
+
 
 class PangeaSample:
-    endpoint = luigi.Parameter(default='https://pangea.gimmebio.com')
-    email = luigi.Parameter()
-    password = luigi.Parameter()
 
     def __init__(self, sample_name, email, password, endpoint, org_name, grp_name, knex=None, sample=None):
         if not knex:
@@ -29,6 +28,7 @@ class PangeaSample:
         self.name = sample_name
         self.r1 = f'downloaded_data/{self.name}.R1.fq.gz'
         self.r2 = f'downloaded_data/{self.name}.R2.fq.gz'
+        self.cap_sample = Sample(self.name, self.r1, self.r2)
 
     def download(self):
         ar = self.sample.analysis_result('raw::raw_reads').get()
@@ -42,9 +42,6 @@ class PangeaSample:
 
 
 class PangeaGroup:
-    endpoint = luigi.Parameter(default='https://pangea.gimmebio.com')
-    email = luigi.Parameter()
-    password = luigi.Parameter()
 
     def __init__(self, grp_name, email, password, endpoint, org_name):
         self.knex = Knex(endpoint)
@@ -53,7 +50,7 @@ class PangeaGroup:
         self.grp = org.sample_group(grp_name).get()
         self.name = grp_name
 
-    def samples(self):
+    def pangea_samples(self):
         for sample in self.grp.get_samples():
             yield PangeaSample(
                 sample.name,
@@ -65,3 +62,7 @@ class PangeaGroup:
                 knex=self.knex,
                 sample=sample,
             )
+
+    def cap_samples(self):
+        for sample in self.pangea_samples():
+            yield sample.cap_sample

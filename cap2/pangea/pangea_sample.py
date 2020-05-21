@@ -31,6 +31,15 @@ class PangeaSample:
         self.r2 = f'downloaded_data/{self.name}.R2.fq.gz'
         self.cap_sample = Sample(self.name, self.r1, self.r2)
 
+    def has_reads(self):
+        for name in ['raw::raw_reads', 'raw_reads']:
+            try:
+                self.sample.analysis_result(name).get()
+                return True
+            except HTTPError:
+                continue
+        return False
+
     def download(self):
         try:
             ar = self.sample.analysis_result('raw::raw_reads').get()
@@ -56,7 +65,7 @@ class PangeaGroup:
 
     def pangea_samples(self):
         for sample in self.grp.get_samples():
-            yield PangeaSample(
+            psample = PangeaSample(
                 sample.name,
                 None,
                 None,
@@ -66,6 +75,8 @@ class PangeaGroup:
                 knex=self.knex,
                 sample=sample,
             )
+            if psample.has_reads():
+                yield psample
 
     def cap_samples(self):
         for sample in self.pangea_samples():

@@ -122,7 +122,7 @@ class PangeaLoadTask(PangeaBaseLoadTask, CapTask):
             return None
         if self.requires_reads:
             PangeaSample(
-                sample.name,
+                self.sample.name,
                 None,
                 None,
                 None,

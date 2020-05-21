@@ -1,6 +1,7 @@
 import luigi
 import subprocess
 import os
+from requests.exceptions import HTTPError
 
 from pangea_api import (
     Knex,
@@ -31,7 +32,10 @@ class PangeaSample:
         self.cap_sample = Sample(self.name, self.r1, self.r2)
 
     def download(self):
-        ar = self.sample.analysis_result('raw::raw_reads').get()
+        try:
+            ar = self.sample.analysis_result('raw::raw_reads').get()
+        except HTTPError:
+            ar = self.sample.analysis_result('raw_reads').get()
         r1 = ar.field('read_1').get()
         r2 = ar.field('read_2').get()
         os.makedirs('downloaded_data', exist_ok=True)

@@ -1,6 +1,7 @@
 
 import click
 
+from .pangea.cli import pangea
 from .api import (
     run_db_stage,
     run_modules,
@@ -15,6 +16,9 @@ from .constants import (
 @click.group()
 def main():
     pass
+
+
+main.add_command(pangea)
 
 
 @main.group()

@@ -21,6 +21,9 @@ class FastQC(CapTask):
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
 
+    def _module_name(self):
+        return 'fastqc'
+
     @property
     def _report(self):
         return basename(self.pe1).split('.f')[0] + '_fastqc.html'

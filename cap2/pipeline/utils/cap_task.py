@@ -16,7 +16,7 @@ class CapTask(luigi.Task):
     sample_name = luigi.Parameter()
     pe1 = luigi.Parameter()
     pe2 = luigi.Parameter()
-    config_filename = luigi.Parameter()
+    config_filename = luigi.Parameter(default='')
     cores = luigi.IntParameter(default=1)
 
     def __init__(self, *args, **kwargs):
@@ -24,8 +24,11 @@ class CapTask(luigi.Task):
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
 
-    def module_name(self):
+    def _module_name(self):
         raise NotImplementedError()
+
+    def module_name(self):
+        return 'cap2::' + self._module_name()
 
     def get_target(self, field_name, ext):
         filename = f'{self.sample_name}.{self.module_name()}.{field_name}.{ext}'

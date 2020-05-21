@@ -36,23 +36,22 @@ class FastQC(CapTask):
         return self.pkg
 
     def output(self):
-        report = luigi.LocalTarget(join(self.out_dir, self._report))
-        zip_out = luigi.LocalTarget(join(self.out_dir, self._zip_output))
-        report.makedirs()
-        zip_out.makedirs()
         return {
-            'report': report,
-            'zip_output': zip_out,
+            'report': self.get_target('report', 'html'),
+            'zip_output': self.get_target('zip_out', 'zip'),
         }
 
     def _run(self):
         # fixme: redirect output to loggers
+        outdir = dirname(self.output()['report'].path)
         cmd = ' '.join([
             self.pkg._env.bin + '/perl',  # fastqc uses system perl which we do not assume access to
             self.pkg.bin,
             '-t', str(self.cores),
             self.pe1,
-            '-o',
-            dirname(self.output()['report'].path)
+            f'-o {outdir}',
+            '&& ',
+            f'mv {outdir}/{self._report} {self.output()["report"].path}; ',
+            f'mv {outdir}/{self._zip_output} {self.output()["zip_output"].path}; ',
         ])
         self.run_cmd(cmd)

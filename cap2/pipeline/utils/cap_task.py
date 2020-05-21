@@ -8,14 +8,7 @@ from os.path import join
 from ..config import PipelineConfig
 
 
-class CapTask(luigi.Task):
-    """Base class for CAP2 tasks.
-
-    Currently implements some basic shared logic.
-    """
-    sample_name = luigi.Parameter()
-    pe1 = luigi.Parameter()
-    pe2 = luigi.Parameter()
+class BaseCapTask(luigi.Task):
     config_filename = luigi.Parameter(default='')
     cores = luigi.IntParameter(default=1)
 
@@ -29,23 +22,6 @@ class CapTask(luigi.Task):
 
     def module_name(self):
         return 'cap2::' + self._module_name()
-
-    def get_target(self, field_name, ext):
-        filename = f'{self.sample_name}.{self.module_name()}.{field_name}.{ext}'
-        filepath = join(self.config.out_dir, self.sample_name, filename)
-        target = luigi.LocalTarget(filepath)
-        target.makedirs()
-        return target
-
-    @classmethod
-    def from_sample(cls, sample, config_path, cores=1):
-        return cls(
-            pe1=sample.r1,
-            pe2=sample.r2,
-            sample_name=sample.name,
-            config_filename=config_path,
-            cores=cores
-        )
 
     def _run(self):
         raise NotImplementedError()
@@ -66,19 +42,40 @@ class CapTask(luigi.Task):
             job.check_returncode()  # raises CalledProcessError
 
 
-class CapGroupTask(luigi.Task):
-    group_name = luigi.Parameter()
-    samples = luigi.TupleParameter()
-    config_filename = luigi.Parameter()
-    cores = luigi.IntParameter(default=1)
+class CapTask(BaseCapTask):
+    """Base class for CAP2 tasks.
 
-    @property
-    def module_name(self):
-        raise NotImplementedError()
+    Currently implements some basic shared logic.
+    """
+    sample_name = luigi.Parameter()
+    pe1 = luigi.Parameter()
+    pe2 = luigi.Parameter()
 
     def get_target(self, field_name, ext):
-        filename = f'{self.group_name}.{self.module_name}.{field_name}.{ext}'
-        filepath = join(self.config.out_dir, filename)
+        filename = f'{self.sample_name}.{self.module_name()}.{field_name}.{ext}'
+        filepath = join(self.config.out_dir, self.sample_name, filename)
+        target = luigi.LocalTarget(filepath)
+        target.makedirs()
+        return target
+
+    @classmethod
+    def from_sample(cls, sample, config_path, cores=1):
+        return cls(
+            pe1=sample.r1,
+            pe2=sample.r2,
+            sample_name=sample.name,
+            config_filename=config_path,
+            cores=cores
+        )
+
+
+class CapGroupTask(BaseCapTask):
+    group_name = luigi.Parameter()
+    samples = luigi.TupleParameter()
+
+    def get_target(self, field_name, ext):
+        filename = f'{self.group_name}.{self.module_name()}.{field_name}.{ext}'
+        filepath = join(self.config.out_dir, 'groups', self.group_name, filename)
         target = luigi.LocalTarget(filepath)
         target.makedirs()
         return target

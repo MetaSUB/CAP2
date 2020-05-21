@@ -50,7 +50,7 @@ def cli_run_group(scheduler_host, scheduler_port,
 
     mqc_task = PangeaGroupLoadTask.from_samples(grp_name, group.cap_samples())
     mqc_task.wrapped_module = MultiQC
-    mqc.requires_reads[FastQC] = True
+    mqc_task.module_requires_reads[FastQC] = True
     tasks.append(mqc_task)
 
     if not scheduler_host:

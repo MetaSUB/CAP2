@@ -110,16 +110,16 @@ class PangeaLoadTask(PangeaBaseLoadTask, CapTask):
 
     @property
     def wrapped(self):
-        return self.wrapped_module(
+        instance = self.wrapped_module(
             pe1=self.pe1,
             pe2=self.pe2,
             sample_name=self.sample_name,
             config_filename=self.config_filename,
         )
+        instance.pre_run_hooks.append(self._download_reads)
+        return instance
 
-    def requires(self):
-        if self.results_available():
-            return None
+    def _download_reads(self):
         if self.requires_reads:
             PangeaSample(
                 self.sample.name,
@@ -131,6 +131,10 @@ class PangeaLoadTask(PangeaBaseLoadTask, CapTask):
                 knex=self.knex,
                 sample=self.sample,
             ).download()
+
+    def requires(self):
+        if self.results_available():
+            return None
         return self.wrapped
 
     def _uri(self, local_path):

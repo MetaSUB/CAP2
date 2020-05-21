@@ -16,6 +16,7 @@ class BaseCapTask(luigi.Task):
         super().__init__(*args, **kwargs)
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
+        self.pre_run_hooks = []
 
     def _module_name(self):
         raise NotImplementedError()
@@ -27,6 +28,8 @@ class BaseCapTask(luigi.Task):
         raise NotImplementedError()
 
     def run(self):
+        for hook in self.pre_run_hooks:
+            hook()
         return self._run()
 
     def run_cmd(self, cmd):

@@ -45,13 +45,14 @@ def cli_run_group(endpoint, s3_endpoint, s3_profile, email, password,
     tasks = []
     for sample in group.samples():
         click.echo(f'Processing sample {sample.name}...', err=True)
-        sample.download()
+        # sample.download()
         task = PangeaLoadTask(
             pe1=sample.r1,
             pe2=sample.r2,
             sample_name=sample.name,
         )
         task.wrapped_module = FastQC
+        task.requires_reads = True
         tasks.append(task)
         click.echo('done.', err=True)
     luigi.build(tasks, local_scheduler=True)
@@ -70,7 +71,7 @@ def cli_run_group(endpoint, s3_endpoint, s3_profile, email, password,
 def cli_run_sample(endpoint, s3_endpoint, s3_profile, email, password,
                    org_name, grp_name, bucket_name, sample_name):
     sample = PangeaSample(sample_name, email, password, endpoint, org_name, grp_name)
-    sample.download()
+    # sample.download()
     set_config(email, password, org_name, grp_name, bucket_name, s3_endpoint, s3_profile)
     task = PangeaLoadTask(
         pe1=sample.r1,
@@ -78,4 +79,5 @@ def cli_run_sample(endpoint, s3_endpoint, s3_profile, email, password,
         sample_name=sample.name,
     )
     task.wrapped_module = FastQC
+    task.requires_reads = True
     luigi.build([task], local_scheduler=True)

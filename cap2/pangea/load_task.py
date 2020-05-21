@@ -11,6 +11,8 @@ from sys import stderr
 from os.path import join, basename
 from requests.exceptions import HTTPError
 
+from .pangea_sample import PangeaSample
+
 from ..pipeline.utils.cap_task import CapTask
 from ..pipeline.config import PipelineConfig
 from ..pipeline.preprocessing import FastQC
@@ -26,6 +28,7 @@ class PangeaLoadTask(CapTask):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.wrapped_module = None
+        self.requires_reads = False
         user = luigi.configuration.get_config().get('pangea', 'user')
         password = luigi.configuration.get_config().get('pangea', 'password')
         org_name = luigi.configuration.get_config().get('pangea', 'org_name')
@@ -33,9 +36,9 @@ class PangeaLoadTask(CapTask):
         self.s3_bucket_name = luigi.configuration.get_config().get('pangea', 's3_bucket_name')
         self.s3_endpoint_url = luigi.configuration.get_config().get('pangea', 's3_endpoint_url')
         self.s3_profile = luigi.configuration.get_config().get('pangea', 's3_profile')
-        knex = Knex(self.endpoint)
-        User(knex, user, password).login()
-        org = Organization(knex, org_name).get()
+        self.knex = Knex(self.endpoint)
+        User(self.knex, user, password).login()
+        org = Organization(self.knex, org_name).get()
         grp = org.sample_group(grp_name).get()
         self.sample = grp.sample(self.sample_name).get()
 
@@ -51,6 +54,17 @@ class PangeaLoadTask(CapTask):
     def requires(self):
         if self.results_available():
             return None
+        if self.requires_reads:
+            PangeaSample(
+                sample.name,
+                None,
+                None,
+                None,
+                None,
+                None,
+                knex=self.knex,
+                sample=self.sample,
+            ).download()
         return self.wrapped
 
     def module_name(self):

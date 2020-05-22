@@ -55,11 +55,20 @@ class ReadStats(CapTask):
         )
         self.dropout = 1 / 1000
 
-    def module_name(self):
+    @classmethod
+    def _module_name(cls):
         return 'read_stats'
 
     def requires(self):
         return self.reads
+
+    @classmethod
+    def version(cls):
+        return 'v1.0.0'
+
+    @classmethod
+    def dependencies(cls):
+        return [CleanReads]
 
     def output(self):
         return {

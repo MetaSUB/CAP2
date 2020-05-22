@@ -15,7 +15,7 @@ class Mash(CapTask):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.pkg = CondaPackage(
-            package="mash",
+            package="mash==2.2.2",
             executable="mash",
             channel="bioconda",
             config_filename=self.config_filename,
@@ -29,11 +29,20 @@ class Mash(CapTask):
             config_filename=self.config_filename
         )
 
-    def module_name(self):
+    @classmethod
+    def _module_name(cls):
         return 'mash'
 
     def requires(self):
         return self.pkg, self.reads
+
+    @classmethod
+    def version(cls):
+        return 'v1.0.0'
+
+    @classmethod
+    def dependencies(cls):
+        return ['mash==2.2.2', CleanReads]
 
     def output(self):
         return {'10M_mash_sketch': self.get_target('sketch', 'msh')}

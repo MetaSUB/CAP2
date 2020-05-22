@@ -15,7 +15,7 @@ class GrootAMR(CapTask):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.pkg = CondaPackage(
-            package="groot",
+            package="groot==1.1.2",
             executable="groot",
             channel="bioconda",
             config_filename=self.config_filename,
@@ -30,11 +30,20 @@ class GrootAMR(CapTask):
             config_filename=self.config_filename
         )
 
-    def module_name(self):
+    @classmethod
+    def _module_name(cls):
         return 'groot'
 
     def requires(self):
         return self.pkg, self.db, self.reads
+
+    @classmethod
+    def version(cls):
+        return 'v1.0.0'
+
+    @classmethod
+    def dependencies(cls):
+        return ['groot==1.1.2', GrootDB, CleanReads]
 
     def output(self):
         return {

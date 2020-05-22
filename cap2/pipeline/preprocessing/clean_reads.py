@@ -27,7 +27,16 @@ class CleanReads(CapTask):
     def reads(self):
         return self.ec_reads
 
-    def module_name(self):
+    @classmethod
+    def version(cls):
+        return 'v1.0.0'
+
+    @classmethod
+    def dependencies(cls):
+        return [ErrorCorrectReads]
+
+    @classmethod
+    def _module_name(cls):
         return 'clean_reads'
 
     def requires(self):

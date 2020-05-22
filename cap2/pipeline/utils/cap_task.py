@@ -2,6 +2,7 @@
 import luigi
 import subprocess
 
+from hashlib import md5
 from sys import stderr
 from os.path import join
 
@@ -14,15 +15,56 @@ class BaseCapTask(luigi.Task):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.version()  # force this method to be implemented
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
         self.pre_run_hooks = []
 
-    def _module_name(self):
+    @classmethod
+    def version(cls):
         raise NotImplementedError()
 
-    def module_name(self):
-        return 'cap2::' + self._module_name()
+    @classmethod
+    def dependencies(cls):
+        raise NotImplementedError()
+
+    @classmethod
+    def version_tree(cls, terminal=True):
+        """Return a newick tree with versions."""
+        out = f'{cls._module_name()}=={cls.version()}'
+        if cls.dependencies:
+            depends = [
+                el if isinstance(el, str) else el.version_tree(terminal=False)
+                for el in cls.dependencies()
+            ]
+            depends = ','.join(depends)
+            out = f'({depends}){out}'
+        if terminal:
+            out += ';'
+        return out
+
+    @classmethod
+    def version_hash(cls):
+        try:
+            version = cls.version()
+        except:
+            print(cls, file=stderr)
+            raise
+        out = ''
+        for el in [version] + cls.dependencies():
+            if not isinstance(el, str):
+                el = el.version_hash()
+            result = md5(el.encode())
+            out += result.hexdigest()
+        return out
+
+    @classmethod
+    def _module_name(cls):
+        raise NotImplementedError(cls.module_name())
+
+    @classmethod
+    def module_name(cls):
+        return 'cap2::' + cls._module_name()
 
     def _run(self):
         raise NotImplementedError()

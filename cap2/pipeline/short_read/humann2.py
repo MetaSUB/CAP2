@@ -15,7 +15,7 @@ class MicaUniref90(CapTask):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.pkg = CondaPackage(
-            package="diamond",
+            package="diamond==0.9.32",
             executable="diamond",
             channel="bioconda",
             config_filename=self.config_filename,
@@ -30,11 +30,20 @@ class MicaUniref90(CapTask):
             config_filename=self.config_filename
         )
 
-    def module_name(self):
-        return 'diamond'
-
     def requires(self):
         return self.pkg, self.db, self.reads
+
+    @classmethod
+    def _module_name(cls):
+        return 'diamond'
+
+    @classmethod
+    def version(cls):
+        return 'v1.0.0'
+
+    @classmethod
+    def dependencies(cls):
+        return ['diamond==0.9.32', Uniref90, CleanReads]
 
     def output(self):
         return {
@@ -58,7 +67,7 @@ class Humann2(CapTask):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.pkg = CondaPackage(
-            package="humann2",
+            package="humann2==2.8.1",
             executable="humann2",
             channel="bioconda",
             config_filename=self.config_filename,
@@ -77,6 +86,18 @@ class Humann2(CapTask):
 
     def requires(self):
         return self.pkg, self.alignment
+
+    @classmethod
+    def _module_name(cls):
+        return 'humann2'
+
+    @classmethod
+    def version(cls):
+        return 'v1.0.0'
+
+    @classmethod
+    def dependencies(cls):
+        return ['humann2==2.8.1', MicaUniref90]
 
     def output(self):
         return {

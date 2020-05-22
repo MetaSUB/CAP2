@@ -14,7 +14,7 @@ class MicrobeCensus(CapTask):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.pkg = CondaPackage(
-            package="microbecensus",
+            package="microbecensus==1.1.1",
             executable="microbe_census",
             channel="bioconda",
             config_filename=self.config_filename,
@@ -28,11 +28,20 @@ class MicrobeCensus(CapTask):
             config_filename=self.config_filename
         )
 
-    def module_name(self):
+    @classmethod
+    def _module_name(self):
         return 'microbe_census'
 
     def requires(self):
         return self.pkg, self.reads
+
+    @classmethod
+    def version(self):
+        return 'v1.0.0'
+
+    @classmethod
+    def dependencies(self):
+        return ["microbecensus==1.1.1", CleanReads]
 
     def output(self):
         return {

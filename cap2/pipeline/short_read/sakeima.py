@@ -34,6 +34,12 @@ class Sakeima(CapTask):
     def requires(self):
         return self.pkg, self.reads
 
+    def version(self):
+        return 'v1.0.0'
+
+    def dependencies(self):
+        return [CleanReads]
+
     def output(self):
         return {'sketch': self.get_target('sketch', 'jf')}
 

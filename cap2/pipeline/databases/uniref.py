@@ -5,16 +5,17 @@ import subprocess
 
 from ..config import PipelineConfig
 from ..utils.conda import CondaPackage
+from ..utils.cap_task import CapTask
 
 
-class Uniref90(luigi.Task):
+class Uniref90(CapTask):
     config_filename = luigi.Parameter()
     cores = luigi.IntParameter(default=1)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.pkg = CondaPackage(
-            package="diamond",
+            package="diamond==0.9.32",
             executable="diamond",
             channel="bioconda",
             config_filename=self.config_filename,
@@ -25,6 +26,18 @@ class Uniref90(luigi.Task):
 
     def requires(self):
         return self.pkg
+
+    @classmethod
+    def _module_name(cls):
+        return 'diamond_uniref_db'
+
+    @classmethod
+    def version(cls):
+        return 'v1.0.0'
+
+    @classmethod
+    def dependencies(cls):
+        return ['diamond==0.9.32', '2020-06-01']
 
     @property
     def diamond_index(self):

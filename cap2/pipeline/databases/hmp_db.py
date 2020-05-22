@@ -7,9 +7,10 @@ import subprocess
 from cap2.pipeline.constants import MASH_SKETCH_SIZE
 from ..config import PipelineConfig
 from ..utils.conda import CondaPackage
+from ..utils.cap_task import CapTask
 
 
-class HmpDB(luigi.Task):
+class HmpDB(CapTask):
 
     config_filename = luigi.Parameter()
     cores = luigi.IntParameter(default=1)
@@ -17,7 +18,7 @@ class HmpDB(luigi.Task):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.pkg = CondaPackage(
-            package="mash",
+            package="mash==2.2.2",
             executable="mash",
             channel="bioconda",
             config_filename=self.config_filename,
@@ -29,6 +30,18 @@ class HmpDB(luigi.Task):
 
     def requires(self):
         return self.pkg
+
+    @classmethod
+    def _module_name(cls):
+        return 'mash_hmp_db'
+
+    @classmethod
+    def version(cls):
+        return 'v1.0.0'
+
+    @classmethod
+    def dependencies(cls):
+        return ['mash==2.2.2', '2020-06-01']
 
     @property
     def mash_sketch(self):

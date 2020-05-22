@@ -5,16 +5,17 @@ import subprocess
 
 from ..config import PipelineConfig
 from ..utils.conda import CondaPackage
+from ..utils.cap_task import CapTask
 
 
-class GrootDB(luigi.Task):
+class GrootDB(CapTask):
     config_filename = luigi.Parameter()
     cores = luigi.IntParameter(default=1)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.pkg = CondaPackage(
-            package="groot",
+            package="groot==1.1.2",
             executable="groot",
             channel="bioconda",
             config_filename=self.config_filename,
@@ -26,6 +27,18 @@ class GrootDB(luigi.Task):
     @property
     def groot_index(self):
         return self.output()['groot_index'].path
+
+    @classmethod
+    def _module_name(cls):
+        return 'groot_amr_db'
+
+    @classmethod
+    def version(cls):
+        return 'v1.0.0'
+
+    @classmethod
+    def dependencies(cls):
+        return ['groot==1.1.2', '2020-06-01']
 
     def output(self):
         groot_index = luigi.LocalTarget(join(self.db_dir, 'index_groot-db.90'))

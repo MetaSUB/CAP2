@@ -15,7 +15,7 @@ class KrakenUniq(CapTask):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.pkg = CondaPackage(
-            package="krakenuniq",
+            package="krakenuniq==0.5.8",
             executable="krakenuniq",
             channel="bioconda",
             config_filename=self.config_filename,
@@ -30,11 +30,20 @@ class KrakenUniq(CapTask):
             config_filename=self.config_filename
         )
 
-    def module_name(self):
+    @classmethod
+    def _module_name(cls):
         return 'krakenuniq'
 
     def requires(self):
         return self.pkg, self.db, self.reads
+
+    @classmethod
+    def version(cls):
+        return 'v0.1.0'
+
+    @classmethod
+    def dependencies(cls):
+        return ['krakenuniq==0.5.8', TaxonomicDB, CleanReads]
 
     def output(self):
         return {

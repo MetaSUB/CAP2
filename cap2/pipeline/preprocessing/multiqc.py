@@ -24,7 +24,16 @@ class MultiQC(CapGroupTask):
     def requires(self):
         return self.fastqcs
 
-    def _module_name(self):
+    @classmethod
+    def version(cls):
+        return 'v1.0.0'
+
+    @classmethod
+    def dependencies(cls):
+        return ['multiqc==1.8', FastQC]
+
+    @classmethod
+    def _module_name(cls):
         return 'multiqc'
 
     def output(self):

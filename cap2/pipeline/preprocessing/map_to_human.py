@@ -14,7 +14,7 @@ class RemoveHumanReads(CapTask):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.pkg = CondaPackage(
-            package="bowtie2",
+            package="bowtie2==2.4.1",
             executable="bowtie2",
             channel="bioconda",
             config_filename=self.config_filename,
@@ -32,7 +32,16 @@ class RemoveHumanReads(CapTask):
     def requires(self):
         return self.pkg, self.samtools, self.db
 
-    def module_name(self):
+    @classmethod
+    def version(cls):
+        return 'v1.0.0'
+
+    @classmethod
+    def dependencies(cls):
+        return ["bowtie2==2.4.1", HumanRemovalDB]
+
+    @classmethod
+    def _module_name(cls):
         return 'remove_human'
 
     def output(self):

@@ -11,6 +11,7 @@ from .constants import (
     DEFAULT_STAGE,
     STAGES,
 )
+from .pipeline.full_pipeline import FullPipeline
 
 
 @click.group()
@@ -19,6 +20,18 @@ def main():
 
 
 main.add_command(pangea)
+
+
+@main.command()
+@click.option('-t/-n', '--tree/--number', default=False)
+@click.option('-h/-n', '--hash/--number', default=False)
+def version(tree, hash):
+    if tree:
+        click.echo(FullPipeline.version_tree())
+    elif hash:
+        click.echo(FullPipeline.version_hash())
+    else:
+        click.echo(FullPipeline.version())
 
 
 @main.group()

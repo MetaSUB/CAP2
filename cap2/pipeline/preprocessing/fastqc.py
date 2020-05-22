@@ -13,7 +13,7 @@ class FastQC(CapTask):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.pkg = CondaPackage(
-            package="fastqc",
+            package="fastqc==v0.11.9",
             executable="fastqc",
             channel="bioconda",
             config_filename=self.config_filename,
@@ -21,8 +21,17 @@ class FastQC(CapTask):
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
 
-    def _module_name(self):
+    @classmethod
+    def _module_name(cls):
         return 'fastqc'
+
+    @classmethod
+    def version(cls):
+        return 'v1.0.0'
+
+    @classmethod
+    def dependencies(cls):
+        return ["fastqc==v0.11.9"]
 
     @property
     def _report(self):

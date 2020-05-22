@@ -32,6 +32,14 @@ class FastQC(CapTask):
     def requires(self):
         return self.pkg
 
+    @classmethod
+    def version(cls):
+        return 'v1.0.0'
+
+    @classmethod
+    def dependencies(cls):
+        return [ErrorCorrectReads]
+
     def output(self):
         report = luigi.LocalTarget(join(self.out_dir, self._report))
         zip_out = luigi.LocalTarget(join(self.out_dir, self._zip_output))

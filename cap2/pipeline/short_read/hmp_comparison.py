@@ -30,11 +30,20 @@ class HmpComparison(CapTask):
             config_filename=self.config_filename
         )
 
-    def module_name(self):
+    @classmethod
+    def _module_name(cls):
         return 'hmp_comparison'
 
     def requires(self):
         return self.pkg, self.db, self.mash
+
+    @classmethod
+    def version(cls):
+        return 'v1.0.0'
+
+    @classmethod
+    def dependencies(cls):
+        return ['mash==2.2.2', HmpDB, Mash]
 
     def output(self):
         return {'mash': self.get_target('mash', 'tsv')}

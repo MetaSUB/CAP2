@@ -13,7 +13,7 @@ class FastQC(CapTask):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.pkg = CondaPackage(
-            package="fastqc==v0.11.9",
+            package="fastqc=0.11.9",
             executable="fastqc",
             channel="bioconda",
             config_filename=self.config_filename,

@@ -13,7 +13,7 @@ class FullPipeline(CapTask):
 
     @classmethod
     def version(cls):
-        return 'v1.0.0'
+        return 'v2.0.0dev'
 
     @classmethod
     def dependencies(cls):
@@ -21,7 +21,7 @@ class FullPipeline(CapTask):
 
     @classmethod
     def _module_name(cls):
-        return 'processed_reads'
+        return 'metasub_cap'
 
     def output(self):
         return {}

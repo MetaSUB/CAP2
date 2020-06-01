@@ -48,6 +48,14 @@ class PangeaBaseLoadTask(BaseCapTask):
     def module_name(self):
         return 'pangea_load_task_' + self.wrapped.module_name()
 
+    @classmethod
+    def version(cls):
+        return 'v1.0.0'
+
+    @classmethod
+    def dependencies(cls):
+        return []
+
     def output(self):
         wrapped_out = self.wrapped.output()
         wrapped_out['upload_flag'] = self.get_target('uploaded', 'flag')

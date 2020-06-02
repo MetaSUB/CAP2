@@ -5,15 +5,21 @@ import subprocess
 
 from ..config import PipelineConfig
 from ..utils.conda import CondaPackage
-from ..utils.cap_task import CapTask
+from ..utils.cap_task import CapDbTask
 
 
-class Uniref90(CapTask):
+class Uniref90(CapDbTask):
     config_filename = luigi.Parameter()
     cores = luigi.IntParameter(default=1)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.boost_pkg = CondaPackage(  # the diamond package on conda has a broken link
+            package="boost-cpp=1.70",
+            executable="",
+            channel="conda-forge",
+            config_filename=self.config_filename,
+        )
         self.pkg = CondaPackage(
             package="diamond==0.9.32",
             executable="diamond",
@@ -25,7 +31,7 @@ class Uniref90(CapTask):
         self.fasta = join(self.db_dir, 'uniref90', 'uniref90.fasta.gz')
 
     def requires(self):
-        return self.pkg
+        return [self.boost_pkg, self.pkg]
 
     @classmethod
     def _module_name(cls):

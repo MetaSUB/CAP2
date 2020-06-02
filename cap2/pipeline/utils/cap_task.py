@@ -87,6 +87,10 @@ class BaseCapTask(luigi.Task):
             job.check_returncode()  # raises CalledProcessError
 
 
+class CapDbTask(BaseCapTask):
+    """Currently a stub. May do something in future."""
+
+
 class CapTask(BaseCapTask):
     """Base class for CAP2 tasks.
 

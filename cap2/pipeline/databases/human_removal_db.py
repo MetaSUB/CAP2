@@ -6,10 +6,10 @@ import subprocess
 
 from ..config import PipelineConfig
 from ..utils.conda import CondaPackage
-from ..utils.cap_task import CapTask
+from ..utils.cap_task import CapDbTask
 
 
-class HumanRemovalDB(CapTask):
+class HumanRemovalDB(CapDbTask):
     """This class is responsible for building and/or retriveing
     validating the database which will be used to remove human
     reads from the sample.

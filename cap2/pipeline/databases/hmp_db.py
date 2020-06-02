@@ -7,10 +7,10 @@ import subprocess
 from cap2.pipeline.constants import MASH_SKETCH_SIZE
 from ..config import PipelineConfig
 from ..utils.conda import CondaPackage
-from ..utils.cap_task import CapTask
+from ..utils.cap_task import CapDbTask
 
 
-class HmpDB(CapTask):
+class HmpDB(CapDbTask):
 
     config_filename = luigi.Parameter()
     cores = luigi.IntParameter(default=1)

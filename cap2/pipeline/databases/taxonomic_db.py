@@ -7,10 +7,10 @@ import subprocess
 
 from ..config import PipelineConfig
 from ..utils.conda import CondaPackage
-from ..utils.cap_task import CapTask
+from ..utils.cap_task import CapDbTask
 
 
-class TaxonomicDB(CapTask):
+class TaxonomicDB(CapDbTask):
     config_filename = luigi.Parameter()
     cores = luigi.IntParameter(default=1)
 

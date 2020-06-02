@@ -4,8 +4,7 @@ from os.path import join, dirname, isfile, isdir
 from unittest import TestCase, skip
 
 from cap2.api import (
-    run_short_read_stage,
-    run_preprocessing_stage,
+    run_stage,
 )
 from cap2.sample import Sample
 
@@ -19,7 +18,7 @@ class TestApi(TestCase):
     """Test the CAP2 API, essentially integration tests."""
 
     def test_short_read_stage(self):
-        run_short_read_stage([SAMPLE], TEST_CONFIG)
+        run_stage([SAMPLE], 'reads', TEST_CONFIG)
 
     def test_preprocessing_stage(self):
-        run_preprocessing_stage([SAMPLE], TEST_CONFIG)
+        run_stage([SAMPLE], 'pre', TEST_CONFIG)

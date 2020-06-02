@@ -32,8 +32,8 @@ class CondaEnv(luigi.Task):
         if not os.path.isfile(self.spec_file):
             with open(self.spec_file, 'w') as f:
                 f.write(
-                    '''
-                    name: CAP_v2
+                    f'''
+                    name: {self.name}
                     channels:
                       - defaults
                     '''

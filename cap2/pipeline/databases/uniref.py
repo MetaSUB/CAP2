@@ -21,7 +21,7 @@ class Uniref90(CapDbTask):
             config_filename=self.config_filename,
         )
         self.pkg = CondaPackage(
-            package="diamond==0.9.32",
+            package="diamond",
             executable="diamond",
             channel="bioconda",
             config_filename=self.config_filename,
@@ -31,7 +31,7 @@ class Uniref90(CapDbTask):
         self.fasta = join(self.db_dir, 'uniref90', 'uniref90.fasta.gz')
 
     def requires(self):
-        return [self.boost_pkg, self.pkg]
+        return [self.pkg]
 
     @classmethod
     def _module_name(cls):

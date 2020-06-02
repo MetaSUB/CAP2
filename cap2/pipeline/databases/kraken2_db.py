@@ -16,6 +16,13 @@ class Kraken2DB(CapDbTask):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.rsync_pkg = CondaPackage(
+            package="rsync",
+            executable="rsync",
+            channel="conda-forge",
+            env="CAP_v2_kraken2",
+            config_filename=self.config_filename,
+        )
         self.pkg = CondaPackage(
             package="kraken2=2.0.9beta",
             executable="kraken2",
@@ -29,7 +36,7 @@ class Kraken2DB(CapDbTask):
         self.kraken_db_dir = ''
 
     def requires(self):
-        return self.pkg
+        return [self.rsync_pkg, self.pkg]
 
     @classmethod
     def _module_name(cls):

@@ -16,7 +16,7 @@ class ErrorCorrectReads(CapTask):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.pkg = CondaPackage(
-            package="spades==3.14.0",
+            package="spades",
             executable="spades.py",
             channel="bioconda",
             config_filename=self.config_filename,
@@ -39,7 +39,7 @@ class ErrorCorrectReads(CapTask):
 
     @classmethod
     def dependencies(cls):
-        return ["spades==3.14.0", RemoveHumanReads]
+        return ["spades", RemoveHumanReads]
 
     @classmethod
     def _module_name(cls):

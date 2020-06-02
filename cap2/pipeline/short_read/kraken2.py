@@ -14,10 +14,18 @@ class Kraken2(CapTask):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.rsync_pkg = CondaPackage(
+            package="rsync",
+            executable="rsync",
+            channel="conda-forge",
+            env="CAP_v2_kraken2",
+            config_filename=self.config_filename,
+        )
         self.pkg = CondaPackage(
-            package="kraken2=2.0.9beta",
+            package="kraken2",
             executable="kraken2",
             channel="bioconda",
+            env="CAP_v2_kraken2",
             config_filename=self.config_filename,
         )
         self.config = PipelineConfig(self.config_filename)
@@ -35,7 +43,7 @@ class Kraken2(CapTask):
         return 'kraken2'
 
     def requires(self):
-        return self.pkg, self.db, self.reads
+        return self.rsync_pkg, self.pkg, self.db, self.reads
 
     @classmethod
     def version(cls):
@@ -43,7 +51,7 @@ class Kraken2(CapTask):
 
     @classmethod
     def dependencies(cls):
-        return ['kraken2=2.0.9beta', Kraken2DB, CleanReads]
+        return ['kraken2', Kraken2DB, CleanReads]
 
     def output(self):
         return {
@@ -54,14 +62,14 @@ class Kraken2(CapTask):
     def _run(self):
         cmd = (
             f'{self.pkg.bin} '
+            f'--db {self.db.kraken2_db} '
             f'--paired '
             f'--threads {self.cores} '
-            '--fastq-input '
             '--use-mpa-style '
             '--gzip-compressed '
             f'--report {self.output()["report"].path} '
-            f'{self.reads.output()["clean_reads"][0].path} '
-            f'{self.reads.output()["clean_reads"][1].path} '
+            f'{self.reads.output()["clean_reads_1"].path} '
+            f'{self.reads.output()["clean_reads_2"].path} '
             f'> {self.output()["read_assignments"].path}'
         )
         self.run_cmd(cmd)

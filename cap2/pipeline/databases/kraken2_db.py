@@ -1,7 +1,7 @@
 
 import luigi
 
-from os.path import join
+from os.path import join, abspath, dirname
 from glob import glob
 import subprocess
 
@@ -16,15 +16,8 @@ class Kraken2DB(CapDbTask):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.rsync_pkg = CondaPackage(
-            package="rsync",
-            executable="rsync",
-            channel="conda-forge",
-            env="CAP_v2_kraken2",
-            config_filename=self.config_filename,
-        )
         self.pkg = CondaPackage(
-            package="kraken2=2.0.9beta",
+            package="kraken2",
             executable="kraken2",
             channel="bioconda",
             env="CAP_v2_kraken2",
@@ -33,10 +26,11 @@ class Kraken2DB(CapDbTask):
         self.config = PipelineConfig(self.config_filename)
         self.db_dir = self.config.db_dir
         self.libraries = ['archaea', 'bacteria', 'plasmid', 'viral', 'fungi', 'protozoa']
-        self.kraken_db_dir = ''
+        self.kraken_db_dir = 'taxa_kraken2'
+        self.download_libs = True
 
     def requires(self):
-        return [self.rsync_pkg, self.pkg]
+        return [self.pkg]
 
     @classmethod
     def _module_name(cls):
@@ -52,7 +46,7 @@ class Kraken2DB(CapDbTask):
 
     @property
     def kraken2_db(self):
-        return join(self.db_dir, 'taxa_kraken2')
+        return join(self.db_dir, self.kraken_db_dir)
 
     def output(self):
         db_taxa = luigi.LocalTarget(join(self.kraken2_db, 'taxDB'))
@@ -60,13 +54,18 @@ class Kraken2DB(CapDbTask):
         return {'kraken2_db_taxa': db_taxa}
 
     def run(self):
-        self.download_kraken2_db()
+        if self.download_libs:
+            self.download_kraken2_db()
         self.build_kraken2_db()
 
     def download_kraken2_db(self):
-        for library in []:
+        cmd = f'{self.pkg.bin}-build --use-ftp --download-taxonomy --db {self.kraken_db_dir}'
+        self.run_cmd(cmd)
+        for library in self.libraries:
             cmd = (
+                f'PATH=$PATH:{dirname(abspath(self.pkg.bin))} '
                 f'{self.pkg.bin}-build '
+                f'--use-ftp '
                 f'--download-library {library} '
                 f'--db {self.kraken_db_dir}'
             )
@@ -76,6 +75,7 @@ class Kraken2DB(CapDbTask):
         cmd = (
             f'{self.pkg.bin}-build '
             '--build '
+            f'--max-db-size {10 * 1000 * 1000} '
             f'--db {self.kraken_db_dir}'
         )
         self.run_cmd(cmd)

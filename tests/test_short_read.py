@@ -6,6 +6,7 @@ from os.path import join, dirname, isfile, isdir
 from unittest import TestCase, skip
 
 from cap2.pipeline.short_read.krakenuniq import KrakenUniq
+from cap2.pipeline.short_read.kraken2 import Kraken2
 from cap2.pipeline.short_read.humann2 import MicaUniref90, Humann2
 from cap2.pipeline.short_read.mash import Mash
 from cap2.pipeline.short_read.hmp_comparison import HmpComparison
@@ -26,6 +27,16 @@ class DummyTaxonomicDB(luigi.ExternalTask):
 
     def output(self):
         return luigi.LocalTarget(join(dirname(__file__), 'data/'))
+
+
+class DummyKraken2DB(luigi.ExternalTask):
+
+    @property
+    def kraken2_db(self):
+        return join(dirname(__file__), 'data/kraken2')
+
+    def output(self):
+        return {'kraken2_db_taxa': luigi.LocalTarget(self.kraken2_db)}
 
 
 class DummyHmpDB(luigi.ExternalTask):
@@ -87,7 +98,8 @@ class DummyCleanReads(luigi.ExternalTask):
 
     def output(self):
         return {
-            'clean_reads': [luigi.LocalTarget(el) for el in self.reads],
+            'clean_reads_1': luigi.LocalTarget(self.reads[0]),
+            'clean_reads_2': luigi.LocalTarget(self.reads[1]),
         }
 
 
@@ -105,6 +117,20 @@ class TestShortRead(TestCase):
         luigi.build([instance], local_scheduler=True)
         self.assertTrue(isfile(instance.output()['report'].path))
         self.assertTrue(isfile(instance.output()['read_assignments'].path))
+
+    def test_invoke_kraken2(self):
+        instance = Kraken2(
+            pe1=RAW_READS_1,
+            pe2=RAW_READS_2,
+            sample_name='test_sample',
+            config_filename=TEST_CONFIG
+        )
+        instance.reads = DummyCleanReads()
+        instance.db = DummyKraken2DB()
+        luigi.build([instance], local_scheduler=True)
+        self.assertTrue(isfile(instance.output()['report'].path))
+        self.assertTrue(isfile(instance.output()['read_assignments'].path))
+
 
     def test_invoke_groot_amr(self):
         instance = GrootAMR(

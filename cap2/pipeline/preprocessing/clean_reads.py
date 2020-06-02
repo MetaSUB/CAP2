@@ -44,7 +44,8 @@ class CleanReads(CapTask):
 
     def output(self):
         return {
-            'clean_reads': self.ec_reads.output()['error_corrected_reads'],
+            'clean_reads_1': self.ec_reads.output()['error_corrected_reads_1'],
+            'clean_reads_2': self.ec_reads.output()['error_corrected_reads_2'],
         }
 
     def _run(self):

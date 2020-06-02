@@ -15,7 +15,7 @@ class MicaUniref90(CapTask):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.pkg = CondaPackage(
-            package="diamond==0.9.32",
+            package="diamond",
             executable="diamond",
             channel="bioconda",
             config_filename=self.config_filename,
@@ -55,7 +55,7 @@ class MicaUniref90(CapTask):
             f'{self.pkg.bin} blastx '
             f'--threads {self.cores} '
             f'-d {self.db.diamond_index} '
-            f'-q {self.reads.output()["clean_reads"][0]} '
+            f'-q {self.reads.output()["clean_reads_1"].path} '
             '--block-size 6 '
             f'| gzip > {self.output()["m8"].path} '
         )

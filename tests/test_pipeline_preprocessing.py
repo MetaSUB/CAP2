@@ -36,13 +36,15 @@ class DummyHumanRemovedReads(luigi.ExternalTask):
     def output(self):
         return {
             'bam': None,
-            'nonhuman_reads': [luigi.LocalTarget(el) for el in self.reads],
+            'nonhuman_reads_1': luigi.LocalTarget(self.reads[0]),
+            'nonhuman_reads_2': luigi.LocalTarget(self.reads[1]),
         }
 
 
 class TestPipelinePreprocessing(TestCase):
 
     def tearDownClass():
+        pass
         rmtree('test_out')
 
     def test_invoke_count_raw_reads(self):
@@ -84,8 +86,8 @@ class TestPipelinePreprocessing(TestCase):
         if abspath('.') != '/root/project':  # Happens on CircleCI, unlikely otherwise
             # I can't figure out why these files don't get created on CircleCI
             # this is a hack but hopefully not too problematic of one.
-            self.assertTrue(isfile(instance.output()['nonhuman_reads'][0].path))
-            self.assertTrue(isfile(instance.output()['nonhuman_reads'][1].path))
+            self.assertTrue(isfile(instance.output()['nonhuman_reads_1'].path))
+            self.assertTrue(isfile(instance.output()['nonhuman_reads_2'].path))
 
     def test_error_correct_reads(self):
         instance = ErrorCorrectReads(
@@ -97,5 +99,5 @@ class TestPipelinePreprocessing(TestCase):
         )
         instance.nonhuman_reads = DummyHumanRemovedReads()
         luigi.build([instance], local_scheduler=True)
-        self.assertTrue(isfile(instance.output()['error_corrected_reads'][0].path))
-        self.assertTrue(isfile(instance.output()['error_corrected_reads'][1].path))
+        self.assertTrue(isfile(instance.output()['error_corrected_reads_1'].path))
+        self.assertTrue(isfile(instance.output()['error_corrected_reads_2'].path))

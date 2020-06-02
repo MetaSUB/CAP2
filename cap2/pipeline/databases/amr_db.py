@@ -5,10 +5,10 @@ import subprocess
 
 from ..config import PipelineConfig
 from ..utils.conda import CondaPackage
-from ..utils.cap_task import CapTask
+from ..utils.cap_task import CapDbTask
 
 
-class GrootDB(CapTask):
+class GrootDB(CapDbTask):
     config_filename = luigi.Parameter()
     cores = luigi.IntParameter(default=1)
 

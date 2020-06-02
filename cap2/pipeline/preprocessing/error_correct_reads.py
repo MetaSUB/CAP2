@@ -47,14 +47,13 @@ class ErrorCorrectReads(CapTask):
 
     def output(self):
         return {
-            'error_corrected_reads': [
-                self.get_target('R1', 'fastq.gz'),
-                self.get_target('R2', 'fastq.gz'),
-            ],
+            'error_corrected_reads_1': self.get_target('R1', 'fastq.gz'),
+            'error_corrected_reads_2': self.get_target('R2', 'fastq.gz'),
         }
 
     def _run(self):
-        r1, r2 = self.nonhuman_reads.output()['nonhuman_reads']
+        r1 = self.nonhuman_reads.output()['nonhuman_reads_1']
+        r2 = self.nonhuman_reads.output()['nonhuman_reads_2']
         cmd = self.pkg.bin
         cmd += f' --only-error-correction --meta -1 {r1.path} -2 {r2.path}'
         outdir = f'{self.sample_name}.error_correction_out'
@@ -66,7 +65,7 @@ class ErrorCorrectReads(CapTask):
         assert len(ec_r1) == 1
         ec_r2 = spades_out[0]['right reads']
         assert len(ec_r2) == 1
-        paths = self.output()['error_corrected_reads']
+        paths = self.output()['error_corrected_reads_1'], self.output()['error_corrected_reads_2']
         cmd = f'mv {ec_r1[0]} {paths[0].path} && mv {ec_r2[0]} {paths[1].path}'
         self.run_cmd(cmd)
         rmtree(outdir)

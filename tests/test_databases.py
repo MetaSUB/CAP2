@@ -39,7 +39,7 @@ class TestDatabases(TestCase):
 
     def test_build_kraken2_taxa_db(self):
         instance = Kraken2DB(config_filename=TEST_CONFIG)
-        instance.libraries = ['viral']
+        instance.libraries = ['plasmid']
         instance.kraken_db_dir = data_file('kraken2')
         luigi.build([instance], local_scheduler=True)
         self.assertTrue(isfile(instance.output()['kraken2_db_taxa'].path))

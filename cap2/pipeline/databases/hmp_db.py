@@ -18,7 +18,7 @@ class HmpDB(CapDbTask):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.pkg = CondaPackage(
-            package="mash==2.2.2",
+            package="mash",
             executable="mash",
             channel="bioconda",
             config_filename=self.config_filename,

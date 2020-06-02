@@ -52,6 +52,6 @@ class Mash(CapTask):
             f'{self.pkg.bin} '
             f'sketch -s {MASH_SKETCH_SIZE} '
             f'-o {self.output()["10M_mash_sketch"].path[:-4]} '
-            f'{self.reads.output()["clean_reads"][0].path}'
+            f'{self.reads.output()["clean_reads_1"].path}'
         )
         self.run_cmd(cmd)

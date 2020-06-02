@@ -4,7 +4,7 @@ from ..utils.cap_task import CapTask
 from .amrs import GrootAMR
 from .hmp_comparison import HmpComparison
 from .humann2 import Humann2
-from .krakenuniq import KrakenUniq
+from .kraken2 import Kraken2
 from .mash import Mash
 from .read_stats import ReadStats
 
@@ -27,7 +27,7 @@ class ProcessedReads(CapTask):
 
     @classmethod
     def dependencies(cls):
-        return [GrootAMR, HmpComparison, Humann2, KrakenUniq, Mash, ReadStats]
+        return [GrootAMR, HmpComparison, Humann2, Kraken2, Mash, ReadStats]
 
     @classmethod
     def _module_name(cls):

@@ -37,12 +37,13 @@ class TestDatabases(TestCase):
         self.assertTrue(isfile(instance.output()['krakenuniq_db_taxa'].path))
         rmtree('test_db')
 
+    @skip(reason="kraken2 database is very slow")
     def test_build_kraken2_taxa_db(self):
         instance = Kraken2DB(config_filename=TEST_CONFIG)
         instance.libraries = ['plasmid']
         instance.kraken_db_dir = data_file('kraken2')
         luigi.build([instance], local_scheduler=True)
-        self.assertTrue(isfile(instance.output()['kraken2_db_taxa'].path))
+        self.assertTrue(isfile(instance.output()['kraken2_db_taxa'].path +'/hash.k2d'))
         #rmtree('test_db')
 
     def test_build_hmp_db(self):

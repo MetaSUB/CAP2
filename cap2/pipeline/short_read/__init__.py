@@ -1,4 +1,5 @@
 
+from .processed_reads import ProcessedReads
 from .krakenuniq import KrakenUniq
 from .humann2 import MicaUniref90, Humann2
 from .mash import Mash

@@ -82,7 +82,10 @@ class PangeaBaseLoadTask(BaseCapTask):
         open(self.output()['upload_flag'].path, 'w').close()  # we do this just for consistency. If we downloaded the results it means they were uploaded at some point
 
     def _upload_results(self):
-        ar = self.pangea_obj.analysis_result(pangea_module_name(self.wrapped)).idem()
+        ar = self.pangea_obj.analysis_result(
+            pangea_module_name(self.wrapped),
+            replicate=self.wrapped.short_version_hash(),
+        ).idem()
         for field_name, local_path in self.wrapped.output().items():
             uri = self._uri(local_path.path)
             cmd = (

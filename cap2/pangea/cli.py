@@ -4,6 +4,7 @@ import luigi
 
 from os import environ
 
+from .api import get_task_list_for_sample
 from .load_task import PangeaLoadTask, PangeaGroupLoadTask
 from .pangea_sample import PangeaSample, PangeaGroup
 from ..pipeline.preprocessing import FastQC, MultiQC
@@ -60,6 +61,7 @@ def cli_run_group(scheduler_host, scheduler_port,
             tasks, scheduler_host=scheduler_host, scheduler_port=scheduler_port, workers=workers
         )
 
+
 @run.command('sample')
 @click.option('--endpoint', default='https://pangea.gimmebio.com')
 @click.option('--s3-endpoint', default='https://s3.wasabisys.com')
@@ -73,13 +75,6 @@ def cli_run_group(scheduler_host, scheduler_port,
 def cli_run_sample(endpoint, s3_endpoint, s3_profile, email, password,
                    org_name, grp_name, bucket_name, sample_name):
     sample = PangeaSample(sample_name, email, password, endpoint, org_name, grp_name)
-    # sample.download()
     set_config(email, password, org_name, grp_name, bucket_name, s3_endpoint, s3_profile)
-    task = PangeaLoadTask(
-        pe1=sample.r1,
-        pe2=sample.r2,
-        sample_name=sample.name,
-    )
-    task.wrapped_module = FastQC
-    task.requires_reads = True
-    luigi.build([task], local_scheduler=True)
+    tasks = get_task_list_for_sample(sample)
+    luigi.build(tasks, local_scheduler=True)

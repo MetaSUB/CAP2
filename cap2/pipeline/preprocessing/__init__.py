@@ -1,4 +1,5 @@
 
+from .clean_reads import CleanReads
 from .count_reads import CountRawReads
 from .fastqc import FastQC
 from .map_to_human import RemoveHumanReads

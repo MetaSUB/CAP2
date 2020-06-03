@@ -59,6 +59,11 @@ class BaseCapTask(luigi.Task):
         return out
 
     @classmethod
+    def short_version_hash(cls):
+        myhash = cls.version_hash()
+        return myhash[-8:]
+
+    @classmethod
     def _module_name(cls):
         raise NotImplementedError(cls.module_name())
 
@@ -101,7 +106,9 @@ class CapTask(BaseCapTask):
     pe2 = luigi.Parameter()
 
     def get_target(self, field_name, ext):
-        filename = f'{self.sample_name}.{self.module_name()}.{field_name}.{ext}'
+        filename = '.'.join([
+            self.sample_name, self.module_name(), self.short_version_hash(), field_name, ext
+        ])
         filepath = join(self.config.out_dir, self.sample_name, filename)
         target = luigi.LocalTarget(filepath)
         target.makedirs()

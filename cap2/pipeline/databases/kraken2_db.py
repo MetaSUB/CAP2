@@ -25,7 +25,9 @@ class Kraken2DB(CapDbTask):
         )
         self.config = PipelineConfig(self.config_filename)
         self.db_dir = self.config.db_dir
-        self.libraries = ['archaea', 'bacteria', 'plasmid', 'viral', 'fungi', 'protozoa']
+        self.libraries = [
+            'archaea', 'bacteria', 'plasmid', 'viral', 'fungi', 'protozoa', 'human'
+        ]
         self.kraken_db_dir = 'taxa_kraken2'
         self.download_libs = True
 

@@ -77,7 +77,7 @@ class Kraken2DB(CapDbTask):
         cmd = (
             f'{self.pkg.bin}-build '
             '--build '
-            f'--max-db-size {10 * 1000 * 1000} '
+            f'--max-db-size {120 * 1000 * 1000 * 1000} '
             f'--db {self.kraken_db_dir}'
         )
         self.run_cmd(cmd)

@@ -3,6 +3,7 @@ import luigi
 import subprocess
 from os.path import join, dirname, basename
 
+from .remove_adapters import AdapterRemoval
 from ..utils.cap_task import CapTask
 from ..config import PipelineConfig
 from ..utils.conda import CondaPackage
@@ -28,9 +29,15 @@ class RemoveHumanReads(CapTask):
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
         self.db = HumanRemovalDB(config_filename=self.config_filename)
+        self.reads = AdapterRemoval(
+            pe1=self.pe1,
+            pe2=self.pe2,
+            sample_name=self.sample_name,
+            config_filename=self.config_filename,
+        )
 
     def requires(self):
-        return self.samtools, self.pkg, self.db
+        return self.samtools, self.pkg, self.db, self.reads
 
     @classmethod
     def version(cls):
@@ -38,7 +45,7 @@ class RemoveHumanReads(CapTask):
 
     @classmethod
     def dependencies(cls):
-        return ["bowtie2==2.4.1", HumanRemovalDB]
+        return ["samtools", "bowtie2", HumanRemovalDB, AdapterRemoval]
 
     @classmethod
     def _module_name(cls):
@@ -56,8 +63,8 @@ class RemoveHumanReads(CapTask):
         cmd = ''.join((
             self.pkg.bin,
             ' -x ', self.db.bowtie2_index,
-            ' -1 ', self.pe1,
-            ' -2 ', self.pe2,
+            ' -1 ', self.reads.output()['adapter_removed_reads_1'].path,
+            ' -2 ', self.reads.output()['adapter_removed_reads_2'].path,
             f' --un-conc-gz {fastq_out} ',
             ' --threads ', str(self.cores),
             ' --very-sensitive ',

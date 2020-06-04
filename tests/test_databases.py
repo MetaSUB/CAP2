@@ -42,6 +42,7 @@ class TestDatabases(TestCase):
         instance = Kraken2DB(config_filename=TEST_CONFIG)
         instance.libraries = ['plasmid']
         instance.kraken_db_dir = data_file('kraken2')
+        instance.db_size = 10 * 1000 * 1000
         luigi.build([instance], local_scheduler=True)
         self.assertTrue(isfile(instance.output()['kraken2_db_taxa'].path +'/hash.k2d'))
         #rmtree('test_db')

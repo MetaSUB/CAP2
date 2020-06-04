@@ -91,7 +91,7 @@ class Kraken2DB(CapDbTask):
         )
         self.config = PipelineConfig(self.config_filename)
         self.kraken_db_dir = 'taxa_kraken2'
-        self.db_size = 120 * (1000 * 3)  # 120 GB
+        self.db_size = 120 * (1000 ** 3)  # 120 GB
 
     def requires(self):
         return self.pkg, self.download_task

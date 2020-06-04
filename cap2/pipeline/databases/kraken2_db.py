@@ -60,7 +60,7 @@ class Kraken2DBDataDown(CapDbTask):
             open(self.output()['flag'].path, 'w').close()
 
     def download_kraken2_db(self):
-        cmd = f'{self.pkg.bin}-build --use-ftp --download-taxonomy --db {self.kraken_db_dir}'
+        cmd = f'{self.pkg.bin}-build --use-ftp --download-taxonomy --db {self.kraken2_db}'
         self.run_cmd(cmd)
         for library in self.libraries:
             cmd = (

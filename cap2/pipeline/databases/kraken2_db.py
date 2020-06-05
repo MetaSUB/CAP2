@@ -9,6 +9,8 @@ from ..config import PipelineConfig
 from ..utils.conda import CondaPackage
 from ..utils.cap_task import CapDbTask
 
+DB_DATE = '2020-06-01'
+
 
 class Kraken2DBDataDown(CapDbTask):
     config_filename = luigi.Parameter()
@@ -43,7 +45,7 @@ class Kraken2DBDataDown(CapDbTask):
 
     @classmethod
     def dependencies(cls):
-        return ['kraken2', '2020-06-01']
+        return ['kraken2', DB_DATE]
 
     @property
     def kraken2_db(self):
@@ -106,11 +108,11 @@ class Kraken2DB(CapDbTask):
 
     @classmethod
     def dependencies(cls):
-        return ['kraken2', '2020-06-01', self.download_task]
+        return ['kraken2', DB_DATE, self.download_task]
 
     @property
     def kraken2_db(self):
-        return join(self.config.db_dir, self.kraken_db_dir)
+        return self.download_task.kraken2_db
 
     def output(self):
         db_taxa = luigi.LocalTarget(join(self.kraken2_db, 'hash.k2d'))
@@ -126,5 +128,62 @@ class Kraken2DB(CapDbTask):
             '--build '
             f'--max-db-size {self.db_size} '
             f'--db {self.kraken2_db}'
+        )
+        self.run_cmd(cmd)
+
+
+class BrakenKraken2DB(CapDbTask):
+    config_filename = luigi.Parameter()
+    cores = luigi.IntParameter(default=1)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.pkg = CondaPackage(
+            package="bracken",
+            executable="bracken",
+            channel="bioconda",
+            env="CAP_v2_kraken2",
+            config_filename=self.config_filename,
+        )
+        self.kraken2_db = Kraken2DB(
+            config_filename=self.config_filename,
+        )
+        self.config = PipelineConfig(self.config_filename)
+
+    def requires(self):
+        return self.pkg, self.kraken2_db
+
+    @classmethod
+    def _module_name(cls):
+        return 'bracken_kraken2_taxa_db'
+
+    @classmethod
+    def version(cls):
+        return 'v0.1.0'
+
+    @classmethod
+    def dependencies(cls):
+        return ['bracken', DB_DATE, self.kraken2_db]
+
+    @property
+    def kraken2_db(self):
+        return self.kraken2_db.kraken2_db
+
+    def output(self):
+        db_taxa = luigi.LocalTarget(join(self.kraken2_db, 'hash.k2d'))
+        db_taxa.makedirs()
+        return {'bracken_kraken2_db_taxa': db_taxa}
+
+    def run(self):
+        self.build_kraken2_db(150)
+
+    def build_bracken_db(self, read_len):
+        cmd = (
+            f'{self.pkg.bin}-build '
+            f'-d {self.kraken2_db.kraken2_db} '
+            f'-t {self.cores} '
+            f'-k 35 '
+            f'-l {read_len} '
+            f'-x {self.kraken2_db.pkg.bin} '
         )
         self.run_cmd(cmd)

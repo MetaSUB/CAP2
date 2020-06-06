@@ -181,7 +181,7 @@ class BrakenKraken2DB(CapDbTask):
 
     def run(self):
         for rlen in self.read_lengths:
-            self.build_kraken2_db(rlen)
+            self.build_bracken_db(rlen)
 
     def build_bracken_db(self, read_len):
         cmd = (

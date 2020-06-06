@@ -200,6 +200,6 @@ class BrakenKraken2DB(CapDbTask):
             f'-l {read_len} '
             f'-x {dirname(abspath(self.kraken2_db_task.pkg.bin))} '
             '; '
-            f'test -e {self.kraken2_db}/database{read_len}mers.kmer_distrib|| exit 1'
+            f'test -e {self.kraken2_db}/database{read_len}mers.kmer_distrib || exit 1'
         )
         self.run_cmd(cmd)

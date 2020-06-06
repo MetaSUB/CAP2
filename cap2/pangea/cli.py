@@ -31,6 +31,7 @@ def set_config(email, password, org_name, grp_name, bucket_name, s3_endpoint, s3
 
 
 @run.command('group')
+@click.option('--upload/--no-upload', default=True)
 @click.option('--scheduler-host', default=None)
 @click.option('--scheduler-port', default=8082)
 @click.option('--endpoint', default='https://pangea.gimmebio.com')
@@ -42,7 +43,8 @@ def set_config(email, password, org_name, grp_name, bucket_name, s3_endpoint, s3
 @click.argument('org_name')
 @click.argument('grp_name')
 @click.argument('bucket_name')
-def cli_run_group(scheduler_host, scheduler_port,
+def cli_run_group(upload,
+                  scheduler_host, scheduler_port,
                   endpoint, s3_endpoint, s3_profile, email, password, workers,
                   org_name, grp_name, bucket_name):
     set_config(email, password, org_name, grp_name, bucket_name, s3_endpoint, s3_profile)
@@ -63,6 +65,7 @@ def cli_run_group(scheduler_host, scheduler_port,
 
 
 @run.command('sample')
+@click.option('--upload/--no-upload', default=True)
 @click.option('--endpoint', default='https://pangea.gimmebio.com')
 @click.option('--s3-endpoint', default='https://s3.wasabisys.com')
 @click.option('--s3-profile', default='default')
@@ -72,9 +75,10 @@ def cli_run_group(scheduler_host, scheduler_port,
 @click.argument('grp_name')
 @click.argument('bucket_name')
 @click.argument('sample_name')
-def cli_run_sample(endpoint, s3_endpoint, s3_profile, email, password,
+def cli_run_sample(upload,
+                   endpoint, s3_endpoint, s3_profile, email, password,
                    org_name, grp_name, bucket_name, sample_name):
     sample = PangeaSample(sample_name, email, password, endpoint, org_name, grp_name)
     set_config(email, password, org_name, grp_name, bucket_name, s3_endpoint, s3_profile)
-    tasks = get_task_list_for_sample(sample)
+    tasks = get_task_list_for_sample(sample, upload=upload)
     luigi.build(tasks, local_scheduler=True)

@@ -44,6 +44,7 @@ class PangeaBaseLoadTask(BaseCapTask):
         User(self.knex, user, password).login()
         org = Organization(self.knex, self.org_name).get()
         self.grp = org.sample_group(self.grp_name).get()
+        self.upload_allowed = True
 
     def module_name(self):
         return 'pangea_load_task_' + self.wrapped.module_name()
@@ -109,8 +110,10 @@ class PangeaBaseLoadTask(BaseCapTask):
         """
         if self.results_available():
             self._download_results()
-        else:
+        elif self.upload_allowed:
             self._upload_results()
+        elif not self.upload_allowed:
+            open(self.output()['upload_flag'].path, 'w').close()
 
 class PangeaLoadTask(PangeaBaseLoadTask, CapTask):
 

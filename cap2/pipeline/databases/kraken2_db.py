@@ -190,6 +190,6 @@ class BrakenKraken2DB(CapDbTask):
             f'-t {self.cores} '
             f'-k 35 '
             f'-l {read_len} '
-            f'-x {self.kraken2_db.pkg.bin} '
+            f'-x {self.kraken2_db_task.pkg.bin} '
         )
         self.run_cmd(cmd)

@@ -179,17 +179,25 @@ class BrakenKraken2DB(CapDbTask):
             ))
         return out
 
+    def get_index(self, length):
+        for index_len in sorted(self.read_lengths, reverse=True):
+            if length > index_len:
+                break
+        # index_len is now the largest index shorter than length or the smallest
+        return index_len, self.output()[f'bracken_kraken2_db_{length}']
+
     def run(self):
         for rlen in self.read_lengths:
             self.build_bracken_db(rlen)
 
     def build_bracken_db(self, read_len):
         cmd = (
+            f'PATH=${{PATH}}:{dirname(abspath(self.pkg.bin))} '
             f'{self.pkg.bin}-build '
             f'-d {self.kraken2_db} '
             f'-t {self.cores} '
             f'-k 35 '
             f'-l {read_len} '
-            f'-x {self.kraken2_db_task.pkg.bin} '
+            f'-x {dirname(self.kraken2_db_task.pkg.bin)} '
         )
         self.run_cmd(cmd)

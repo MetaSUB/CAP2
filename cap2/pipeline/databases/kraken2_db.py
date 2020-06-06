@@ -90,9 +90,9 @@ class Kraken2DB(CapDbTask):
         )
         self.download_task = Kraken2DBDataDown(
             config_filename=self.config_filename,
+            cores=self.cores,
         )
         self.config = PipelineConfig(self.config_filename)
-        self.kraken_db_dir = 'taxa_kraken2'
         self.db_size = 120 * (1000 ** 3)  # 120 GB
 
     def requires(self):
@@ -139,19 +139,21 @@ class BrakenKraken2DB(CapDbTask):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.pkg = CondaPackage(
-            package="bracken",
+            package="bracken==2.6.0",
             executable="bracken",
             channel="bioconda",
-            env="CAP_v2_kraken2",
+            env="CAP_v2_bracken_kraken2",
             config_filename=self.config_filename,
         )
-        self.kraken2_db = Kraken2DB(
+        self.kraken2_db_task = Kraken2DB(
             config_filename=self.config_filename,
+            cores=self.cores,
         )
         self.config = PipelineConfig(self.config_filename)
+        self.read_lengths = [75, 100, 125, 150, 175, 200, 225, 250]
 
     def requires(self):
-        return self.pkg, self.kraken2_db
+        return self.pkg, self.kraken2_db_task
 
     @classmethod
     def _module_name(cls):
@@ -163,24 +165,28 @@ class BrakenKraken2DB(CapDbTask):
 
     @classmethod
     def dependencies(cls):
-        return ['bracken', DB_DATE, self.kraken2_db]
+        return ['bracken', DB_DATE, Kraken2DB]
 
     @property
     def kraken2_db(self):
-        return self.kraken2_db.kraken2_db
+        return self.kraken2_db_task.kraken2_db
 
     def output(self):
-        db_taxa = luigi.LocalTarget(join(self.kraken2_db, 'hash.k2d'))
-        db_taxa.makedirs()
-        return {'bracken_kraken2_db_taxa': db_taxa}
+        out = {}
+        for rlen in self.read_lengths:
+            out[f'bracken_kraken2_db_{rlen}'] = luigi.LocalTarget(join(
+                self.kraken2_db, f'database{rlen}mers.kmer_distrib'
+            ))
+        return out
 
     def run(self):
-        self.build_kraken2_db(150)
+        for rlen in self.read_lengths:
+            self.build_kraken2_db(rlen)
 
     def build_bracken_db(self, read_len):
         cmd = (
             f'{self.pkg.bin}-build '
-            f'-d {self.kraken2_db.kraken2_db} '
+            f'-d {self.kraken2_db} '
             f'-t {self.cores} '
             f'-k 35 '
             f'-l {read_len} '

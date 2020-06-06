@@ -7,7 +7,7 @@ from unittest import TestCase, skip
 from cap2.pipeline.databases.human_removal_db import HumanRemovalDB
 from cap2.pipeline.databases.hmp_db import HmpDB
 from cap2.pipeline.databases.taxonomic_db import TaxonomicDB
-from cap2.pipeline.databases.kraken2_db import Kraken2DB
+from cap2.pipeline.databases.kraken2_db import Kraken2DB, BrakenKraken2DB
 from cap2.pipeline.databases.uniref import Uniref90
 from cap2.pipeline.databases.amr_db import GrootDB
 
@@ -46,6 +46,15 @@ class TestDatabases(TestCase):
         luigi.build([instance], local_scheduler=True)
         self.assertTrue(isfile(instance.output()['kraken2_db_taxa'].path +'/hash.k2d'))
         #rmtree('test_db')
+
+    def test_build_bracken_kraken2_taxa_db(self):
+        instance = BrakenKraken2DB(config_filename=TEST_CONFIG)
+        instance.libraries = ['plasmid']
+        instance.kraken2_db_task.download_task.kraken_db_dir = data_file('kraken2')
+        instance.kraken2_db_task.db_size = 10 * 1000 * 1000
+        luigi.build([instance], local_scheduler=True)
+        assert False
+        self.assertTrue(isfile(instance.output()['kraken2_db_taxa'].path +'/hash.k2d'))
 
     def test_build_hmp_db(self):
         instance = HmpDB(config_filename=TEST_CONFIG)

@@ -18,28 +18,44 @@ class MetaspadesAssembly(CapTask):
             executable="metaspades.py",
             channel="bioconda"
         )
+        self.reads = CleanReads(
+            sample_name=self.sample_name,
+            pe1=self.pe1,
+            pe2=self.pe2,
+            config_filename=self.config_filename
+        )
         self.config = PipelineConfig(self.config_filename)
-        self.out_dir = self.config.out_dir
+
+    @classmethod
+    def _module_name(cls):
+        return 'metaspades'
 
     def requires(self):
-        return self.pkg
+        return self.pkg, self.reads
+
+    @classmethod
+    def version(cls):
+        return 'v0.1.0'
+
+    @classmethod
+    def dependencies(cls):
+        return ['spades', CleanReads]
 
     def output(self):
-        trgt = lambda a, b: self.get_target(self.sample_name, 'metaspades', a, b)
         return {
-            'contigs': trgt('contigs', 'fasta'),
-            'scaffolds_fasta': trgt('scaffolds', 'fasta'),
-            'scaffolds_paths': trgt('scaffolds', 'paths'),
-            'fastg': trgt('graph', 'fastg'),
-            'gfa': trgt('graph', 'gfa'),
+            'contigs': self.get_target('contigs', 'fasta'),
+            'scaffolds_fasta': self.get_target('scaffolds', 'fasta'),
+            'scaffolds_paths': self.get_target('scaffolds', 'paths'),
+            'fastg': self.get_target('graph', 'fastg'),
+            'gfa': self.get_target('graph', 'gfa'),
         }
 
     def run(self):
         out_dir = f'{self.out_dir}/tmp_metaspades_out.{self.sample_name}'
         cmd = ''.join((
             self.pkg.bin,
-            ' -1 ', self.pe1,
-            ' -2 ', self.pe2,
+            ' -1 ', self.reads.output()["clean_reads_1"].path,
+            ' -2 ', self.reads.output()["clean_reads_2"].path,
             f' -t {self.cores} ',
             ' -m 200 ',
             f' -o {out_dir}'

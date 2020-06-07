@@ -45,13 +45,20 @@ class Mash(CapTask):
         return ['mash==2.2.2', CleanReads]
 
     def output(self):
-        return {'10M_mash_sketch': self.get_target('sketch', 'msh')}
+        return {
+            '10M_mash_sketch': self.get_target('10M_sketch', 'msh'),
+            '10K_mash_sketch': self.get_target('10K_sketch', 'msh'),
+        }
 
-    def _run(self):
+    def _cmd(self, mash_sketch_size, out_key):
         cmd = (
             f'{self.pkg.bin} '
-            f'sketch -s {MASH_SKETCH_SIZE} '
-            f'-o {self.output()["10M_mash_sketch"].path[:-4]} '
+            f'sketch -s {mash_sketch_size} '
+            f'-o {self.output()[out_key].path[:-4]} '
             f'{self.reads.output()["clean_reads_1"].path}'
         )
-        self.run_cmd(cmd)
+        return cmd
+
+    def _run(self):
+        self.run_cmd(self._cmd(10 * 1000), '10K_mash_sketch')
+        self.run_cmd(self._cmd(10 * 1000 * 1000), '10M_mash_sketch')

@@ -89,5 +89,5 @@ def cli_run_sample(upload, scheduler_host, workers,
         luigi.build(tasks, local_scheduler=True, workers=workers)
     else:
         luigi.build(
-            tasks, scheduler_host=scheduler_host, workers=workers
+            tasks, scheduler_host=scheduler_host, scheduler_port=443, workers=workers
         )

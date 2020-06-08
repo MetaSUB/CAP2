@@ -29,7 +29,7 @@ class RemoveHumanReads(CapTask):
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
         self.db = HumanRemovalDB(config_filename=self.config_filename)
-        self.reads = AdapterRemoval(
+        self.adapter_removed_reads = AdapterRemoval(
             pe1=self.pe1,
             pe2=self.pe2,
             sample_name=self.sample_name,
@@ -63,8 +63,8 @@ class RemoveHumanReads(CapTask):
         cmd = ''.join((
             self.pkg.bin,
             ' -x ', self.db.bowtie2_index,
-            ' -1 ', self.reads.output()['adapter_removed_reads_1'].path,
-            ' -2 ', self.reads.output()['adapter_removed_reads_2'].path,
+            ' -1 ', self.adapter_removed_reads.output()['adapter_removed_reads_1'].path,
+            ' -2 ', self.adapter_removed_reads.output()['adapter_removed_reads_2'].path,
             f' --un-conc-gz {fastq_out} ',
             ' --threads ', str(self.cores),
             ' --very-sensitive ',

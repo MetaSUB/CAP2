@@ -4,6 +4,7 @@ from ..pipeline.preprocessing import FastQC
 from ..pipeline.preprocessing import CleanReads
 from ..pipeline.preprocessing import AdapterRemoval
 from ..pipeline.short_read import MODULES as SHORT_READ_MODULES
+from ..pipeline.preprocessing import BaseReads
 from ..pipeline.assembly.metaspades import MetaspadesAssembly 
 
 STAGES = {
@@ -27,12 +28,10 @@ def wrap_task(sample, module, requires_reads=True, upload=True):
 
 
 def get_task_list_for_sample(sample, stage, upload=True):
-    adapter_removed = wrap_task(sample, AdapterRemoval, upload=False)
+    reads = wrap_task(sample, BaseReads, upload=False)
     clean_reads = wrap_task(sample, CleanReads, requires_reads=False)
-    clean_reads.wrapped.ec_reads.nonhuman_reads.reads = adapter_removed
+    clean_reads.wrapped.ec_reads.nonhuman_reads.adapter_removed_reads.reads = reads
     tasks = [
         clean_reads,
-        wrap_task(sample, FastQC)
     ]
     return tasks
-

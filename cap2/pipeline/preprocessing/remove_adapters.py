@@ -7,6 +7,7 @@ from ..utils.cap_task import CapTask
 from ..config import PipelineConfig
 from ..utils.conda import CondaPackage
 from ..databases.human_removal_db import HumanRemovalDB
+from .base_reads import BaseReads
 
 
 class AdapterRemoval(CapTask):
@@ -19,11 +20,17 @@ class AdapterRemoval(CapTask):
             channel="bioconda",
             config_filename=self.config_filename,
         )
+        self.reads = BaseReads(
+            pe1=self.pe1,
+            pe2=self.pe2,
+            sample_name=self.sample_name,
+            config_filename=self.config_filename,
+        )
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
 
     def requires(self):
-        return self.pkg
+        return self.pkg, self.reads
 
     @classmethod
     def version(cls):
@@ -31,7 +38,7 @@ class AdapterRemoval(CapTask):
 
     @classmethod
     def dependencies(cls):
-        return ["adapterremoval"]
+        return ["adapterremoval", BaseReads]
 
     @classmethod
     def _module_name(cls):
@@ -47,8 +54,8 @@ class AdapterRemoval(CapTask):
         basename = f'ar_temp_{self.sample_name}'
         cmd = (
             f'{self.pkg.bin} '
-            f'--file1 {self.pe1} '
-            f'--file2 {self.pe2} '
+            f'--file1 {self.reads.output()["base_reads_1"].path} '
+            f'--file2 {self.reads.output()["base_reads_2"].path} '
             '--trimns '
             '--trimqualities '
             '--gzip '

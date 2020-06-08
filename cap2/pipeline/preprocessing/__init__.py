@@ -6,6 +6,7 @@ from .map_to_human import RemoveHumanReads
 from .remove_adapters import AdapterRemoval
 from .error_correct_reads import ErrorCorrectReads
 from .multiqc import MultiQC
+from .base_reads import BaseReads
 
 MODULES = [
     CountRawReads,

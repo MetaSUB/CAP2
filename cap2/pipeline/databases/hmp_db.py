@@ -55,10 +55,26 @@ class HmpDB(CapDbTask):
         }
 
     def run(self):
-        self.build_mash_index_sketch()
+        if self.config.db_mode == PipelineConfig.DB_MODE_BUILD:
+            self.build_mash_index_sketch()
+        else:
+            self.download_hmp_sketch_from_s3()
 
     def build_mash_index_sketch(self):
         cmd = self.pkg.bin + ' sketch'
         cmd += f' -s {self.sketch_size} -o {self.mash_sketch[:-4]} '
         cmd += ' '.join(self.fastqs)
         subprocess.check_call(cmd, shell=True)
+
+    def download_hmp_sketch_from_s3(self):
+        paths = [
+            'cap2/databases/2020-06-08/hmp/hmp_mash_sketch.msh',
+        ]
+        for path in paths:
+            cmd = (
+                'wget '
+                f'--directory-prefix={dirname(self.output()["hmp_sketch"].path)} '
+                f'https://s3.wasabisys.com/metasub-microbiome/{path} '
+
+            )
+            self.run_cmd(cmd)

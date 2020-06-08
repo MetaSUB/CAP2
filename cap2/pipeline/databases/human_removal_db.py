@@ -1,6 +1,6 @@
 
 import luigi
-from os.path import join
+from os.path import join, dirname
 from glob import glob
 import subprocess
 
@@ -66,7 +66,23 @@ class HumanRemovalDB(CapDbTask):
         subprocess.check_call(cmd, shell=True)
 
     def download_bowtie2_index_from_s3(self):
-        pass
+        paths = [
+            'cap2/databases/2020-06-08/hg38/hg38.fa.gz',
+            'cap2/databases/2020-06-08/hg38/human_removal.bt2.1.bt2',
+            'cap2/databases/2020-06-08/hg38/human_removal.bt2.2.bt2',
+            'cap2/databases/2020-06-08/hg38/human_removal.bt2.3.bt2',
+            'cap2/databases/2020-06-08/hg38/human_removal.bt2.4.bt2',
+            'cap2/databases/2020-06-08/hg38/human_removal.bt2.rev.1.bt2',
+            'cap2/databases/2020-06-08/hg38/human_removal.bt2.rev.2.bt2',
+        ]
+        for path in paths:
+            cmd = (
+                'wget '
+                f'--directory-prefix={dirname(self.output()["bt2_index_1"].path)} '
+                f'https://s3.wasabisys.com/metasub-microbiome/{path} '
+
+            )
+            self.run_cmd(cmd)
 
     def run(self):
         if self.config.db_mode == PipelineConfig.DB_MODE_BUILD:

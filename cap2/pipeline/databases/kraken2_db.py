@@ -12,6 +12,9 @@ from ..utils.cap_task import CapDbTask
 DB_DATE = '2020-06-01'
 
 
+'cap2/databases/2020-06-08/taxa_kraken2/db_download_flag',
+
+
 class Kraken2DBDataDown(CapDbTask):
     config_filename = luigi.Parameter()
     cores = luigi.IntParameter(default=1)
@@ -57,9 +60,10 @@ class Kraken2DBDataDown(CapDbTask):
         return {'flag': download_flag}
 
     def run(self):
-        if self.download_libs:
-            self.download_kraken2_db()
-            open(self.output()['flag'].path, 'w').close()
+        if self.config.db_mode == PipelineConfig.DB_MODE_BUILD:
+            if self.download_libs:
+                self.download_kraken2_db()
+        open(self.output()['flag'].path, 'w').close()
 
     def download_kraken2_db(self):
         cmd = f'{self.pkg.bin}-build --use-ftp --download-taxonomy --db {self.kraken2_db}'
@@ -120,7 +124,10 @@ class Kraken2DB(CapDbTask):
         return {'kraken2_db_taxa': db_taxa}
 
     def run(self):
-        self.build_kraken2_db()
+        if self.config.db_mode == PipelineConfig.DB_MODE_BUILD:
+            self.build_kraken2_db()
+        else:
+            self.download_kraken2_db_from_s3()
 
     def build_kraken2_db(self):
         cmd = (
@@ -130,6 +137,23 @@ class Kraken2DB(CapDbTask):
             f'--db {self.kraken2_db}'
         )
         self.run_cmd(cmd)
+
+    def download_kraken2_db_from_s3(self):
+        paths = [
+            'cap2/databases/2020-06-08/taxa_kraken2/hash.k2d',
+            'cap2/databases/2020-06-08/taxa_kraken2/opts.k2d',
+            'cap2/databases/2020-06-08/taxa_kraken2/seqid2taxid.map',
+            'cap2/databases/2020-06-08/taxa_kraken2/taxo.k2d',
+            'cap2/databases/2020-06-08/taxa_kraken2/unmapped.txt',
+        ]
+        for path in paths:
+            cmd = (
+                'wget '
+                f'--directory-prefix={dirname(self.output()["kraken2_db_taxa"].path)} '
+                f'https://s3.wasabisys.com/metasub-microbiome/{path} '
+
+            )
+            self.run_cmd(cmd)
 
 
 class BrakenKraken2DB(CapDbTask):
@@ -187,8 +211,11 @@ class BrakenKraken2DB(CapDbTask):
         return index_len, self.output()[f'bracken_kraken2_db_{length}']
 
     def run(self):
-        for rlen in self.read_lengths:
-            self.build_bracken_db(rlen)
+        if self.config.db_mode == PipelineConfig.DB_MODE_BUILD:
+            for rlen in self.read_lengths:
+                self.build_bracken_db(rlen)
+        else:
+            self.download_bracken_db_from_s3()
 
     def build_bracken_db(self, read_len):
         cmd = (
@@ -203,3 +230,31 @@ class BrakenKraken2DB(CapDbTask):
             f'test -e {self.kraken2_db}/database{read_len}mers.kmer_distrib'
         )
         self.run_cmd(cmd)
+
+    def download_bracken_db_from_s3(self):
+        paths = [
+            'cap2/databases/2020-06-08/taxa_kraken2/database100mers.kmer_distrib',
+            'cap2/databases/2020-06-08/taxa_kraken2/database100mers.kraken',
+            'cap2/databases/2020-06-08/taxa_kraken2/database125mers.kmer_distrib',
+            'cap2/databases/2020-06-08/taxa_kraken2/database125mers.kraken',
+            'cap2/databases/2020-06-08/taxa_kraken2/database150mers.kmer_distrib',
+            'cap2/databases/2020-06-08/taxa_kraken2/database150mers.kraken',
+            'cap2/databases/2020-06-08/taxa_kraken2/database175mers.kmer_distrib',
+            'cap2/databases/2020-06-08/taxa_kraken2/database175mers.kraken',
+            'cap2/databases/2020-06-08/taxa_kraken2/database200mers.kmer_distrib',
+            'cap2/databases/2020-06-08/taxa_kraken2/database200mers.kraken',
+            'cap2/databases/2020-06-08/taxa_kraken2/database225mers.kmer_distrib',
+            'cap2/databases/2020-06-08/taxa_kraken2/database225mers.kraken',
+            'cap2/databases/2020-06-08/taxa_kraken2/database250mers.kmer_distrib',
+            'cap2/databases/2020-06-08/taxa_kraken2/database250mers.kraken',
+            'cap2/databases/2020-06-08/taxa_kraken2/database75mers.kmer_distrib',
+            'cap2/databases/2020-06-08/taxa_kraken2/database75mers.kraken',
+        ]
+        for path in paths:
+            cmd = (
+                'wget '
+                f'--directory-prefix={dirname(self.output()["bracken_kraken2_db_150"].path)} '
+                f'https://s3.wasabisys.com/metasub-microbiome/{path} '
+
+            )
+            self.run_cmd(cmd)

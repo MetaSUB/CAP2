@@ -57,7 +57,23 @@ class Uniref90(CapDbTask):
         }
 
     def run(self):
-        cmd = self.pkg.bin + ' makedb'
-        cmd += f' --in {self.fasta} -d {self.diamond_index[:-5]}'
-        print(cmd)
-        subprocess.check_call(cmd, shell=True)
+        if self.config.db_mode == PipelineConfig.DB_MODE_BUILD:
+            cmd = self.pkg.bin + ' makedb'
+            cmd += f' --in {self.fasta} -d {self.diamond_index[:-5]}'
+            self.run_cmd(cmd)
+        else:
+            self.download_uniref90_index_from_s3()
+
+    def download_uniref90_index_from_s3(self):
+        paths = [
+            'cap2/databases/2020-06-08/uniref90/uniref90.dmnd',
+            'cap2/databases/2020-06-08/uniref90/uniref90.fasta.gz',
+        ]
+        for path in paths:
+            cmd = (
+                'wget '
+                f'--directory-prefix={dirname(self.output()["diamond_index"].path)} '
+                f'https://s3.wasabisys.com/metasub-microbiome/{path} '
+
+            )
+            self.run_cmd(cmd)

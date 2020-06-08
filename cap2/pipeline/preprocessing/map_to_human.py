@@ -37,7 +37,7 @@ class RemoveHumanReads(CapTask):
         )
 
     def requires(self):
-        return self.samtools, self.pkg, self.db, self.reads
+        return self.samtools, self.pkg, self.db, self.adapter_removed_reads
 
     @classmethod
     def version(cls):

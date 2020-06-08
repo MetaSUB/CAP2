@@ -15,7 +15,7 @@ class AdapterRemoval(CapTask):
         super().__init__(*args, **kwargs)
         self.pkg = CondaPackage(
             package="adapterremoval",
-            executable="adapterremoval",
+            executable="AdapterRemoval",
             channel="bioconda",
             config_filename=self.config_filename,
         )

@@ -16,5 +16,4 @@ MODULES = [
     HmpComparison,
     MicrobeCensus,
     ReadStats,
-    GrootAMR,
 ]

@@ -27,10 +27,12 @@ def wrap_task(sample, module, requires_reads=True, upload=True):
 
 
 def get_task_list_for_sample(sample, stage, upload=True):
+    ar = wrap_task(sample, AdapterRemoval, upload=False)
+    clean_reads = wrap_task(sample, CleanReads, requires_reads=False)
+    clean_reads.ec_reads.nonhuman_reads.reads = AR
     tasks = [
-        wrap_task(sample, AdapterRemoval, upload=False)
+        clean_reads,
+        wrap_task(sample, FastQC)
     ]
-    for module in STAGES[stage]:
-        tasks.append(wrap_task(sample, module, upload=upload))
     return tasks
 

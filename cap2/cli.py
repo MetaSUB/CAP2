@@ -40,9 +40,10 @@ def run():
 
 
 @run.command('db')
+@click.option('-w', '--workers', default=1)
 @click.option('-t', '--threads', default=1)
 @click.option('-c', '--config', type=click.Path(), default='')
-def cap_db(threads, config):
+def cap_db(workers, threads, config):
     """Run the CAP2 database pipeline.
 
     Config is a yaml file specifying these keys:
@@ -50,7 +51,7 @@ def cap_db(threads, config):
         db_dir: <directory where databases are currently stored>
         db_mode: "build"|"download" (defaults to download)
     """
-    run_db_stage(config_path=config, cores=threads)
+    run_db_stage(config_path=config, cores=threads, workers=workers)
 
 
 @run.command('pipeline')

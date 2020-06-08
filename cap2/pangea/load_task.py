@@ -27,6 +27,7 @@ def pangea_module_name(module):
 
 
 class PangeaBaseLoadTask(BaseCapTask):
+    wraps = luigi.Parameter()
     endpoint = luigi.Parameter(default='https://pangea.gimmebio.com')
 
     def __init__(self, *args, **kwargs):

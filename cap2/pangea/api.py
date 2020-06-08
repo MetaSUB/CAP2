@@ -20,6 +20,7 @@ def wrap_task(sample, module, requires_reads=True, upload=True):
         pe1=sample.r1,
         pe2=sample.r2,
         sample_name=sample.name,
+        wraps=module.module_name(),
     )
     task.upload_allowed = upload
     task.wrapped_module = module

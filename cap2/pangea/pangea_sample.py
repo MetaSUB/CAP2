@@ -41,6 +41,7 @@ class PangeaSample:
         return False
 
     def download(self):
+        print('DOWNLOADING READS')
         try:
             ar = self.sample.analysis_result('raw::raw_reads').get()
         except HTTPError:

@@ -1,6 +1,6 @@
 
 import luigi
-from os.path import join
+from os.path import join, dirname
 from glob import glob
 import subprocess
 

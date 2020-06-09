@@ -70,6 +70,6 @@ def get_task_list_for_sample(sample, stage, upload=True, config_path='', cores=1
     if stage == 'reads':
         tasks = [
             clean_reads,
-            processed,
+            hmp,
         ]
     return tasks

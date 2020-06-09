@@ -1,6 +1,7 @@
 
 from .processed_reads import ProcessedReads
 from .krakenuniq import KrakenUniq
+from .kraken2 import Kraken2
 from .humann2 import MicaUniref90, Humann2
 from .mash import Mash
 from .hmp_comparison import HmpComparison
@@ -9,11 +10,11 @@ from .read_stats import ReadStats
 from .amrs import GrootAMR
 
 MODULES = [
-    KrakenUniq,
     MicaUniref90,
     Humann2,
     Mash,
     HmpComparison,
     MicrobeCensus,
     ReadStats,
+    Kraken2,
 ]

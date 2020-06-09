@@ -11,6 +11,7 @@ from .base_reads import BaseReads
 
 
 class AdapterRemoval(CapTask):
+    ILLUMINA_SHARED_PREFIX = 'AGATCGGAAGAGC'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -28,6 +29,8 @@ class AdapterRemoval(CapTask):
         )
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
+        self.adapter1 = self.ILLUMINA_SHARED_PREFIX
+        self.adapter2 = self.ILLUMINA_SHARED_PREFIX
 
     def requires(self):
         return self.pkg, self.reads
@@ -48,6 +51,7 @@ class AdapterRemoval(CapTask):
         return {
             'adapter_removed_reads_1': self.get_target('adapter_removed', 'R1.fastq.gz'),
             'adapter_removed_reads_2': self.get_target('adapter_removed', 'R2.fastq.gz'),
+            'settings': self.get_target('settings', 'txt'),
         }
 
     def _run(self):
@@ -59,8 +63,11 @@ class AdapterRemoval(CapTask):
             '--trimns '
             '--trimqualities '
             '--gzip '
+            f'--adapter1 {self.adapter1} '
+            f'--adapter1 {self.adapter2} '
             f'--output1 {self.output()["adapter_removed_reads_1"].path} '
             f'--output2 {self.output()["adapter_removed_reads_2"].path} '
+            f'--settings {self.output()["settings"].path} '
             f'--basename {basename} '
             '--minquality 2 '
             f'--threads {self.cores} '

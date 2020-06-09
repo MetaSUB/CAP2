@@ -18,6 +18,7 @@ setuptools.setup(
         'biopython',
         'click',
         'multiqc==1.8',  # hackish, tbd if I'm okay with this
+        'humann2'
     ],
     entry_points={
         'console_scripts': [

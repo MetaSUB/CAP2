@@ -66,12 +66,6 @@ class Humann2(CapTask):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.pkg = CondaPackage(
-            package="humann2",
-            executable="humann2",
-            channel="bioconda",
-            config_filename=self.config_filename,
-        )
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
         self.alignment = MicaUniref90(
@@ -82,7 +76,7 @@ class Humann2(CapTask):
         )
 
     def requires(self):
-        return self.pkg, self.alignment
+        return self.alignment
 
     @classmethod
     def _module_name(cls):

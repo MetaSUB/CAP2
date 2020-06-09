@@ -56,7 +56,7 @@ def get_task_list_for_sample(sample, stage, upload=True, config_path='', cores=1
     read_stats.reads = clean_reads
     kraken2 = wrap_task(sample, Kraken2, config_path=config_path, cores=cores)
     kraken2.reads = clean_reads
-    processed = ProcessedReads.from_sample(sample, config_path, cores=cores),
+    processed = ProcessedReads.from_sample(sample, config_path, cores=cores)
     processed.hmp = hmp
     processed.humann2 = humann2
     processed.kraken2 = kraken2

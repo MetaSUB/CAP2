@@ -6,6 +6,7 @@ from os.path import join, dirname, basename
 from ..utils.cap_task import CapTask
 from ..config import PipelineConfig
 from ..utils.conda import CondaPackage
+from .base_reads import BaseReads
 
 
 class FastQC(CapTask):
@@ -16,6 +17,12 @@ class FastQC(CapTask):
             package="fastqc=0.11.9",
             executable="fastqc",
             channel="bioconda",
+            config_filename=self.config_filename,
+        )
+        self.reads = BaseReads(
+            pe1=self.pe1,
+            pe2=self.pe2,
+            sample_name=self.sample_name,
             config_filename=self.config_filename,
         )
         self.config = PipelineConfig(self.config_filename)
@@ -31,7 +38,7 @@ class FastQC(CapTask):
 
     @classmethod
     def dependencies(cls):
-        return ["fastqc==v0.11.9"]
+        return ["fastqc==0.11.9", BaseReads]
 
     @property
     def _report(self):
@@ -57,7 +64,7 @@ class FastQC(CapTask):
             self.pkg._env.bin + '/perl',  # fastqc uses system perl which we do not assume access to
             self.pkg.bin,
             '-t', str(self.cores),
-            self.pe1,
+            self.output()["adapter_removed_reads_1"].path,
             f'-o {outdir}',
             '&& ',
             f'mv {outdir}/{self._report} {self.output()["report"].path}; ',

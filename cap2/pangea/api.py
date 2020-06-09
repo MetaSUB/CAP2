@@ -9,9 +9,9 @@ from ..pipeline.short_read import (
     MicrobeCensus,
     ReadStats,
     Kraken2,
-
     Humann2,
     HmpComparison,
+    ProcessedReads,
 )
 from ..pipeline.preprocessing import BaseReads
 from ..pipeline.assembly.metaspades import MetaspadesAssembly 
@@ -29,6 +29,7 @@ def wrap_task(sample, module, requires_reads=True, upload=True, config_path=''):
         pe2=sample.r2,
         sample_name=sample.name,
         wraps=module.module_name(),
+        config_filename=config_path,        
     )
     task.upload_allowed = upload
     task.wrapped_module = module
@@ -63,5 +64,11 @@ def get_task_list_for_sample(sample, stage, upload=True, config_path=''):
         microbe_census,
         read_stats,
         kraken2,
+        ProcessedReads(
+            pe1=sample.r1,
+            pe2=sample.r2,
+            sample_name=sample.name,
+            config_filename=config_path,
+        )
     ]
     return tasks

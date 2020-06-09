@@ -112,7 +112,7 @@ class Kraken2DB(CapDbTask):
 
     @classmethod
     def dependencies(cls):
-        return ['kraken2', DB_DATE, self.download_task]
+        return ['kraken2', DB_DATE, Kraken2DBDataDown]
 
     @property
     def kraken2_db(self):

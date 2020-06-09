@@ -2,7 +2,7 @@
 import luigi
 import subprocess
 
-from hashlib import md5
+from hashlib import sha256
 from sys import stderr
 from os.path import join
 
@@ -54,14 +54,14 @@ class BaseCapTask(luigi.Task):
         for el in [version] + cls.dependencies():
             if not isinstance(el, str):
                 el = el.version_hash()
-            result = md5(el.encode())
+            result = sha256(el.encode())
             out += result.hexdigest()
         return out
 
     @classmethod
     def short_version_hash(cls):
         myhash = cls.version_hash()
-        return myhash[-8:]
+        return myhash[:4] + myhash[20:24] + myhash[-4:]
 
     @classmethod
     def _module_name(cls):

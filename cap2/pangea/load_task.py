@@ -123,9 +123,12 @@ class PangeaLoadTask(PangeaBaseLoadTask, CapTask):
         super().__init__(*args, **kwargs)
         self.sample = self.grp.sample(self.sample_name).get()
         self.pangea_obj = self.sample
+        self._wrapped = None
 
     @property
     def wrapped(self):
+        if self._wrapped:
+            return self._wrapped
         instance = self.wrapped_module(
             pe1=self.pe1,
             pe2=self.pe2,
@@ -133,7 +136,8 @@ class PangeaLoadTask(PangeaBaseLoadTask, CapTask):
             config_filename=self.config_filename,
         )
         instance.pre_run_hooks.append(self._download_reads)
-        return instance
+        self._wrapped = instance
+        return self._wrapped
 
     def _download_reads(self):
         if self.requires_reads:

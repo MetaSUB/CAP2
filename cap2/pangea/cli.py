@@ -80,7 +80,7 @@ def cli_run_group(upload,
 @click.argument('grp_name')
 @click.argument('bucket_name')
 @click.argument('sample_name')
-def cli_run_sample(config, upload, scheduler_url, workers, threads
+def cli_run_sample(config, upload, scheduler_url, workers, threads,
                    endpoint, s3_endpoint, s3_profile, email, password,
                    stage,
                    org_name, grp_name, bucket_name, sample_name):

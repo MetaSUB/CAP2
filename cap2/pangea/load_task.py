@@ -116,6 +116,7 @@ class PangeaBaseLoadTask(BaseCapTask):
         elif not self.upload_allowed:
             open(self.output()['upload_flag'].path, 'w').close()
 
+
 class PangeaLoadTask(PangeaBaseLoadTask, CapTask):
 
     def __init__(self, *args, **kwargs):
@@ -151,6 +152,7 @@ class PangeaLoadTask(PangeaBaseLoadTask, CapTask):
         if self.results_available():
             print('RESULTS AVAILABLE')
             return None
+        print('RESULTS WRAPPED', self.wrapped.module_name())
         return self.wrapped
 
     def _uri(self, local_path):

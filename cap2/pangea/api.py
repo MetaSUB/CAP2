@@ -19,7 +19,6 @@ from ..pipeline.assembly.metaspades import MetaspadesAssembly
 STAGES = {
     'qc': [FastQC],
     'pre': [CleanReads],
-    'reads': SHORT_READ_MODULES,
     'assembly': [MetaspadesAssembly],
 }
 

@@ -1,6 +1,7 @@
 
 import click
 import luigi
+import time
 
 from os import environ
 
@@ -95,3 +96,39 @@ def cli_run_sample(config, upload, scheduler_url, workers, threads,
         luigi.build(
             tasks, scheduler_url=scheduler_url, workers=workers
         )
+
+
+@run.command('samples')
+@click.option('-c', '--config', type=click.Path(), default='', envvar='CAP2_CONFIG')
+@click.option('--upload/--no-upload', default=True)
+@click.option('--scheduler-url', default=None, envvar='CAP2_LUIGI_SCHEDULER_URL')
+@click.option('-w', '--workers', default=1)
+@click.option('-t', '--threads', default=1)
+@click.option('--timelimit', default=0, help='Stop adding jobs after N hours')
+@click.option('--endpoint', default='https://pangea.gimmebio.com')
+@click.option('--s3-endpoint', default='https://s3.wasabisys.com')
+@click.option('--s3-profile', default='default', envvar='CAP2_PANGEA_S3_PROFILE')
+@click.option('-e', '--email', envvar='PANGEA_USER')
+@click.option('-p', '--password', envvar='PANGEA_PASS')
+@click.option('-s', '--stage', default='reads')
+@click.argument('org_name')
+@click.argument('grp_name')
+@click.argument('bucket_name')
+def cli_run_samples(config, upload, scheduler_url, workers, threads, timelimit,
+                    endpoint, s3_endpoint, s3_profile, email, password, stage,
+                    org_name, grp_name, bucket_name):
+    set_config(email, password, org_name, grp_name, bucket_name, s3_endpoint, s3_profile)
+    group = PangeaGroup(grp_name, email, password, endpoint, org_name)
+    start_time = time.time()
+    for sample in group.pangea_samples(randomize=True):
+        if timelimit and (time.time() - start_time) > (60 * 60 * timelimit):
+            break
+        tasks = get_task_list_for_sample(
+            sample, stage, upload=upload, config_path=config, cores=threads
+        )
+        if not scheduler_url:
+            luigi.build(tasks, local_scheduler=True, workers=workers)
+        else:
+            luigi.build(
+                tasks, scheduler_url=scheduler_url, workers=workers
+            )

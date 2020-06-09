@@ -1,4 +1,5 @@
 import luigi
+import random
 import subprocess
 import os
 from requests.exceptions import HTTPError
@@ -64,8 +65,12 @@ class PangeaGroup:
         self.grp = org.sample_group(grp_name).get()
         self.name = grp_name
 
-    def pangea_samples(self):
-        for sample in self.grp.get_samples():
+    def pangea_samples(self, randomize=False):
+        if randomize:
+            samples = random.shuffle(list(self.grp.get_samples()))
+        else:
+            samples = self.grp.get_samples()
+        for sample in samples:
             psample = PangeaSample(
                 sample.name,
                 None,

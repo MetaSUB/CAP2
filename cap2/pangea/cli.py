@@ -69,6 +69,7 @@ def cli_run_group(upload,
 @click.option('--upload/--no-upload', default=True)
 @click.option('--scheduler-url', default=None)
 @click.option('-w', '--workers', default=1)
+@click.option('-t', '--threads', default=1)
 @click.option('--endpoint', default='https://pangea.gimmebio.com')
 @click.option('--s3-endpoint', default='https://s3.wasabisys.com')
 @click.option('--s3-profile', default='default')
@@ -79,13 +80,15 @@ def cli_run_group(upload,
 @click.argument('grp_name')
 @click.argument('bucket_name')
 @click.argument('sample_name')
-def cli_run_sample(config, upload, scheduler_url, workers,
+def cli_run_sample(config, upload, scheduler_url, workers, threads
                    endpoint, s3_endpoint, s3_profile, email, password,
                    stage,
                    org_name, grp_name, bucket_name, sample_name):
     sample = PangeaSample(sample_name, email, password, endpoint, org_name, grp_name)
     set_config(email, password, org_name, grp_name, bucket_name, s3_endpoint, s3_profile)
-    tasks = get_task_list_for_sample(sample, stage, upload=upload, config_path=config)
+    tasks = get_task_list_for_sample(
+        sample, stage, upload=upload, config_path=config, cores=threads
+    )
     if not scheduler_url:
         luigi.build(tasks, local_scheduler=True, workers=workers)
     else:

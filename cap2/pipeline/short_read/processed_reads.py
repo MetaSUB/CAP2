@@ -16,10 +16,36 @@ class ProcessedReads(CapTask):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-    @property
-    def reads(self):
-        return self.ec_reads
+        self.hmp = HmpComparison(
+            sample_name=self.sample_name,
+            pe1=self.pe1,
+            pe2=self.pe2,
+            config_filename=self.config_filename
+        )
+        self.humann2 = Humann2(
+            sample_name=self.sample_name,
+            pe1=self.pe1,
+            pe2=self.pe2,
+            config_filename=self.config_filename
+        )
+        self.kraken2 = Kraken2(
+            sample_name=self.sample_name,
+            pe1=self.pe1,
+            pe2=self.pe2,
+            config_filename=self.config_filename
+        )
+        self.mash = Mash(
+            sample_name=self.sample_name,
+            pe1=self.pe1,
+            pe2=self.pe2,
+            config_filename=self.config_filename
+        )
+        self.read_stats = ReadStats(
+            sample_name=self.sample_name,
+            pe1=self.pe1,
+            pe2=self.pe2,
+            config_filename=self.config_filename
+        )
 
     @classmethod
     def version(cls):
@@ -27,7 +53,7 @@ class ProcessedReads(CapTask):
 
     @classmethod
     def dependencies(cls):
-        return [GrootAMR, HmpComparison, Humann2, Kraken2, Mash, ReadStats]
+        return [HmpComparison, Humann2, Kraken2, Mash, ReadStats]
 
     @classmethod
     def _module_name(cls):

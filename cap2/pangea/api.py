@@ -72,5 +72,6 @@ def get_task_list_for_sample(sample, stage, upload=True, config_path='', cores=1
             clean_reads,
             read_stats,
             kraken2,
+            humann2,
         ]
     return tasks

@@ -12,4 +12,4 @@ def estimate_read_length(fastq_filename):
                 break
             n += 1
             total_len += len(rec.seq)
-    return total_len / n
+    return total_len // n

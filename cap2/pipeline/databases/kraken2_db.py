@@ -208,7 +208,7 @@ class BrakenKraken2DB(CapDbTask):
             if length > index_len:
                 break
         # index_len is now the largest index shorter than length or the smallest
-        return index_len, self.output()[f'bracken_kraken2_db_{length}']
+        return index_len, self.output()[f'bracken_kraken2_db_{index_len}']
 
     def run(self):
         if self.config.db_mode == PipelineConfig.DB_MODE_BUILD:

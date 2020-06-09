@@ -20,6 +20,7 @@ STAGES = {
     'qc': [FastQC],
     'pre': [CleanReads],
     'assembly': [MetaspadesAssembly],
+    'reads': [],
 }
 
 
@@ -62,8 +63,13 @@ def get_task_list_for_sample(sample, stage, upload=True, config_path='', cores=1
     processed.mash = mash
     processed.read_stats = read_stats
 
-    tasks = [
-        clean_reads,
-        processed
-    ]
+    if stage == 'qc':
+        tasks = [
+            clean_reads,
+        ]
+    if stage == 'reads':
+        tasks = [
+            clean_reads,
+            processed,
+        ]
     return tasks

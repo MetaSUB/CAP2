@@ -67,7 +67,7 @@ class Humann2(CapTask):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.pkg = CondaPackage(
-            package="humann2==2.8.1",
+            package="humann2",
             executable="humann2",
             channel="bioconda",
             config_filename=self.config_filename,
@@ -94,7 +94,7 @@ class Humann2(CapTask):
 
     @classmethod
     def dependencies(cls):
-        return ['humann2==2.8.1', MicaUniref90]
+        return ['humann2', MicaUniref90]
 
     def output(self):
         return {

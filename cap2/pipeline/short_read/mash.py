@@ -60,5 +60,5 @@ class Mash(CapTask):
         return cmd
 
     def _run(self):
-        self.run_cmd(self._cmd(10 * 1000), '10K_mash_sketch')
-        self.run_cmd(self._cmd(10 * 1000 * 1000), '10M_mash_sketch')
+        self.run_cmd(self._cmd(10 * 1000, '10K_mash_sketch'))
+        self.run_cmd(self._cmd(10 * 1000 * 1000, '10M_mash_sketch'))

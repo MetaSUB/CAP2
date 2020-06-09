@@ -47,10 +47,6 @@ def get_task_list_for_sample(sample, stage, upload=True, config_path='', cores=1
     dmnd_uniref90.wrapped.reads = clean_reads
     humann2 = wrap_task(sample, Humann2, config_path=config_path, cores=cores)
     humann2.wrapped.alignment = dmnd_uniref90
-    print('humann2.wrapped.alignment', humann2.wrapped.alignment)
-    print('humann2.wrapped.alignment.wrapped.reads', humann2.wrapped.alignment.wrapped.reads)
-    print('humann2.wrapped.alignment.wrapped.reads.wrapped', humann2.wrapped.alignment.wrapped.reads.wrapped)
-    assert False
     mash = wrap_task(sample, Mash, config_path=config_path, cores=cores)
     mash.wrapped.reads = clean_reads
     hmp = wrap_task(sample, HmpComparison, config_path=config_path, cores=cores)

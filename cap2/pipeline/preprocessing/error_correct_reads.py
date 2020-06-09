@@ -35,7 +35,7 @@ class ErrorCorrectReads(CapTask):
 
     @classmethod
     def version(cls):
-        return 'v1.0.0'
+        return 'v0.2.0'
 
     @classmethod
     def dependencies(cls):

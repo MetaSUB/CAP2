@@ -37,7 +37,7 @@ class MicrobeCensus(CapTask):
 
     @classmethod
     def version(self):
-        return 'v1.0.0'
+        return 'v0.1.0'
 
     @classmethod
     def dependencies(self):

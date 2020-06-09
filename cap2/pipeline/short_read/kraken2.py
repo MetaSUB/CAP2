@@ -48,7 +48,7 @@ class Kraken2(CapTask):
 
     @classmethod
     def version(cls):
-        return 'v0.1.0'
+        return 'v0.2.0'
 
     @classmethod
     def dependencies(cls):

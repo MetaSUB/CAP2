@@ -44,21 +44,21 @@ def get_task_list_for_sample(sample, stage, upload=True, config_path='', cores=1
     clean_reads = wrap_task(sample, CleanReads, config_path=config_path, cores=cores)
     clean_reads.wrapped.ec_reads.nonhuman_reads.adapter_removed_reads.reads = reads
     dmnd_uniref90 = wrap_task(sample, MicaUniref90, config_path=config_path, cores=cores)
-    dmnd_uniref90.reads = clean_reads
+    dmnd_uniref90.wrapped.reads = clean_reads
     humann2 = wrap_task(sample, Humann2, config_path=config_path, cores=cores)
     humann2.wrapped.alignment = dmnd_uniref90
-    print(humann2.wrapped.alignment)
-    print(humann2.wrapped.alignment.wrapped.reads)
-    print(humann2.wrapped.alignment.wrapped.reads.wrapped)
+    print('humann2.wrapped.alignment', humann2.wrapped.alignment)
+    print('humann2.wrapped.alignment.wrapped.reads', humann2.wrapped.alignment.wrapped.reads)
+    print('humann2.wrapped.alignment.wrapped.reads.wrapped', humann2.wrapped.alignment.wrapped.reads.wrapped)
     assert False
     mash = wrap_task(sample, Mash, config_path=config_path, cores=cores)
-    mash.reads = clean_reads
+    mash.wrapped.reads = clean_reads
     hmp = wrap_task(sample, HmpComparison, config_path=config_path, cores=cores)
     hmp.wrapped.mash = mash
     read_stats = wrap_task(sample, ReadStats, config_path=config_path, cores=cores)
-    read_stats.reads = clean_reads
+    read_stats.wrapped.reads = clean_reads
     kraken2 = wrap_task(sample, Kraken2, config_path=config_path, cores=cores)
-    kraken2.reads = clean_reads
+    kraken2.wrapped.reads = clean_reads
 
     processed = ProcessedReads.from_sample(sample, config_path, cores=cores)
     processed.hmp = hmp

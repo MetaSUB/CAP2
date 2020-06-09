@@ -103,7 +103,7 @@ class Humann2(CapTask):
         abunds = odir + '/*pathabundance.tsv'
         covs = odir + '/*pathcoverage.tsv'
         cmd = (
-            f'{self.pkg.bin} '
+            f'humann2 '
             f'--input {self.alignment.output()["m8"].path} '
             f'--output {self.sample_name}_humann2 ; '
             'mv ' + genes + ' ' + self.output()['genes'].path + '; '

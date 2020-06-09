@@ -46,11 +46,11 @@ def get_task_list_for_sample(sample, stage, upload=True, config_path='', cores=1
     dmnd_uniref90 = wrap_task(sample, MicaUniref90, config_path=config_path, cores=cores)
     dmnd_uniref90.reads = clean_reads
     humann2 = wrap_task(sample, Humann2, config_path=config_path, cores=cores)
-    humann2.alignment = dmnd_uniref90
+    humann2.wrapped.alignment = dmnd_uniref90
     mash = wrap_task(sample, Mash, config_path=config_path, cores=cores)
     mash.reads = clean_reads
     hmp = wrap_task(sample, HmpComparison, config_path=config_path, cores=cores)
-    hmp.mash = mash
+    hmp.wrapped.mash = mash
     read_stats = wrap_task(sample, ReadStats, config_path=config_path, cores=cores)
     read_stats.reads = clean_reads
     kraken2 = wrap_task(sample, Kraken2, config_path=config_path, cores=cores)

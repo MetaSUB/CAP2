@@ -128,8 +128,8 @@ class BrakenKraken2(CapTask):
         cmd = (
             f'{self.pkg.bin} '
             f'-d {self.db.kraken2_db} '
-            f'-i {self.report.output()["report"]} '
-            f'-o {self.output()["report"]} '
+            f'-i {self.report.output()["report"].path} '
+            f'-o {self.output()["report"].path} '
             f'-r {index_len} '
             '-l S '  # Species
             '-t 10 '  # Min reads

@@ -134,6 +134,7 @@ class PangeaLoadTask(PangeaBaseLoadTask, CapTask):
             pe2=self.pe2,
             sample_name=self.sample_name,
             config_filename=self.config_filename,
+            cores=self.cores,
         )
         instance.pre_run_hooks.append(self._download_reads)
         self._wrapped = instance

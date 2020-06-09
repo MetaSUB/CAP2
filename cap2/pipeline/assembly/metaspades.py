@@ -66,7 +66,7 @@ class MetaspadesAssembly(CapTask):
             ('contigs.fasta', 'contigs'),
             ('scaffolds.fasta', 'scaffolds_fasta'),
             ('scaffolds.paths', 'scaffolds_paths'),
-            ('assembly_graph.fastg', 'fastq'),
+            ('assembly_graph.fastg', 'fastg'),
             ('assembly_graph_with_scaffolds.gfa', 'gfa'),
 
         ]

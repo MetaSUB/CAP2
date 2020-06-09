@@ -149,6 +149,7 @@ class PangeaLoadTask(PangeaBaseLoadTask, CapTask):
 
     def requires(self):
         if self.results_available():
+            print('RESULTS AVAILABLE')
             return None
         return self.wrapped
 

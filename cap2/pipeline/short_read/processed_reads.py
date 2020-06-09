@@ -70,5 +70,11 @@ class ProcessedReads(CapTask):
     def output(self):
         return {}
 
+    def complete(self):
+        for depends in self.requires:
+            if not depends.complete():
+                return False
+        return True
+
     def _run(self):
         pass

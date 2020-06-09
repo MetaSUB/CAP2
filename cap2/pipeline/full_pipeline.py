@@ -49,6 +49,12 @@ class FullPipeline(CapTask):
     def _module_name(cls):
         return 'metasub_cap'
 
+    def complete(self):
+        for depends in self.requires:
+            if not depends.complete():
+                return False
+        return True
+
     def output(self):
         return {}
 

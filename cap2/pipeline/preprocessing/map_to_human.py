@@ -34,6 +34,7 @@ class RemoveHumanReads(CapTask):
             pe2=self.pe2,
             sample_name=self.sample_name,
             config_filename=self.config_filename,
+            cores=self.cores,
         )
 
     def requires(self):
@@ -41,7 +42,7 @@ class RemoveHumanReads(CapTask):
 
     @classmethod
     def version(cls):
-        return 'v0.2.0'
+        return 'v0.2.1'
 
     @classmethod
     def dependencies(cls):

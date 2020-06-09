@@ -40,7 +40,7 @@ def wrap_task(sample, module, requires_reads=True, upload=True, config_path='', 
 
 def get_task_list_for_sample(sample, stage, upload=True, config_path='', cores=1):
     reads = wrap_task(sample, BaseReads, upload=False, config_path=config_path, cores=cores)
-    clean_reads = wrap_task(sample, CleanReads, requires_reads=False, config_path=config_path, cores=cores)
+    clean_reads = wrap_task(sample, CleanReads, config_path=config_path, cores=cores)
     clean_reads.wrapped.ec_reads.nonhuman_reads.adapter_removed_reads.reads = reads
     dmnd_uniref90 = wrap_task(sample, MicaUniref90, config_path=config_path, cores=cores)
     dmnd_uniref90.reads = clean_reads
@@ -50,12 +50,11 @@ def get_task_list_for_sample(sample, stage, upload=True, config_path='', cores=1
     mash.reads = clean_reads
     hmp = wrap_task(sample, HmpComparison, config_path=config_path, cores=cores)
     hmp.mash = mash
-    microbe_census = wrap_task(sample, MicrobeCensus, config_path=config_path, cores=cores)
-    microbe_census.reads = clean_reads
     read_stats = wrap_task(sample, ReadStats, config_path=config_path, cores=cores)
     read_stats.reads = clean_reads
     kraken2 = wrap_task(sample, Kraken2, config_path=config_path, cores=cores)
     kraken2.reads = clean_reads
+
     processed = ProcessedReads.from_sample(sample, config_path, cores=cores)
     processed.hmp = hmp
     processed.humann2 = humann2
@@ -65,13 +64,6 @@ def get_task_list_for_sample(sample, stage, upload=True, config_path='', cores=1
 
     tasks = [
         clean_reads,
-        dmnd_uniref90,
-        humann2,
-        mash,
-        hmp,
-        microbe_census,
-        read_stats,
-        kraken2,
         processed
     ]
     return tasks

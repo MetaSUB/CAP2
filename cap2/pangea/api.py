@@ -14,7 +14,7 @@ from ..pipeline.short_read import (
     ProcessedReads,
 )
 from ..pipeline.preprocessing import BaseReads
-from ..pipeline.assembly.metaspades import MetaspadesAssembly 
+from ..pipeline.assembly.metaspades import MetaspadesAssembly
 
 STAGES = [
     'qc',

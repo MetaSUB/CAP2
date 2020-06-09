@@ -16,7 +16,8 @@ class MetaspadesAssembly(CapTask):
         self.pkg = CondaPackage(
             package="spades",
             executable="metaspades.py",
-            channel="bioconda"
+            channel="bioconda",
+            config_filename=self.config_filename
         )
         self.reads = CleanReads(
             sample_name=self.sample_name,

@@ -6,7 +6,7 @@ from shutil import rmtree
 from ..utils.cap_task import CapTask
 from ..config import PipelineConfig
 from ..utils.conda import CondaPackage
-from ..databases.human_removal_db import HumanRemovalDB
+from ..preprocessing import CleanReads
 
 
 class MetaspadesAssembly(CapTask):

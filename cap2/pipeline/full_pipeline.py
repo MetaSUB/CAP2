@@ -50,7 +50,7 @@ class FullPipeline(CapTask):
         return 'metasub_cap'
 
     def complete(self):
-        for depends in self.requires:
+        for depends in self.requires():
             if not depends.complete():
                 return False
         return True

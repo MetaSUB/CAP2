@@ -21,6 +21,7 @@ STAGES = [
     'pre',
     'reads',
     'assembly',
+    'all',
 ]
 
 
@@ -95,4 +96,6 @@ def get_task_list_for_sample(sample, stage, upload=True, config_path='', cores=1
         tasks = [clean_reads, processed]
     if stage == 'assembly':
         tasks = [clean_reads, assembly]
+    if stage == 'all':
+        tasks = [clean_reads, fastqc, assembly, processed]
     return tasks

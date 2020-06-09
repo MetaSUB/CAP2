@@ -98,7 +98,7 @@ class Humann2(CapTask):
         }
 
     def _run(self):
-        odir = params.sample_name + '_humann2'
+        odir = self.sample_name + '_humann2'
         genes = odir + '/*genefamilies.tsv'
         abunds = odir + '/*pathabundance.tsv'
         covs = odir + '/*pathcoverage.tsv'

@@ -9,6 +9,7 @@ from ..pipeline.short_read import (
     MicrobeCensus,
     ReadStats,
     Kraken2,
+    BrakenKraken2,
     Humann2,
     HmpComparison,
     ProcessedReads,
@@ -54,11 +55,14 @@ def get_task_list_for_read_stage(sample, clean_reads, upload=True, config_path='
     read_stats.wrapped.reads = clean_reads
     kraken2 = wrap_task(sample, Kraken2, config_path=config_path, cores=cores)
     kraken2.wrapped.reads = clean_reads
+    braken = wrap_task(sample, BrakenKraken2, config_path=config_path, cores=cores)
+    braken.wrapped.report = kraken2
+    braken.wrapped.reads = clean_reads
 
     processed = ProcessedReads.from_sample(sample, config_path, cores=cores)
     processed.hmp = hmp
     processed.humann2 = humann2
-    processed.kraken2 = kraken2
+    processed.kraken2 = braken
     processed.mash = mash
     processed.read_stats = read_stats
     return processed

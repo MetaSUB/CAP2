@@ -4,7 +4,7 @@ from ..utils.cap_task import CapTask
 from .amrs import GrootAMR
 from .hmp_comparison import HmpComparison
 from .humann2 import Humann2
-from .kraken2 import Kraken2
+from .kraken2 import BrakenKraken2
 from .mash import Mash
 from .read_stats import ReadStats
 
@@ -30,7 +30,7 @@ class ProcessedReads(CapTask):
             config_filename=self.config_filename,
             cores=self.cores,
         )
-        self.kraken2 = Kraken2(
+        self.kraken2 = BrakenKraken2(
             sample_name=self.sample_name,
             pe1=self.pe1,
             pe2=self.pe2,

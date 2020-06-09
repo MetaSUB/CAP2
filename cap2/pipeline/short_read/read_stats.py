@@ -77,7 +77,7 @@ class ReadStats(CapTask):
 
     def _run(self):
         tbl = pd.DataFrame.from_dict({
-            (self.sample_name, 'read_1'): stats_one_fastq(self.reads.reads[0], self.dropout),
-            (self.sample_name, 'read_2'): stats_one_fastq(self.reads.reads[1], self.dropout),
+            (self.sample_name, 'read_1'): stats_one_fastq(self.reads.output()['clean_reads_1'].path, self.dropout),
+            (self.sample_name, 'read_2'): stats_one_fastq(self.reads.output()['clean_reads_2'].path, self.dropout),
         }, orient='index')
         tbl.to_csv(self.output()['report'].path)

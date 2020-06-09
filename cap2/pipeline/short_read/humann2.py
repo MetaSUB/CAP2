@@ -81,9 +81,6 @@ class Humann2(CapTask):
             config_filename=self.config_filename
         )
 
-    def module_name(self):
-        return 'humann2'
-
     def requires(self):
         return self.pkg, self.alignment
 

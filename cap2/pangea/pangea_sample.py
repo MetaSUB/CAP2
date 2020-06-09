@@ -67,7 +67,8 @@ class PangeaGroup:
 
     def pangea_samples(self, randomize=False):
         if randomize:
-            samples = random.shuffle(list(self.grp.get_samples()))
+            samples = list(self.grp.get_samples())
+            random.shuffle(samples)
         else:
             samples = self.grp.get_samples()
         for sample in samples:

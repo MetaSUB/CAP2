@@ -64,8 +64,8 @@ class MetaspadesAssembly(CapTask):
         self.run_cmd(cmd)
         pairs_to_move = [
             ('contigs.fasta', 'contigs'),
-            ('scaffolds.fasta', 'scaffolds'),
-            ('scaffolds.paths', 'scaffolds'),
+            ('scaffolds.fasta', 'scaffolds_fasta'),
+            ('scaffolds.paths', 'scaffolds_paths'),
             ('assembly_graph.fastg', 'fastq'),
             ('assembly_graph_with_scaffolds.gfa', 'gfa'),
 

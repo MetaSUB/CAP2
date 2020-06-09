@@ -60,7 +60,7 @@ class ProcessedReads(CapTask):
         return 'processed_reads'
 
     def requires(self):
-        return self.ec_reads
+        return self.hmp, self.humann2, self.kraken2, self.mash, self.read_stats
 
     def output(self):
         return {}

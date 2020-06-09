@@ -20,31 +20,36 @@ class ProcessedReads(CapTask):
             sample_name=self.sample_name,
             pe1=self.pe1,
             pe2=self.pe2,
-            config_filename=self.config_filename
+            config_filename=self.config_filename,
+            cores=self.cores,
         )
         self.humann2 = Humann2(
             sample_name=self.sample_name,
             pe1=self.pe1,
             pe2=self.pe2,
-            config_filename=self.config_filename
+            config_filename=self.config_filename,
+            cores=self.cores,
         )
         self.kraken2 = Kraken2(
             sample_name=self.sample_name,
             pe1=self.pe1,
             pe2=self.pe2,
-            config_filename=self.config_filename
+            config_filename=self.config_filename,
+            cores=self.cores,
         )
         self.mash = Mash(
             sample_name=self.sample_name,
             pe1=self.pe1,
             pe2=self.pe2,
-            config_filename=self.config_filename
+            config_filename=self.config_filename,
+            cores=self.cores,
         )
         self.read_stats = ReadStats(
             sample_name=self.sample_name,
             pe1=self.pe1,
             pe2=self.pe2,
-            config_filename=self.config_filename
+            config_filename=self.config_filename,
+            cores=self.cores,
         )
 
     @classmethod

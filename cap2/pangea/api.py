@@ -15,6 +15,7 @@ from ..pipeline.short_read import (
 )
 from ..pipeline.preprocessing import BaseReads
 from ..pipeline.assembly.metaspades import MetaspadesAssembly
+from ..pipeline.full_pipeline import FullPipeline
 
 STAGES = [
     'qc',
@@ -87,6 +88,11 @@ def get_task_list_for_sample(sample, stage, upload=True, config_path='', cores=1
         sample, MetaspadesAssembly, upload=upload, config_path=config_path, cores=cores
     )
     assembly.wrapped.reads = clean_reads
+    # all stage
+    full = FullPipeline.from_sample(sample, config_path, cores=cores)
+    full.qc = fastqc
+    full.short_reads = processed
+    full.assembly = assembly
 
     if stage == 'qc':
         tasks = [fastqc]
@@ -97,5 +103,5 @@ def get_task_list_for_sample(sample, stage, upload=True, config_path='', cores=1
     if stage == 'assembly':
         tasks = [clean_reads, assembly]
     if stage == 'all':
-        tasks = [clean_reads, fastqc, assembly, processed]
+        tasks = [full]
     return tasks

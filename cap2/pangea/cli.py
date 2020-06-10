@@ -124,11 +124,13 @@ def cli_run_samples(config, clean_reads, upload, scheduler_url, workers, threads
     start_time = time.time()
     index, completed = -1, set()
     samples = list(group.pangea_samples(randomize=True))
-    while len(completed) < samples:
+    while len(completed) < len(samples):
         if timelimit and (time.time() - start_time) > (60 * 60 * timelimit):
             break
         index = (index + 1) % len(samples)
         sample = samples[index]
+        if index in completed:
+            continue
         if clean_reads and not sample.has_clean_reads():
             continue
         tasks = get_task_list_for_sample(

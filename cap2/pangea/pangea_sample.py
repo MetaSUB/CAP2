@@ -41,6 +41,15 @@ class PangeaSample:
                 continue
         return False
 
+    def has_clean_reads(self):
+        for name in ['cap2::clean_reads']:
+            try:
+                self.sample.analysis_result(name).get()
+                return True
+            except HTTPError:
+                continue
+        return False
+
     def download(self):
         print('DOWNLOADING READS')
         try:

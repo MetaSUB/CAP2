@@ -100,6 +100,7 @@ def cli_run_sample(config, upload, scheduler_url, workers, threads,
 
 @run.command('samples')
 @click.option('-c', '--config', type=click.Path(), default='', envvar='CAP2_CONFIG')
+@click.option('--clean-reads/--all-reads', default=False)
 @click.option('--upload/--no-upload', default=True)
 @click.option('--scheduler-url', default=None, envvar='CAP2_LUIGI_SCHEDULER_URL')
 @click.option('-w', '--workers', default=1)
@@ -114,15 +115,22 @@ def cli_run_sample(config, upload, scheduler_url, workers, threads,
 @click.argument('org_name')
 @click.argument('grp_name')
 @click.argument('bucket_name')
-def cli_run_samples(config, upload, scheduler_url, workers, threads, timelimit,
+def cli_run_samples(config, clean_reads, upload, scheduler_url, workers, threads,
+                    timelimit,
                     endpoint, s3_endpoint, s3_profile, email, password, stage,
                     org_name, grp_name, bucket_name):
     set_config(email, password, org_name, grp_name, bucket_name, s3_endpoint, s3_profile)
     group = PangeaGroup(grp_name, email, password, endpoint, org_name)
     start_time = time.time()
-    for sample in group.pangea_samples(randomize=True):
+    index, completed = -1, set()
+    samples = list(group.pangea_samples(randomize=True))
+    while len(completed) < samples:
         if timelimit and (time.time() - start_time) > (60 * 60 * timelimit):
             break
+        index = (index + 1) % len(samples)
+        sample = samples[index]
+        if clean_reads and not sample.has_clean_reads():
+            continue
         tasks = get_task_list_for_sample(
             sample, stage, upload=upload, config_path=config, cores=threads
         )
@@ -132,3 +140,4 @@ def cli_run_samples(config, upload, scheduler_url, workers, threads, timelimit,
             luigi.build(
                 tasks, scheduler_url=scheduler_url, workers=workers
             )
+        completed.add(index)

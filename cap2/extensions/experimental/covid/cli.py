@@ -5,7 +5,9 @@ import time
 
 from .fast_detect import Kraken2FastDetectCovid
 from ....pangea.cli import set_config
+from ....pangea.api import wrap_task
 from ....pangea.pangea_sample import PangeaGroup
+from ....pipeline.preprocessing import BaseReads
 
 
 @click.group('covid')
@@ -42,13 +44,15 @@ def covid_fast_cli(config, scheduler_url, workers, threads, timelimit,
         sample = samples[index]
         if index in completed:
             continue
-        tasks = [Kraken2FastDetectCovid(
-            pe1=sample.r1,
-            pe2=sample.r2,
-            sample_name=sample.name,
-            config_filename=config,
-            cores=threads,
-        )]
+        reads = wrap_task(
+            sample, BaseReads,
+            upload=False, config_path=config, cores=threads, requires_reads=True
+        )
+        fast_detect = wrap_task(
+            sample, Kraken2FastDetectCovid, config_path=config, cores=threads
+        )
+        fast_detect.wrapped.reads = reads
+        tasks = [fast_detect]
         if not scheduler_url:
             luigi.build(tasks, local_scheduler=True, workers=workers)
         else:

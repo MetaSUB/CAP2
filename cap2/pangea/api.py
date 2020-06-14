@@ -19,6 +19,7 @@ from ..pipeline.assembly.metaspades import MetaspadesAssembly
 from ..pipeline.full_pipeline import FullPipeline
 
 STAGES = [
+    'data',
     'qc',
     'pre',
     'reads',
@@ -97,7 +98,8 @@ def get_task_list_for_sample(sample, stage, upload=True, config_path='', cores=1
     full.qc = fastqc
     full.short_reads = processed
     full.assembly = assembly
-
+    if stage == 'data':
+        tasks = [reads]
     if stage == 'qc':
         tasks = [fastqc]
     if stage == 'pre':

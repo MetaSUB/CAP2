@@ -3,22 +3,71 @@ import luigi
 import subprocess
 from os.path import join, dirname, basename
 
-from ..utils.cap_task import CapTask
+from ..utils.cap_task import CapTask, CapDBTask
 from ..config import PipelineConfig
 from ..utils.conda import CondaPackage
 from ..databases.human_removal_db import HumanRemovalDB
 from .base_reads import BaseReads
 
 
-class AdapterRemoval(CapTask):
-    ILLUMINA_SHARED_PREFIX = 'AGATCGGAAGAGC'
+KRAKEN2_COVID_DB_URL = 'https://s3.wasabisys.com/metasub/covid/kraken2_covid_2020_03_13.tar.gz'
+
+
+class Kraken2FastDetectCovidDB(CapDBTask):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.config = PipelineConfig(self.config_filename)
+
+    def requires(self):
+        return []
+
+    @classmethod
+    def version(cls):
+        return 'v0.1.0'
+
+    @classmethod
+    def dependencies(cls):
+        return []
+
+    @classmethod
+    def _module_name(cls):
+        return 'experimental::covid19_fast_detect_db'
+
+    @property
+    def kraken2_covid_db(self):
+        return KRAKEN2_COVID_DB_URL.split("/")[-1]
+
+    def output(self):
+        db_taxa = luigi.LocalTarget(join(self.config.db_dir, self.kraken2_covid_db))
+        db_taxa.makedirs()
+        return {'kraken2_db_covid': db_taxa}
+
+    def _run(self):
+        cmd = (
+            f'cd {self.config.db_dir} && '
+            f'wget {KRAKEN2_COVID_DB_URL} && '
+            f'tar -xzf {self.kraken2_covid_db} '
+        )
+        self.run_cmd(cmd)
+
+
+class Kraken2FastDetectCovid(CapTask):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.rsync_pkg = CondaPackage(
+            package="rsync",
+            executable="rsync",
+            channel="conda-forge",
+            env="CAP_v2_kraken2",
+            config_filename=self.config_filename,
+        )
         self.pkg = CondaPackage(
-            package="adapterremoval",
-            executable="AdapterRemoval",
+            package="kraken2",
+            executable="kraken2",
             channel="bioconda",
+            env="CAP_v2_kraken2",
             config_filename=self.config_filename,
         )
         self.reads = BaseReads(
@@ -28,51 +77,41 @@ class AdapterRemoval(CapTask):
             config_filename=self.config_filename,
             cores=self.cores,
         )
+        self.db = Kraken2FastDetectCovidDB(config_filename=self.config_filename, cores=self.cores)
         self.config = PipelineConfig(self.config_filename)
-        self.out_dir = self.config.out_dir
-        self.adapter1 = self.ILLUMINA_SHARED_PREFIX
-        self.adapter2 = self.ILLUMINA_SHARED_PREFIX
 
     def requires(self):
-        return self.pkg, self.reads
+        return self.rsync_pkg, self.pkg, self.reads, self.db
 
     @classmethod
     def version(cls):
-        return 'v0.2.1'
+        return 'v0.1.0'
 
     @classmethod
     def dependencies(cls):
-        return ["adapterremoval", BaseReads]
+        return ["kraken2", BaseReads, Kraken2FastDetectCovidDB]
 
     @classmethod
     def _module_name(cls):
-        return 'adapter_removal'
+        return 'experimental::covid19_fast_detect'
 
     def output(self):
         return {
-            'adapter_removed_reads_1': self.get_target('adapter_removed', 'R1.fastq.gz'),
-            'adapter_removed_reads_2': self.get_target('adapter_removed', 'R2.fastq.gz'),
-            'settings': self.get_target('settings', 'txt'),
+            'report': self.get_target('report', 'tsv'),
+            'read_assignments': self.get_target('read_assignments', 'tsv'),
         }
 
     def _run(self):
-        basename = f'ar_temp_{self.sample_name}'
         cmd = (
             f'{self.pkg.bin} '
-            f'--file1 {self.reads.output()["base_reads_1"].path} '
-            f'--file2 {self.reads.output()["base_reads_2"].path} '
-            '--trimns '
-            '--trimqualities '
-            '--gzip '
-            f'--adapter1 {self.adapter1} '
-            f'--adapter1 {self.adapter2} '
-            f'--output1 {self.output()["adapter_removed_reads_1"].path} '
-            f'--output2 {self.output()["adapter_removed_reads_2"].path} '
-            f'--settings {self.output()["settings"].path} '
-            f'--basename {basename} '
-            '--minquality 2 '
+            f'--db {self.db.kraken2_db} '
+            f'--paired '
             f'--threads {self.cores} '
-            '; '
-            f'rm {basename}*'
+            '--use-mpa-style '
+            '--gzip-compressed '
+            f'--report {self.output()["report"].path} '
+            f'{self.reads.output()["base_reads_1"].path} '
+            f'{self.reads.output()["base_reads_2"].path} '
+            f'> {self.output()["read_assignments"].path}'
         )
         self.run_cmd(cmd)

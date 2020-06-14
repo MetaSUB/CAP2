@@ -1,7 +1,7 @@
 
 import click
 
-from covid.cli import covid_cli
+from .covid.cli import covid_cli
 
 
 @click.group('experimental')

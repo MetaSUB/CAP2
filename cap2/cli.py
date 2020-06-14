@@ -1,6 +1,7 @@
 
 import click
 
+from .extensions.experimental.cli import experimental_cli
 from .pangea.cli import pangea
 from .api import (
     run_db_stage,
@@ -20,6 +21,7 @@ def main():
 
 
 main.add_command(pangea)
+main.add_command(experimental_cli)
 
 
 @main.command()

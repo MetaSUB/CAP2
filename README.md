@@ -2,7 +2,7 @@
 
 [![CircleCI](https://circleci.com/gh/MetaSUB/CAP2.svg?style=svg)](https://circleci.com/gh/MetaSUB/CAP2)
 
-This repository contains code for the second version of the MetaSUB Core Analysis Pipeline. This pipeline is not complete.
+This repository contains code for the second version of the MetaSUB Core Analysis Pipeline. This pipeline is in Beta and under development.
 
 ## Major Changes and Goals
 
@@ -15,12 +15,15 @@ There are a number of important changes from CAP1 to CAP2
  - More in depth assembly pipeline
  - Better strain calling
 
-## Installation and Testing
+## Installation, Testing, and Running
 
+To install and run tests download the repo and run the setup command
 ```
 python setup.py develop
 python -m pytest tests
 ```
+
+To run CAP2 use the command `cap2 --help` which will show you all available options. To process a group of samples you will need to give the CAP2 a file with three columns: the sample name, a path to the read 1 fastq file, a path to the read 2 fastq file.
 
 ### Configuration
 
@@ -57,8 +60,8 @@ You can also use a yaml configuration file. See `cap2/config.py` for details and
 | Short Read | Uniref90 Align   | x               | x             | x             |
 | Short Read | read stats       | x               | x             | x             |
 | Short Read | Microbe Census   | x               | x             |               |
-| Short Read | HUMAnN2          | x               |               |               |
-| Short Read | KrakenUniq       | x               |               |               |
+| Short Read | HUMAnN2          | x               | x             | x             |
+| Short Read | Kraken2          | x               | x             | x             |
 | Short Read | Strain Calling   |                 |               |               |
 | Short Read | GRiD             |                 |               |               |
 | Short Read | EMP Similarity   |                 |               |               |
@@ -68,8 +71,9 @@ You can also use a yaml configuration file. See `cap2/config.py` for details and
 | DB         | Uniref90         | x               | x             | x             |
 | DB         | host removal     | x               | x             | x             |
 | DB         | HMP Similarity   | x               | x             | x             |
-| DB         | KrakenUniq       | x               |               |               |
+| DB         | Kraken2          | x               | x             | x             |
 |            |                  |                 |               |               |
+| Contig     | MetaSPAdes       | x               | x             | x             |
 | Contig     | Progdigal        | x               |               |               |
 | Contig     | Deep BGC         |                 |               |               |
 | Contig     | Taxonomy         |                 |               |               |
@@ -82,14 +86,6 @@ You can also use a yaml configuration file. See `cap2/config.py` for details and
 
  - `samtools` needed to be manually installed on my mac
  - several tests still failing on CircleCI but passing on my laptop, not clear why. Maybe something to do with perl
- 
-## Missing Features
-
- - Needs some way to download databases
- - Accept remote Luigi scheduler
- - MultiQC in QC pipeline
- - shared/param conda env
-
 
 ## License
 

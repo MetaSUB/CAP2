@@ -104,7 +104,7 @@ class Kraken2FastDetectCovid(CapTask):
     def _run(self):
         cmd = (
             f'{self.pkg.bin} '
-            f'--db {self.db.kraken2_db} '
+            f'--db {self.db.kraken2_covid_db} '
             f'--paired '
             f'--threads {self.cores} '
             '--use-mpa-style '

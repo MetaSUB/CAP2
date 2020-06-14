@@ -30,8 +30,8 @@ class Kraken2FastDetectCovidDB(CapDbTask):
     def dependencies(cls):
         return []
 
-    def _module_name(cls):
     @classmethod
+    def _module_name(cls):
         return 'experimental::covid19_fast_detect_db'
 
     @property

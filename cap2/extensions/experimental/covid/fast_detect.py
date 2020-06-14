@@ -48,9 +48,9 @@ class Kraken2FastDetectCovidDB(CapDbTask):
     def _run(self):
         cmd = (
             f'cd {self.config.db_dir} && '
-            f'wget {KRAKEN2_COVID_DB_URL} && '
-            f'tar -xzf {self.kraken2_covid_db} && '
-            f'mv home/cem2009/Projects/SARS-CoV-2/database/covid_2020.03.13 {self.kraken2_covid_db}'
+            f'wget -q {KRAKEN2_COVID_DB_URL} && '
+            f'tar -xzf kraken2_covid_2020_03_13.tar.gz && '
+            f'mv home/cem2009/Projects/SARS-CoV-2/database/covid_2020.03.13 {self.kraken2_covid_db} '
         )
         self.run_cmd(cmd)
 

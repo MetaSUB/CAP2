@@ -3,11 +3,11 @@ import luigi
 import subprocess
 from os.path import join, dirname, basename
 
-from ..utils.cap_task import CapTask, CapDBTask
-from ..config import PipelineConfig
-from ..utils.conda import CondaPackage
-from ..databases.human_removal_db import HumanRemovalDB
-from .base_reads import BaseReads
+from ....pipeline.utils.cap_task import CapTask, CapDBTask
+from ....pipeline.config import PipelineConfig
+from ....pipeline.utils.conda import CondaPackage
+from ....pipeline.databases.human_removal_db import HumanRemovalDB
+from ....pipeline.base_reads import BaseReads
 
 
 KRAKEN2_COVID_DB_URL = 'https://s3.wasabisys.com/metasub/covid/kraken2_covid_2020_03_13.tar.gz'

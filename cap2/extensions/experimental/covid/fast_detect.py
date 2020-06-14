@@ -56,13 +56,13 @@ class Kraken2FastDetectCovid(CapTask):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.rsync_pkg = CondaPackage(
-            package="rsync",
-            executable="rsync",
-            channel="conda-forge",
-            env="CAP_v2_kraken2",
-            config_filename=self.config_filename,
-        )
+        # self.rsync_pkg = CondaPackage(
+        #     package="rsync",
+        #     executable="rsync",
+        #     channel="conda-forge",
+        #     env="CAP_v2_kraken2",
+        #     config_filename=self.config_filename,
+        # )
         self.pkg = CondaPackage(
             package="kraken2",
             executable="kraken2",
@@ -81,7 +81,7 @@ class Kraken2FastDetectCovid(CapTask):
         self.config = PipelineConfig(self.config_filename)
 
     def requires(self):
-        return self.rsync_pkg, self.pkg, self.reads, self.db
+        return self.pkg, self.reads, self.db
 
     @classmethod
     def version(cls):

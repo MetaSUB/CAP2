@@ -30,16 +30,18 @@ class Kraken2FastDetectCovidDB(CapDbTask):
     def dependencies(cls):
         return []
 
-    @classmethod
     def _module_name(cls):
+    @classmethod
         return 'experimental::covid19_fast_detect_db'
 
     @property
     def kraken2_covid_db(self):
-        return KRAKEN2_COVID_DB_URL.split("/")[-1]
+        return join(
+            self.config.db_dir, KRAKEN2_COVID_DB_URL.split("/")[-1].split('.tar.gz')[0]
+        )
 
     def output(self):
-        db_taxa = luigi.LocalTarget(join(self.config.db_dir, self.kraken2_covid_db))
+        db_taxa = luigi.LocalTarget(self.kraken2_covid_db)
         db_taxa.makedirs()
         return {'kraken2_db_covid': db_taxa}
 
@@ -47,7 +49,8 @@ class Kraken2FastDetectCovidDB(CapDbTask):
         cmd = (
             f'cd {self.config.db_dir} && '
             f'wget {KRAKEN2_COVID_DB_URL} && '
-            f'tar -xzf {self.kraken2_covid_db} '
+            f'tar -xzf {self.kraken2_covid_db} && '
+            f'mv home/cem2009/Projects/SARS-CoV-2/database/covid_2020.03.13 {self.kraken2_covid_db}'
         )
         self.run_cmd(cmd)
 

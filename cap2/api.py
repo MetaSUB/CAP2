@@ -24,7 +24,10 @@ def run_db_stage(config_path='', cores=1, **kwargs):
 def run_stage(samples, stage_name, config_path='', cores=1, **kwargs):
     modules = STAGES[stage_name]
     group_modules = STAGES_GROUP.get(stage_name, [])
-    run_modules(samples, modules, group_modules=group_modules, config_path='', cores=1, **kwargs)
+    run_modules(
+        samples, modules,
+        group_modules=group_modules, config_path=config_path, cores=cores, **kwargs
+    )
 
 
 def run_modules(samples, modules, group_modules=[], config_path='', cores=1, **kwargs):

@@ -10,11 +10,5 @@ from .read_stats import ReadStats
 from .amrs import GrootAMR
 
 MODULES = [
-    MicaUniref90,
-    Humann2,
-    Mash,
-    HmpComparison,
-    MicrobeCensus,
-    ReadStats,
-    Kraken2,
+    ProcessedReads,
 ]

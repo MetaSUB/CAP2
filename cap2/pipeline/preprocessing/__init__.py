@@ -9,10 +9,7 @@ from .multiqc import MultiQC
 from .base_reads import BaseReads
 
 MODULES = [
-    CountRawReads,
-    FastQC,
-    RemoveHumanReads,
-    ErrorCorrectReads,
+    CleanReads,
 ]
 
 QC_MODULES = [

@@ -17,8 +17,13 @@ SAMPLE = Sample('test_sample', RAW_READS_1, RAW_READS_2)
 class TestApi(TestCase):
     """Test the CAP2 API, essentially integration tests."""
 
+    @skip(reason="too slow")
     def test_short_read_stage(self):
         run_stage([SAMPLE], 'reads', TEST_CONFIG)
 
+    @skip(reason="too slow")
     def test_preprocessing_stage(self):
         run_stage([SAMPLE], 'pre', TEST_CONFIG)
+
+    def test_qc_stage(self):
+        run_stage([SAMPLE], 'qc', TEST_CONFIG)

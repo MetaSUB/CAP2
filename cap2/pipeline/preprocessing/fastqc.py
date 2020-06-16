@@ -65,7 +65,7 @@ class FastQC(CapTask):
             self.pkg._env.bin + '/perl',  # fastqc uses system perl which we do not assume access to
             self.pkg.bin,
             '-t', str(self.cores),
-            self.output()["adapter_removed_reads_1"].path,
+            self.reads.output()["base_reads_1"].path,
             f'-o {outdir}',
             '&& ',
             f'mv {outdir}/{self._report} {self.output()["report"].path}; ',

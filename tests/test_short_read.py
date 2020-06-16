@@ -118,6 +118,7 @@ class TestShortRead(TestCase):
         self.assertTrue(isfile(instance.output()['report'].path))
         self.assertTrue(isfile(instance.output()['read_assignments'].path))
 
+    @skip(reason="kraken2 create dependency hour")
     def test_invoke_kraken2(self):
         instance = Kraken2(
             pe1=RAW_READS_1,

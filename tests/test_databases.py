@@ -47,13 +47,13 @@ class TestDatabases(TestCase):
         self.assertTrue(isfile(instance.output()['kraken2_db_taxa'].path +'/hash.k2d'))
         #rmtree('test_db')
 
+    @skip(reason="braken-kraken2 database is very slow")
     def test_build_bracken_kraken2_taxa_db(self):
         instance = BrakenKraken2DB(config_filename=TEST_CONFIG)
         instance.libraries = ['plasmid']
         instance.kraken2_db_task.download_task.kraken_db_dir = data_file('kraken2')
         instance.kraken2_db_task.db_size = 10 * 1000 * 1000
         luigi.build([instance], local_scheduler=True)
-        assert False
         self.assertTrue(isfile(instance.output()['kraken2_db_taxa'].path +'/hash.k2d'))
 
     def test_build_hmp_db(self):
@@ -67,6 +67,7 @@ class TestDatabases(TestCase):
         self.assertTrue(isfile(instance.output()['hmp_sketch'].path))
         rmtree('test_db')
 
+    @skip(reason="uniref90 database is very slow")
     def test_build_uniref90_db(self):
         instance = Uniref90(config_filename=TEST_CONFIG)
         instance.fasta = data_file('uniref90/uniref90.sample.fasta.gz')

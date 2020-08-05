@@ -23,7 +23,16 @@ python setup.py develop
 python -m pytest tests
 ```
 
-To run CAP2 use the command `cap2 --help` which will show you all available options. To process a group of samples you will need to give the CAP2 a file with three columns: the sample name, a path to the read 1 fastq file, a path to the read 2 fastq file.
+To run CAP2 use the command `cap2 --help` which will show you all available options. To process a set of samples use the following command `cap2 run pipeline manifest.txt`. There is no need to manually download databases or install programs, however in most cases you will want to set up some configuration (see below). With a config file you can run `cap2 run pipeline -c config.yaml manifest.txt`
+
+`manifest.txt` is a file that tells CAP2 what samples to process. The manifest is a CSV file with three columns: the sample name, a path to the read 1 fastq file, a path to the read 2 fastq file. For example
+
+```
+my-sample-1,/path/to/my-sample-1.R1.fq.gz,/path/to/my-sample-1.R2.fq.gz
+my-sample-2,/path/to/my-sample-2.R1.fq.gz,/path/to/my-sample-2.R2.fq.gz
+my-sample-3,/path/to/my-sample-3.R1.fq.gz,/path/to/my-sample-3.R2.fq.gz
+```
+
 
 ### Configuration
 

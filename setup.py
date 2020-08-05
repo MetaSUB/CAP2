@@ -3,7 +3,7 @@ import setuptools
 
 setuptools.setup(
     name='cap2',
-    version='0.1.0',
+    version='0.1.1',
     description="CAP2",
     author="David C. Danko",
     author_email='dcdanko@gmail.com',

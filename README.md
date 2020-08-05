@@ -37,7 +37,7 @@ CAP2_CONDA_SPEC_DIR=<some local path...>
 CAP2_CONDA_BASE_PATH=<some local path...>
 ```
 
-You can also use a yaml configuration file. See `cap2/config.py` for details and all options.
+You can also use a yaml configuration file. See `cap2/pipeline/config.py` for details and all options.
 
 
 ## Tools and Status

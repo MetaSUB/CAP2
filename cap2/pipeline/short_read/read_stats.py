@@ -30,9 +30,9 @@ def stats_one_fastq(fastq, dropout):
                 elif base not in b'ATUatu':
                     n_count += 1
                 base_count += 1
-    gc_frac = gc_count / base_count
-    n_frac = n_count / base_count
-    seq_length /= read_count
+    gc_frac = gc_count / (base_count + 1)
+    n_frac = n_count / (base_count + 1)
+    seq_length /= (read_count + 1)
     return {
         'read_count': read_count,
         'gc_fraction': gc_frac,
@@ -52,6 +52,7 @@ class ReadStats(CapTask):
             pe1=self.pe1,
             pe2=self.pe2,
             config_filename=self.config_filename,
+            cores=self.cores,
         )
         self.dropout = 1 / 1000
 
@@ -64,7 +65,7 @@ class ReadStats(CapTask):
 
     @classmethod
     def version(cls):
-        return 'v1.0.0'
+        return 'v1.0.1'
 
     @classmethod
     def dependencies(cls):

@@ -21,16 +21,20 @@ def run_db_stage(config_path='', cores=1, **kwargs):
     luigi.build(instances, local_scheduler=True, **kwargs)
 
 
-def run_stage(samples, stage_name, config_path='', cores=1, **kwargs):
+def run_stage(samples, stage_name, config_path='', cores=1, workers=1, **kwargs):
     modules = STAGES[stage_name]
     group_modules = STAGES_GROUP.get(stage_name, [])
     run_modules(
         samples, modules,
-        group_modules=group_modules, config_path=config_path, cores=cores, **kwargs
+        group_modules=group_modules,
+        config_path=config_path,
+        cores=cores,
+        workers=workers,
+        **kwargs
     )
 
 
-def run_modules(samples, modules, group_modules=[], config_path='', cores=1, **kwargs):
+def run_modules(samples, modules, group_modules=[], config_path='', cores=1, workers=1, **kwargs):
     instances = []
     for sample in samples:
         for module in modules:
@@ -40,4 +44,4 @@ def run_modules(samples, modules, group_modules=[], config_path='', cores=1, **k
     for grp_module in group_modules:
         instances.append(grp_module.from_samples('all', samples, config_path))
 
-    luigi.build(instances, local_scheduler=True, **kwargs)
+    luigi.build(instances, local_scheduler=True, workers=workers, **kwargs)

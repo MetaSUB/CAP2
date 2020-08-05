@@ -57,18 +57,19 @@ def cap_db(workers, threads, config):
 
 
 @run.command('pipeline')
+@click.option('-w', '--workers', default=1)
 @click.option('-t', '--threads', default=1)
 @click.option('-c', '--config', type=click.Path(), default='')
 @click.option('-s', '--stage', type=click.Choice(STAGES.keys()), default=DEFAULT_STAGE)
 @click.argument('manifest', type=click.File('r'))
-def cap_pipeline(threads, config, stage, manifest):
+def cap_pipeline(workers, threads, config, stage, manifest):
     """Run  a stage of the CAP2 pipeline.
 
     Manifest is a three column file with rows of form:
     <sample name>   <read1 filepath>    <read2 filepath>
     """
     samples = Sample.samples_from_manifest(manifest)
-    run_stage(samples, stage, config_path=config, cores=threads)
+    run_stage(samples, stage, config_path=config, cores=threads, workers=workers)
 
 
 if __name__ == '__main__':

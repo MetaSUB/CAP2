@@ -66,16 +66,25 @@ class PreclassifyKraken2(CapTask):
         cmd = (
             f'{self.pkg.bin} '
             f'--db {self.db.kraken2_16s_db} '
+            f'--threads {self.cores} '
+            '--use-mpa-style '
+            '--gzip-compressed '
+            f'--report {self.output()["report_16s"].path} '
+            f'{self.reads.output()["base_reads_1"].path} '
+            f'> {self.output()["read_assignments_16s"].path}'
+        )
+        self.run_cmd(cmd)
+        cmd = (
+            f'{self.pkg.bin} '
             f'--db {self.db.kraken2_metagenome_db} '
             f'--threads {self.cores} '
             '--use-mpa-style '
             '--gzip-compressed '
-            f'--report {self.output()["report"].path} '
+            f'--report {self.output()["report_metagenome"].path} '
             f'{self.reads.output()["base_reads_1"].path} '
-            f'> {self.output()["read_assignments"].path}'
+            f'> {self.output()["read_assignments_metagenome"].path}'
         )
         self.run_cmd(cmd)
-
 
 class PreclassifySample(CapTask):
 

@@ -124,7 +124,7 @@ class PreclassifySample(CapTask):
         classified_16s = self._fraction_classified("read_assignments_16s")
         classified_metagenome = self._fraction_classified("read_assignments_metagenome")
         sample_type = 'UNKNOWN'
-        elif classified_16s < 0.01 and classified_metagenome > 0.01:
+        if classified_16s < 0.01 and classified_metagenome > 0.01:
             sample_type = 'METAGENOME'
         elif classified_16s > 0.01 and classified_metagenome < 0.01:
             sample_type = 'AMPLICON'

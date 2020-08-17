@@ -49,22 +49,21 @@ class DynamicPipelineSample(CapTask):
             return True
         return False
 
-    def complete(self):
-        return False
-        if not self._sample_type.complete():
-            return False
-        if self.run_pipeline():
-            for depends in self._get_instance_list():
-                if not depends.complete():
-                    return False
-        return True
+    def output(self):
+        return {
+            'report': self.get_target('report', 'json'),
+        }
 
     def _run(self):
         yield [self._sample_type]
-        if not self.run_pipeline():
-            return
-        instances = self._get_instance_list()
-        yield instances
+        blob = {'modules': [], 'run': False}
+        if self.run_pipeline():
+            instances = self._get_instance_list()
+            blob['modules'] += [inst.module_name() for inst in instances]
+            blob['run'] = True
+            yield instances
+        with open(self.output()['report'].path, 'w') as report_file:
+            report_file.write(json.dumps(blob))
 
     def _get_instance_list(self):
         if not self.pangea:

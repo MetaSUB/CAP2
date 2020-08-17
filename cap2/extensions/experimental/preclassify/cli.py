@@ -46,7 +46,7 @@ def dynamic_sample_cli(workers, threads, config, stage, manifest):
     for sample in samples:
         instance = DynamicPipelineSample.from_sample(sample, config, cores=threads)
         instance.pipeline_stage = stage
-        instances.append(sample)
+        instances.append(instance)
     luigi.build(instances, local_scheduler=True, workers=workers)
 
 

@@ -47,6 +47,7 @@ class DynamicPipelineSample(CapTask):
         return blob['sample_type']
 
     def run_pipeline(self):
+        print(self.sample_type)
         if self.sample_type in ['METAGENOME', 'AMBIGUOUS']:
             return True
         return False

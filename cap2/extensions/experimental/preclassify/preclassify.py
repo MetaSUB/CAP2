@@ -137,6 +137,8 @@ class PreclassifySample(CapTask):
             sample_type = 'METAGENOME'
         elif classified_16s > 0.01 and classified_metagenome < 0.01:
             sample_type = 'AMPLICON'
+        elif classified_16s > 0.01 and classified_metagenome > 0.01:
+            sample_type = 'AMBIGUOUS'
         blob = {
             'classification_rate_16s': classified_16s,
             'classification_rate_metagenome': classified_metagenome,

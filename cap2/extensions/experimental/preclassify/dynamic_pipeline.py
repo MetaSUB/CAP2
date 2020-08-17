@@ -30,9 +30,6 @@ class DynamicPipelineSample(CapTask):
     def _module_name(cls):
         return 'dynamically_pipeline_sample'
 
-    def requires(self):
-        return self._sample_type
-
     @classmethod
     def version(cls):
         return 'v0.1.0'
@@ -63,6 +60,7 @@ class DynamicPipelineSample(CapTask):
         return True
 
     def _run(self):
+        yield [self._sample_type]
         if not self.run_pipeline():
             return
         instances = self._get_instance_list()

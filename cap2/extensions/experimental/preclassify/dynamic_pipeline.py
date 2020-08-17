@@ -53,7 +53,7 @@ class DynamicPipelineSample(CapTask):
 
     def output(self):
         return {
-            'report': self.get_target('report', 'json'),
+            'report': self.get_target(f'report_{self.pipeline_stage}', 'json'),
         }
 
     def _run(self):

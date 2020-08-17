@@ -52,6 +52,8 @@ class DynamicPipelineSample(CapTask):
         return False
 
     def complete(self):
+        if not self._sample_type.complete():
+            return False
         if self.run_pipeline():
             for depends in self.requires():
                 if not depends.complete():

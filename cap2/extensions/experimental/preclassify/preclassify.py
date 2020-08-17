@@ -1,6 +1,7 @@
 
 import luigi
 import subprocess
+import json
 from os.path import join, dirname, basename
 
 from ....pipeline.utils.cap_task import CapTask
@@ -55,8 +56,10 @@ class PreclassifyKraken2(CapTask):
 
     def output(self):
         return {
-            'report': self.get_target('report', 'tsv'),
-            'read_assignments': self.get_target('read_assignments', 'tsv'),
+            'report_16s': self.get_target('report_16s', 'tsv'),
+            'report_metagenome': self.get_target('report_metagenome', 'tsv'),
+            'read_assignments_16s': self.get_target('read_assignments_16s', 'tsv'),
+            'read_assignments_metagenome': self.get_target('read_assignments_metagenome', 'tsv'),
         }
 
     def _run(self):
@@ -107,6 +110,28 @@ class PreclassifySample(CapTask):
             'report': self.get_target('report', 'json'),
         }
 
-    def _run(self):
-        kraken2_report = self.kraken2.output()["report"].path
+    def _fraction_classified(self, report):
+        n_classified, n_total = 0, 1
+        with open(self.kraken2.output()[report].path) as f:
+            for line in f:
+                class_code = line[0]
+                if class_code == 'C':
+                    n_classified += 1
+                n_total += 1
+        return n_classified / n_total
 
+    def _run(self):
+        classified_16s = self._fraction_classified("read_assignments_16s")
+        classified_metagenome = self._fraction_classified("read_assignments_metagenome")
+        sample_type = 'UNKNOWN'
+        elif classified_16s < 0.01 and classified_metagenome > 0.01:
+            sample_type = 'METAGENOME'
+        elif classified_16s > 0.01 and classified_metagenome < 0.01:
+            sample_type = 'AMPLICON'
+        blob = {
+            'classification_rate_16s': classified_16s,
+            'classification_rate_metagenome': classified_metagenome,
+            'sample_type': sample_type,
+        }
+        with open(self.output()['report'].path, 'w') as report_file:
+            report_file.write(json.dumps(blob))

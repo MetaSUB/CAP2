@@ -8,7 +8,7 @@ from ....pangea.api import get_task_list_for_sample
 from ....pangea.pangea_sample import PangeaSample
 from ....pipeline.utils.cap_task import CapTask
 from ....pipeline.config import PipelineConfig
-from ....pipeline.constants import STAGES
+from ....constants import STAGES
 
 
 class DynamicPipelineSample(CapTask):

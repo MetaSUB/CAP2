@@ -10,6 +10,7 @@ from ....pangea.api import wrap_task
 from ....pangea.pangea_sample import PangeaGroup
 from ....sample import Sample
 from ....api import run_modules
+from ....constants import STAGES, DEFAULT_STAGE
 
 
 @click.group('preclassify')
@@ -31,6 +32,22 @@ def preclassify_sample_cli(workers, threads, config, manifest):
         cores=threads,
         workers=workers,
     )
+
+
+@preclassify_cli.command('pipeline')
+@click.option('-w', '--workers', default=1)
+@click.option('-t', '--threads', default=1)
+@click.option('-c', '--config', type=click.Path(), default='')
+@click.option('-s', '--stage', type=click.Choice(STAGES.keys()), default=DEFAULT_STAGE)
+@click.argument('manifest', type=click.File('r'))
+def dynamic_sample_cli(workers, threads, config, stage, manifest):
+    samples = Sample.samples_from_manifest(manifest)
+    instances = []
+    for sample in samples:
+        instance = DynamicPipelineSample.from_sample(sample, config, cores=threads)
+        instance.pipeline_stage = stage
+        instances.append(sample)
+    luigi.build(instances, local_scheduler=True, workers=workers)
 
 
 @preclassify_cli.group('pangea')
@@ -73,7 +90,7 @@ def preclassify_pangea_samples_cli(config, scheduler_url, workers, threads, time
         dynamic_sample_type_pipeline = wrap_task(
             sample, DynamicPipelineSample, config_path=config, cores=threads
         )
-        dynamic_sample_type_pipeline
+        dynamic_sample_type_pipeline.wrapped.pangea = True
         dynamic_sample_type_pipeline.wrapped._sample_type = sample_type
         tasks = [dynamic_sample_type_pipeline]
         if not scheduler_url:

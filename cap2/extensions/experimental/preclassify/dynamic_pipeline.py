@@ -26,6 +26,9 @@ class DynamicPipelineSample(CapTask):
             config_filename=self.config_filename
         )
 
+    def requires(self):
+        return self._sample_type
+
     @classmethod
     def _module_name(cls):
         return 'dynamically_pipeline_sample'
@@ -44,8 +47,7 @@ class DynamicPipelineSample(CapTask):
         return blob['sample_type']
 
     def run_pipeline(self):
-        print(self.sample_type())
-        if self.sample_type in ['METAGENOME', 'AMBIGUOUS']:
+        if self.sample_type() in ['METAGENOME', 'AMBIGUOUS']:
             return True
         return False
 
@@ -55,7 +57,6 @@ class DynamicPipelineSample(CapTask):
         }
 
     def _run(self):
-        yield [self._sample_type]
         blob = {'modules': [], 'run': False, 'sample_type': self.sample_type()}
         if self.run_pipeline():
             instances = self._get_instance_list()

@@ -55,7 +55,7 @@ class DynamicPipelineSample(CapTask):
         if not self._sample_type.complete():
             return False
         if self.run_pipeline():
-            for depends in self.requires():
+            for depends in self._get_instance_list():
                 if not depends.complete():
                     return False
         return True
@@ -63,11 +63,15 @@ class DynamicPipelineSample(CapTask):
     def _run(self):
         if not self.run_pipeline():
             return
+        instances = self._get_instance_list()
+        yield instances
+
+    def _get_instance_list(self):
         if not self.pangea:
             instances = self._get_local_instance_list()
         else:
             instances = self._get_pangea_instance_list()
-        yield instances
+        return instances
 
     def _get_pangea_instance_list(self):
         psample = PangeaSample(

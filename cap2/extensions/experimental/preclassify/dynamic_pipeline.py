@@ -76,11 +76,11 @@ class DynamicPipelineSample(CapTask):
     def _get_pangea_instance_list(self):
         psample = PangeaSample(
             self.sample_name,
-            None,
-            None,
-            None,
-            None,
-            None,
+            luigi.configuration.get_config().get('pangea', 'user'),
+            luigi.configuration.get_config().get('pangea', 'password'),
+            luigi.configuration.get_config().get('pangea', 'pangea_endpoint'),
+            luigi.configuration.get_config().get('pangea', 'org_name'),
+            luigi.configuration.get_config().get('pangea', 'grp_name'),
         )
         instances = get_task_list_for_sample(psample, self.pipeline_stage, cores=self.cores)
         return instances

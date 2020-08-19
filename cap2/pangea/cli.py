@@ -21,7 +21,8 @@ def run():
     pass
 
 
-def set_config(email, password, org_name, grp_name, bucket_name, s3_endpoint, s3_profile):
+def set_config(endpoint, email, password, org_name, grp_name, bucket_name, s3_endpoint, s3_profile):
+    luigi.configuration.get_config().set('pangea', 'pangea_endpoint', endpoint)
     luigi.configuration.get_config().set('pangea', 'user', email)
     luigi.configuration.get_config().set('pangea', 'password', password)
     luigi.configuration.get_config().set('pangea', 'org_name', org_name)
@@ -48,7 +49,7 @@ def cli_run_group(upload,
                   scheduler_host, scheduler_port,
                   endpoint, s3_endpoint, s3_profile, email, password, workers,
                   org_name, grp_name, bucket_name):
-    set_config(email, password, org_name, grp_name, bucket_name, s3_endpoint, s3_profile)
+    set_config(endpoint, email, password, org_name, grp_name, bucket_name, s3_endpoint, s3_profile)
     group = PangeaGroup(grp_name, email, password, endpoint, org_name)
     tasks = []
 
@@ -86,7 +87,7 @@ def cli_run_sample(config, upload, scheduler_url, workers, threads,
                    stage,
                    org_name, grp_name, bucket_name, sample_name):
     sample = PangeaSample(sample_name, email, password, endpoint, org_name, grp_name)
-    set_config(email, password, org_name, grp_name, bucket_name, s3_endpoint, s3_profile)
+    set_config(endpoint, email, password, org_name, grp_name, bucket_name, s3_endpoint, s3_profile)
     tasks = get_task_list_for_sample(
         sample, stage, upload=upload, config_path=config, cores=threads
     )
@@ -119,7 +120,7 @@ def cli_run_samples(config, clean_reads, upload, scheduler_url, workers, threads
                     timelimit,
                     endpoint, s3_endpoint, s3_profile, email, password, stage,
                     org_name, grp_name, bucket_name):
-    set_config(email, password, org_name, grp_name, bucket_name, s3_endpoint, s3_profile)
+    set_config(endpoint, email, password, org_name, grp_name, bucket_name, s3_endpoint, s3_profile)
     group = PangeaGroup(grp_name, email, password, endpoint, org_name)
     start_time = time.time()
     index, completed = -1, set()

@@ -74,7 +74,7 @@ def preclassify_pangea_cli():
 def preclassify_pangea_samples_cli(config, scheduler_url, workers, threads, timelimit,
                                    endpoint, s3_endpoint, s3_profile, email, password,
                                    org_name, grp_name, bucket_name):
-    set_config(email, password, org_name, grp_name, bucket_name, s3_endpoint, s3_profile)
+    set_config(endpoint, email, password, org_name, grp_name, bucket_name, s3_endpoint, s3_profile)
     group = PangeaGroup(grp_name, email, password, endpoint, org_name)
     start_time = time.time()
     index, completed = -1, set()

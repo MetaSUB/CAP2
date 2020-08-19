@@ -8,6 +8,8 @@ from .dynamic_pipeline import DynamicPipelineSample
 from ....pangea.cli import set_config
 from ....pangea.api import wrap_task
 from ....pangea.pangea_sample import PangeaGroup
+from ....pipeline.preprocessing import BaseReads
+
 from ....sample import Sample
 from ....api import run_modules
 from ....constants import STAGES, DEFAULT_STAGE
@@ -84,9 +86,14 @@ def preclassify_pangea_samples_cli(config, scheduler_url, workers, threads, time
         sample = samples[index]
         if index in completed:
             continue
+        reads = wrap_task(
+            sample, BaseReads,
+            upload=False, config_path=config, cores=threads, requires_reads=True
+        )
         sample_type = wrap_task(
             sample, PreclassifySample, config_path=config, cores=threads
         )
+        sample_type.wrapped.kraken2.reads = reads
         dynamic_sample_type_pipeline = wrap_task(
             sample, DynamicPipelineSample, config_path=config, cores=threads
         )

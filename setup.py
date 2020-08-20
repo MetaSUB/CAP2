@@ -18,8 +18,10 @@ setuptools.setup(
         'PyYaml==5.3.1',
         'biopython==1.76',
         'click==6.7',
+        'Jinja2==3.0.0a1',  # for multiqc
         'multiqc==1.8',  # hackish, tbd if I'm okay with this
-        'humann2==2.8.2'
+        'humann2==2.8.2',
+        'pangea_api',
     ],
     entry_points={
         'console_scripts': [

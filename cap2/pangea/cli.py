@@ -104,6 +104,7 @@ def cli_run_sample(config, upload, scheduler_url, workers, threads,
 @click.option('--clean-reads/--all-reads', default=False)
 @click.option('--upload/--no-upload', default=True)
 @click.option('--scheduler-url', default=None, envvar='CAP2_LUIGI_SCHEDULER_URL')
+@click.option('--max-attempts', default=2)
 @click.option('-w', '--workers', default=1)
 @click.option('-t', '--threads', default=1)
 @click.option('--timelimit', default=0, help='Stop adding jobs after N hours')
@@ -116,24 +117,29 @@ def cli_run_sample(config, upload, scheduler_url, workers, threads,
 @click.argument('org_name')
 @click.argument('grp_name')
 @click.argument('bucket_name')
-def cli_run_samples(config, clean_reads, upload, scheduler_url, workers, threads,
-                    timelimit,
+def cli_run_samples(config, clean_reads, upload, scheduler_url, max_attempts,
+                    workers, threads, timelimit,
                     endpoint, s3_endpoint, s3_profile, email, password, stage,
                     org_name, grp_name, bucket_name):
     set_config(endpoint, email, password, org_name, grp_name, bucket_name, s3_endpoint, s3_profile)
     group = PangeaGroup(grp_name, email, password, endpoint, org_name)
     start_time = time.time()
-    index, completed = -1, set()
+    index, completed, attempts, attempted = -1, set(), {}, set()
     samples = list(group.pangea_samples(randomize=True))
-    while len(completed) < len(samples):
+    if clean_reads:
+        samples = [samp for smap in samples if sample.has_clean_reads()]
+    click.echo(f'Processing {len(samples)} samples', err=True)
+    while len(attempted) < len(samples):
+        click.echo(f'Attempted: {len(attempted)} Completed: {len(completed)}', err=True)
         if timelimit and (time.time() - start_time) > (60 * 60 * timelimit):
             break
         index = (index + 1) % len(samples)
-        sample = samples[index]
+        attempts[index] = 1 + attempts.get(index, 0)
+        if attempts[index] >= max_attempts:
+            attempted.add(index)
         if index in completed:
             continue
-        if clean_reads and not sample.has_clean_reads():
-            continue
+        sample = samples[index]
         tasks = get_task_list_for_sample(
             sample, stage, upload=upload, config_path=config, cores=threads
         )
@@ -143,4 +149,5 @@ def cli_run_samples(config, clean_reads, upload, scheduler_url, workers, threads
             luigi.build(
                 tasks, scheduler_url=scheduler_url, workers=workers
             )
+        attempted.add(index)
         completed.add(index)

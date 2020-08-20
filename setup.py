@@ -13,12 +13,13 @@ setuptools.setup(
     install_requires=[
         'pandas',
         'numpy',
-        'luigi',
-        'PyYaml',
-        'biopython',
-        'click',
+        'python-daemon',
+        'luigi==3.0.0b2',
+        'PyYaml==5.3.1',
+        'biopython==1.76',
+        'click==6.7',
         'multiqc==1.8',  # hackish, tbd if I'm okay with this
-        'humann2'
+        'humann2==2.8.2'
     ],
     entry_points={
         'console_scripts': [

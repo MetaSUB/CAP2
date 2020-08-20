@@ -141,7 +141,8 @@ def cli_run_samples(config, clean_reads, upload, scheduler_url, max_attempts,
             continue
         sample = samples[index]
         tasks = get_task_list_for_sample(
-            sample, stage, upload=upload, config_path=config, cores=threads
+            sample, stage,
+            upload=upload, config_path=config, cores=threads, require_clean_reads=clean_reads
         )
         if not scheduler_url:
             luigi.build(tasks, local_scheduler=True, workers=workers)

@@ -22,6 +22,10 @@ from ..pipeline.config import PipelineConfig
 from ..pipeline.preprocessing import FastQC
 
 
+class PangeaLoadTaskError(Exception):
+    pass
+
+
 def pangea_module_name(module):
     return module.module_name()
 
@@ -46,6 +50,7 @@ class PangeaBaseLoadTask(BaseCapTask):
         org = Organization(self.knex, self.org_name).get()
         self.grp = org.sample_group(self.grp_name).get()
         self.upload_allowed = True
+        self.download_only = False
 
     def module_name(self):
         return 'pangea_load_task_' + self.wrapped.module_name()
@@ -158,8 +163,11 @@ class PangeaLoadTask(PangeaBaseLoadTask, CapTask):
         if self.results_available():
             print('RESULTS AVAILABLE')
             return None
-        print('RESULTS WRAPPED', self.wrapped.module_name())
-        return self.wrapped
+        if not self.download_only:
+            print('RESULTS WRAPPED', self.wrapped.module_name())
+            return self.wrapped
+        raise PangeaLoadTaskError('Running tasks is not permitted AND results are not available')
+
 
     def _uri(self, local_path):
         uri = f's3://{self.s3_bucket_name}/analysis/metasub_cap/v2/{self.sample_name}/{basename(local_path)}'

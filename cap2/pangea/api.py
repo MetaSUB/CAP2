@@ -69,7 +69,7 @@ def get_task_list_for_read_stage(sample, clean_reads, upload=True, config_path='
     return processed
 
 
-def get_task_list_for_sample(sample, stage, upload=True, config_path='', cores=1):
+def get_task_list_for_sample(sample, stage, upload=True, config_path='', cores=1, require_clean_reads=False):
     reads = wrap_task(
         sample, BaseReads,
         upload=False, config_path=config_path, cores=cores, requires_reads=True
@@ -84,6 +84,8 @@ def get_task_list_for_sample(sample, stage, upload=True, config_path='', cores=1
         sample, CleanReads, upload=upload, config_path=config_path, cores=cores
     )
     clean_reads.wrapped.ec_reads.nonhuman_reads.adapter_removed_reads.reads = reads
+    if require_clean_reads:
+        clean_reads.download_only = True
     # reads stage
     processed = get_task_list_for_read_stage(
         sample, clean_reads, upload=upload, config_path=config_path, cores=cores

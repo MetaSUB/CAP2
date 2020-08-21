@@ -46,6 +46,9 @@ class MetaspadesAssembly(CapTask):
     def dependencies(cls):
         return ['spades', CleanReads]
 
+    def tool_version(self):
+        return str(self.run_cmd(f'{self.exc} --version').stdout)
+
     def output(self):
         return {
             'contigs': self.get_target('contigs', 'fasta'),
@@ -55,7 +58,7 @@ class MetaspadesAssembly(CapTask):
             'gfa': self.get_target('graph', 'gfa'),
         }
 
-    def run(self):
+    def _run(self):
         out_dir = f'{self.out_dir}/tmp_metaspades_out.{self.sample_name}'
         if isdir(out_dir):
             shutil.rmtree(out_dir)

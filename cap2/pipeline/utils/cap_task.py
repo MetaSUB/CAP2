@@ -1,6 +1,8 @@
 
 import luigi
 import subprocess
+import datetime
+import json
 
 from hashlib import sha256
 from sys import stderr
@@ -71,13 +73,28 @@ class BaseCapTask(luigi.Task):
     def module_name(cls):
         return 'cap2::' + cls._module_name()
 
+    def tool_version(self):
+        return 'tool_version_unknown'
+
+    def get_run_metadata(self):
+        blob = {
+            'current_time': datetime.datetime.now().isoformat(),
+            'tool_version': self.tool_version(),
+            'version_hash': self.version_hash(),
+            'module_version': self.version(),
+        }
+        return blob
+
     def _run(self):
         raise NotImplementedError()
 
     def run(self):
         for hook in self.pre_run_hooks:
             hook()
-        return self._run()
+        run = self._run()
+        with open(self.get_target('run_metadata', 'json'), 'w') as metafile:
+            metafile.write(json.dumps(self.get_run_metadata()))
+        return run
 
     def run_cmd(self, cmd):
         job = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -90,6 +107,7 @@ class BaseCapTask(luigi.Task):
             '''
             print(msg, file=stderr)
             job.check_returncode()  # raises CalledProcessError
+        return job
 
 
 class CapDbTask(BaseCapTask):

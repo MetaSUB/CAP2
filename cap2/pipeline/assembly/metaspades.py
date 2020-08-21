@@ -56,7 +56,6 @@ class MetaspadesAssembly(CapTask):
             'scaffolds_fasta': self.get_target('scaffolds', 'fasta'),
             'scaffolds_paths': self.get_target('scaffolds', 'paths'),
             'fastg': self.get_target('graph', 'fastg'),
-            'gfa': self.get_target('graph', 'gfa'),
         }
 
     def _run(self):
@@ -79,8 +78,6 @@ class MetaspadesAssembly(CapTask):
             ('scaffolds.paths', 'scaffolds_paths'),
             ('assembly_graph.fastg', 'fastg'),
             ('contigs.paths', 'contig_paths'),
-            ('assembly_graph.gfa', 'gfa'),
-
         ]
         out = self.output()
         for cur, new in pairs_to_move:

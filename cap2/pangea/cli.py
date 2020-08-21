@@ -127,7 +127,7 @@ def cli_run_samples(config, clean_reads, upload, scheduler_url, max_attempts,
     index, completed, attempts, attempted = -1, set(), {}, set()
     samples = list(group.pangea_samples(randomize=True))
     if clean_reads:
-        samples = [samp for samp in samples if samp.has_clean_reads()]
+        samples = [samp for samp in samples if samp.has_clean_reads() and samp.get_clean_reads()]
     click.echo(f'Processing {len(samples)} samples', err=True)
     while len(attempted) < len(samples):
         click.echo(f'Attempted: {len(attempted)} Completed: {len(completed)}', err=True)

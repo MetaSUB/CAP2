@@ -81,6 +81,19 @@ class PangeaBaseLoadTask(BaseCapTask):
                 return False
         return True
 
+    def get_results(self):
+        module_name = pangea_module_name(self.wrapped)
+        try:
+            ar = self.pangea_obj.analysis_result(module_name).get()
+        except HTTPError:
+            raise PangeaLoadTaskError(f'Could not load analysis result "{module_name}" for pangea object "{self.pangea_obj.name}"')
+        for field_name in self.wrapped.output().keys():
+            try:
+                ar.field(field_name).get()
+            except HTTPError:
+                raise PangeaLoadTaskError(f'Could not load analysis result field "{field_name}" for analysis result "{ar.module_name}"')
+        return True
+
     def _download_results(self):
         ar = self.pangea_obj.analysis_result(pangea_module_name(self.wrapped)).get()
         for field_name, local_path in self.wrapped.output().items():

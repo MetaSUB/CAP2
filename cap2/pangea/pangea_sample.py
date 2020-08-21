@@ -16,6 +16,10 @@ from os.path import join, isfile
 from ..sample import Sample
 
 
+class PangeaSampleError(Exception):
+    pass
+
+
 class PangeaSample:
 
     def __init__(self, sample_name, email, password, endpoint, org_name, grp_name, knex=None, sample=None):
@@ -49,6 +53,19 @@ class PangeaSample:
             except HTTPError:
                 continue
         return False
+
+    def get_clean_reads(self):
+        module_name = 'cap2::clean_reads'
+        try:
+            ar = self.pangea_obj.analysis_result(module_name).get()
+        except HTTPError:
+            raise PangeaSampleError(f'Could not load analysis result "{module_name}" for pangea object "{self.pangea_obj.name}"')
+        for field_name in self.wrapped.output().keys():
+            try:
+                ar.field(field_name).get()
+            except HTTPError:
+                raise PangeaSampleError(f'Could not load analysis result field "{field_name}" for analysis result "{ar.module_name}"')
+        return ar
 
     def download(self):
         print('DOWNLOADING READS')

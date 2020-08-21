@@ -21,3 +21,5 @@ class PipelineConfig:
         self.conda_base_path = self.blob.get(
             'conda_base_path', environ.get('CAP2_CONDA_BASE_PATH', 'vendor/conda')
         )
+
+        self.exc_metaspades = self.blob.get('EXC_METASPADES', None)

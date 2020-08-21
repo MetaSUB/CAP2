@@ -27,6 +27,9 @@ class MetaspadesAssembly(CapTask):
             config_filename=self.config_filename
         )
         self.config = PipelineConfig(self.config_filename)
+        self.exc = self.pkg.bin
+        if self.config.exc_metaspades is not None:
+            self.exc = self.config.exc_metaspades
 
     @classmethod
     def _module_name(cls):
@@ -57,7 +60,7 @@ class MetaspadesAssembly(CapTask):
         if os.isdir(out_dir):
             os.rmtree(out_dir)
         cmd = ''.join((
-            self.pkg.bin,
+            self.exc,
             ' --only-assembler ',  # we start from error corrected reads
             ' -1 ', self.reads.output()["clean_reads_1"].path,
             ' -2 ', self.reads.output()["clean_reads_2"].path,

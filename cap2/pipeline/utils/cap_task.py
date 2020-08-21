@@ -92,7 +92,7 @@ class BaseCapTask(luigi.Task):
         for hook in self.pre_run_hooks:
             hook()
         run = self._run()
-        with open(self.get_target('run_metadata', 'json'), 'w') as metafile:
+        with open(self.get_target('run_metadata', 'json').path, 'w') as metafile:
             metafile.write(json.dumps(self.get_run_metadata()))
         return run
 

@@ -36,7 +36,7 @@ class MetaspadesAssembly(CapTask):
 
     @classmethod
     def version(cls):
-        return 'v0.2.0'
+        return 'v0.2.1'
 
     @classmethod
     def dependencies(cls):
@@ -55,6 +55,7 @@ class MetaspadesAssembly(CapTask):
         out_dir = f'{self.out_dir}/tmp_metaspades_out.{self.sample_name}'
         cmd = ''.join((
             self.pkg.bin,
+            ' --only-assembler ',  # we start from error corrected reads
             ' -1 ', self.reads.output()["clean_reads_1"].path,
             ' -2 ', self.reads.output()["clean_reads_2"].path,
             f' -t {self.cores} ',

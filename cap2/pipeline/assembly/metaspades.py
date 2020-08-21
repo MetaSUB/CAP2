@@ -47,7 +47,7 @@ class MetaspadesAssembly(CapTask):
         return ['spades', CleanReads]
 
     def tool_version(self):
-        return str(self.run_cmd(f'{self.exc} --version').stdout)
+        return self.run_cmd(f'{self.exc} --version').stderr.decode('utf-8')
 
     def output(self):
         return {
@@ -79,6 +79,7 @@ class MetaspadesAssembly(CapTask):
             ('scaffolds.paths', 'scaffolds_paths'),
             ('assembly_graph.fastg', 'fastg'),
             ('contigs.paths', 'contig_paths'),
+            ('assembly_graph.gfa', 'gfa'),
 
         ]
         out = self.output()

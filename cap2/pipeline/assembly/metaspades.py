@@ -1,5 +1,6 @@
 
 import luigi
+import os
 from os.path import join, dirname, basename
 from shutil import rmtree
 
@@ -53,6 +54,8 @@ class MetaspadesAssembly(CapTask):
 
     def run(self):
         out_dir = f'{self.out_dir}/tmp_metaspades_out.{self.sample_name}'
+        if os.isdir(out_dir):
+            os.rmtree(out_dir)
         cmd = ''.join((
             self.pkg.bin,
             ' --only-assembler ',  # we start from error corrected reads

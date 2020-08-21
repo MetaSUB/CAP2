@@ -57,9 +57,9 @@ class PangeaSample:
     def get_clean_reads(self):
         module_name = 'cap2::clean_reads'
         try:
-            ar = self.pangea_obj.analysis_result(module_name).get()
+            ar = self.sample.analysis_result(module_name).get()
         except HTTPError:
-            raise PangeaSampleError(f'Could not load analysis result "{module_name}" for pangea object "{self.pangea_obj.name}"')
+            raise PangeaSampleError(f'Could not load analysis result "{module_name}" for pangea object "{self.sample.name}"')
         for field_name in self.wrapped.output().keys():
             try:
                 ar.field(field_name).get()

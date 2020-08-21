@@ -40,7 +40,7 @@ class MetaspadesAssembly(CapTask):
 
     @classmethod
     def version(cls):
-        return 'v0.2.1'
+        return 'v0.3.0'
 
     @classmethod
     def dependencies(cls):
@@ -52,6 +52,7 @@ class MetaspadesAssembly(CapTask):
     def output(self):
         return {
             'contigs': self.get_target('contigs', 'fasta'),
+            'contig_paths': self.get_target('contigs', 'paths'),
             'scaffolds_fasta': self.get_target('scaffolds', 'fasta'),
             'scaffolds_paths': self.get_target('scaffolds', 'paths'),
             'fastg': self.get_target('graph', 'fastg'),
@@ -77,7 +78,7 @@ class MetaspadesAssembly(CapTask):
             ('scaffolds.fasta', 'scaffolds_fasta'),
             ('scaffolds.paths', 'scaffolds_paths'),
             ('assembly_graph.fastg', 'fastg'),
-            ('assembly_graph_with_scaffolds.gfa', 'gfa'),
+            ('contigs.paths', 'contig_paths'),
 
         ]
         out = self.output()

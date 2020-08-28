@@ -22,6 +22,7 @@ class CleanReads(CapTask):
             sample_name=self.sample_name,
             config_filename=self.config_filename,
             cores=self.cores,
+            data_type=self.data_type,
         )
 
     @property
@@ -44,10 +45,12 @@ class CleanReads(CapTask):
         return self.ec_reads
 
     def output(self):
-        return {
+        out = {
             'clean_reads_1': self.ec_reads.output()['error_corrected_reads_1'],
-            'clean_reads_2': self.ec_reads.output()['error_corrected_reads_2'],
         }
+        if self.paired:
+            out['clean_reads_2'] = self.ec_reads.output()['error_corrected_reads_2']
+        return out
 
     def _run(self):
         pass

@@ -122,6 +122,7 @@ class CapTask(BaseCapTask):
     sample_name = luigi.Parameter()
     pe1 = luigi.Parameter()
     pe2 = luigi.Parameter()
+    data_type = luigi.Parameter(default='short_read')
 
     def get_target(self, field_name, ext):
         filename = '.'.join([
@@ -132,6 +133,10 @@ class CapTask(BaseCapTask):
         target.makedirs()
         return target
 
+    @property
+    def paired(self):
+        return self.pe2 and self.data_type == 'short_read'
+
     @classmethod
     def from_sample(cls, sample, config_path, cores=1):
         return cls(
@@ -139,7 +144,8 @@ class CapTask(BaseCapTask):
             pe2=sample.r2,
             sample_name=sample.name,
             config_filename=config_path,
-            cores=cores
+            cores=cores,
+            data_type=sample.kind
         )
 
 

@@ -35,6 +35,7 @@ class RemoveHumanReads(CapTask):
             sample_name=self.sample_name,
             config_filename=self.config_filename,
             cores=self.cores,
+            data_type=self.data_type,
         )
 
     def requires(self):
@@ -53,13 +54,34 @@ class RemoveHumanReads(CapTask):
         return 'remove_human'
 
     def output(self):
-        return {
+        out = {
             'bam': self.get_target('human_alignment', 'bam'),
             'nonhuman_reads_1': self.get_target('nonhuman_reads', 'R1.fastq.gz'),
-            'nonhuman_reads_2': self.get_target('nonhuman_reads', 'R2.fastq.gz'),
         }
+        if self.paired:
+            out['nonhuman_reads_2'] = self.get_target('nonhuman_reads', 'R2.fastq.gz')
+        return out
 
     def _run(self):
+        if self.paired:
+            return self._run_paired()
+        return self._run_single()
+
+    def _run_single(self):
+        fastq_out = self.output()['nonhuman_reads_1'].path.replace('R1', 'R%')
+        cmd = ''.join((
+            self.pkg.bin,
+            ' -x ', self.db.bowtie2_index,
+            ' -U ', self.adapter_removed_reads.output()['adapter_removed_reads_1'].path,
+            f' --un-gz ', self.output()['nonhuman_reads_1'].path,
+            ' --threads ', str(self.cores),
+            ' --very-sensitive ',
+            f' | {self.samtools.bin} view -F 4 -b > ',
+            self.output()['bam'].path,
+        ))
+        self.run_cmd(cmd)
+
+    def _run_paired(self):
         fastq_out = self.output()['nonhuman_reads_1'].path.replace('R1', 'R%')
         cmd = ''.join((
             self.pkg.bin,

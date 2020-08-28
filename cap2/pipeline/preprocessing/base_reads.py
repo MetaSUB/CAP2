@@ -27,10 +27,10 @@ class BaseReads(CapTask):
         return []
 
     def output(self):
-        return {
-            'base_reads_1': luigi.LocalTarget(self.pe1),
-            'base_reads_2': luigi.LocalTarget(self.pe2),
-        }
+        out = {'base_reads_1': luigi.LocalTarget(self.pe1)}
+        if self.paired:
+            out['base_reads_2'] = luigi.LocalTarget(self.pe2)
+        return out
 
     def _run(self):
         pass

@@ -42,7 +42,6 @@ class PangeaBaseLoadTask(BaseCapTask):
         password = luigi.configuration.get_config().get('pangea', 'password')
         self.org_name = luigi.configuration.get_config().get('pangea', 'org_name')
         self.grp_name = luigi.configuration.get_config().get('pangea', 'grp_name')
-        self.s3_bucket_name = luigi.configuration.get_config().get('pangea', 's3_bucket_name')
         self.s3_endpoint_url = luigi.configuration.get_config().get('pangea', 's3_endpoint_url')
         self.s3_profile = luigi.configuration.get_config().get('pangea', 's3_profile')
         self.knex = Knex(self.endpoint)
@@ -57,7 +56,7 @@ class PangeaBaseLoadTask(BaseCapTask):
 
     @classmethod
     def version(cls):
-        return 'v1.0.0'
+        return 'v1.1.0'
 
     @classmethod
     def dependencies(cls):
@@ -110,19 +109,8 @@ class PangeaBaseLoadTask(BaseCapTask):
             metadata=metadata,
         ).idem()
         for field_name, local_path in self.wrapped.output().items():
-            uri = self._uri(local_path.path)
-            cmd = (
-                'aws '
-                f'--profile {self.s3_profile} '
-                f's3 --endpoint-url={self.s3_endpoint_url} '
-                f'cp {local_path.path} {uri}'
-            )
-            self.run_cmd(cmd)
-            field = ar.field(field_name, data={
-                '__type__': 's3',
-                'uri': uri,
-                'endpoint_url': self.s3_endpoint_url,
-            }).idem()
+            field = ar.field(field_name).idem()
+            field.upload_file(local_path)
         open(self.output()['upload_flag'].path, 'w').close()
 
     def _run(self):
@@ -184,10 +172,6 @@ class PangeaLoadTask(PangeaBaseLoadTask, CapTask):
         raise PangeaLoadTaskError('Running tasks is not permitted AND results are not available')
 
 
-    def _uri(self, local_path):
-        uri = f's3://{self.s3_bucket_name}/analysis/metasub_cap/v2/{self.sample_name}/{basename(local_path)}'
-        return uri
-
 
 class PangeaGroupLoadTask(PangeaBaseLoadTask, CapGroupTask):
 
@@ -222,8 +206,3 @@ class PangeaGroupLoadTask(PangeaBaseLoadTask, CapGroupTask):
         if self.requires_reads:
             raise NotImplementedError('Group modules that rely directly on reads not yet supported.')
         return self.wrapped
-
-    def _uri(self, local_path):
-        name = self.grp_name.lower().replace(' ', '_')
-        uri = f's3://{self.s3_bucket_name}/analysis/metasub_cap/v2/groups/{name}/{basename(local_path)}'
-        return uri

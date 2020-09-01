@@ -34,6 +34,7 @@ class PangeaSample:
         self.name = sample_name
         self.r1 = f'downloaded_data/{self.name}.R1.fq.gz'
         self.r2 = f'downloaded_data/{self.name}.R2.fq.gz'
+        self.kind = 'short_read'  # TODO
         self.cap_sample = Sample(self.name, self.r1, self.r2)
 
     def has_reads(self):

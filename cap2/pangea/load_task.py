@@ -42,8 +42,6 @@ class PangeaBaseLoadTask(BaseCapTask):
         password = luigi.configuration.get_config().get('pangea', 'password')
         self.org_name = luigi.configuration.get_config().get('pangea', 'org_name')
         self.grp_name = luigi.configuration.get_config().get('pangea', 'grp_name')
-        self.s3_endpoint_url = luigi.configuration.get_config().get('pangea', 's3_endpoint_url')
-        self.s3_profile = luigi.configuration.get_config().get('pangea', 's3_profile')
         self.knex = Knex(self.endpoint)
         User(self.knex, user, password).login()
         org = Organization(self.knex, self.org_name).get()

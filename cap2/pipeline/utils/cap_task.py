@@ -18,6 +18,7 @@ class BaseCapTask(luigi.Task):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.version()  # force this method to be implemented
+        self.task_build_time = datetime.datetime.now().isoformat()
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
         self.pre_run_hooks = []
@@ -82,6 +83,9 @@ class BaseCapTask(luigi.Task):
     def get_run_metadata(self):
         uname = os.uname()
         blob = {
+            'task_build_time': self.task_build_time,
+            'run_start_time': self.run_start_time,
+            'cores': self.cores,
             'current_time': datetime.datetime.now().isoformat(),
             'tool_version': self.tool_version(),
             'version_hash': self.version_hash(),
@@ -100,6 +104,7 @@ class BaseCapTask(luigi.Task):
         raise NotImplementedError()
 
     def run(self):
+        self.run_start_time = datetime.datetime.now().isoformat()
         for hook in self.pre_run_hooks:
             hook()
         run = self._run()

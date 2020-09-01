@@ -80,11 +80,19 @@ class BaseCapTask(luigi.Task):
         return self.get_target('run_metadata', 'json').path
 
     def get_run_metadata(self):
+        uname = os.uname()
         blob = {
             'current_time': datetime.datetime.now().isoformat(),
             'tool_version': self.tool_version(),
             'version_hash': self.version_hash(),
             'module_version': self.version(),
+            'host_info': {
+                'system_name': uname.sysname,
+                'node_name': uname.nodename,
+                'release': uname.release,
+                'version': uname.version,
+                'machine': uname.machine,
+            },
         }
         return blob
 

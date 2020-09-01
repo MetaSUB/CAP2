@@ -21,14 +21,12 @@ def run():
     pass
 
 
-def set_config(endpoint, email, password, org_name, grp_name, bucket_name, s3_endpoint, s3_profile):
+def set_config(endpoint, email, password, org_name, grp_name):
     luigi.configuration.get_config().set('pangea', 'pangea_endpoint', endpoint)
     luigi.configuration.get_config().set('pangea', 'user', email)
     luigi.configuration.get_config().set('pangea', 'password', password)
     luigi.configuration.get_config().set('pangea', 'org_name', org_name)
     luigi.configuration.get_config().set('pangea', 'grp_name', grp_name)
-    luigi.configuration.get_config().set('pangea', 's3_endpoint_url', s3_endpoint)
-    luigi.configuration.get_config().set('pangea', 's3_profile', s3_profile)
 
 
 @run.command('group')
@@ -108,8 +106,6 @@ def cli_run_sample(config, upload, scheduler_url, workers, threads,
 @click.option('-t', '--threads', default=1)
 @click.option('--timelimit', default=0, help='Stop adding jobs after N hours')
 @click.option('--endpoint', default='https://pangea.gimmebio.com')
-@click.option('--s3-endpoint', default='https://s3.wasabisys.com')
-@click.option('--s3-profile', default='default', envvar='CAP2_PANGEA_S3_PROFILE')
 @click.option('-e', '--email', envvar='PANGEA_USER')
 @click.option('-p', '--password', envvar='PANGEA_PASS')
 @click.option('-s', '--stage', default='reads')
@@ -117,9 +113,9 @@ def cli_run_sample(config, upload, scheduler_url, workers, threads,
 @click.argument('grp_name')
 def cli_run_samples(config, clean_reads, upload, scheduler_url, max_attempts,
                     workers, threads, timelimit,
-                    endpoint, s3_endpoint, s3_profile, email, password, stage,
+                    endpoint, email, password, stage,
                     org_name, grp_name):
-    set_config(endpoint, email, password, org_name, grp_name, s3_endpoint, s3_profile)
+    set_config(endpoint, email, password, org_name, grp_name)
     group = PangeaGroup(grp_name, email, password, endpoint, org_name)
     start_time = time.time()
     index, completed, attempts, attempted = -1, set(), {}, set()

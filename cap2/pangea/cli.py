@@ -27,7 +27,6 @@ def set_config(endpoint, email, password, org_name, grp_name, bucket_name, s3_en
     luigi.configuration.get_config().set('pangea', 'password', password)
     luigi.configuration.get_config().set('pangea', 'org_name', org_name)
     luigi.configuration.get_config().set('pangea', 'grp_name', grp_name)
-    luigi.configuration.get_config().set('pangea', 's3_bucket_name', bucket_name)
     luigi.configuration.get_config().set('pangea', 's3_endpoint_url', s3_endpoint)
     luigi.configuration.get_config().set('pangea', 's3_profile', s3_profile)
 
@@ -116,12 +115,11 @@ def cli_run_sample(config, upload, scheduler_url, workers, threads,
 @click.option('-s', '--stage', default='reads')
 @click.argument('org_name')
 @click.argument('grp_name')
-@click.argument('bucket_name')
 def cli_run_samples(config, clean_reads, upload, scheduler_url, max_attempts,
                     workers, threads, timelimit,
                     endpoint, s3_endpoint, s3_profile, email, password, stage,
-                    org_name, grp_name, bucket_name):
-    set_config(endpoint, email, password, org_name, grp_name, bucket_name, s3_endpoint, s3_profile)
+                    org_name, grp_name):
+    set_config(endpoint, email, password, org_name, grp_name, s3_endpoint, s3_profile)
     group = PangeaGroup(grp_name, email, password, endpoint, org_name)
     start_time = time.time()
     index, completed, attempts, attempted = -1, set(), {}, set()

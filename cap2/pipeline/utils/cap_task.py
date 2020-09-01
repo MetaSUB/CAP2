@@ -3,6 +3,7 @@ import luigi
 import subprocess
 import datetime
 import json
+import os
 
 from hashlib import sha256
 from sys import stderr

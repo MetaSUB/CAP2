@@ -93,9 +93,9 @@ class PangeaBaseLoadTask(BaseCapTask):
 
     def _download_results(self):
         ar = self.pangea_obj.analysis_result(pangea_module_name(self.wrapped)).get()
-        for field_name, local_path in self.wrapped.output().items():
+        for field_name, local_target in self.wrapped.output().items():
             field = ar.field(field_name).get()
-            field.download_file(filename=local_path.path)
+            field.download_file(filename=local_target.path)
         open(self.output()['upload_flag'].path, 'w').close()  # we do this just for consistency. If we downloaded the results it means they were uploaded at some point
 
     def _upload_results(self):
@@ -106,9 +106,9 @@ class PangeaBaseLoadTask(BaseCapTask):
             replicate=replicate,
             metadata=metadata,
         ).idem()
-        for field_name, local_path in self.wrapped.output().items():
+        for field_name, local_target in self.wrapped.output().items():
             field = ar.field(field_name).idem()
-            field.upload_file(local_path)
+            field.upload_file(local_target.path)
         open(self.output()['upload_flag'].path, 'w').close()
 
     def _run(self):

@@ -38,6 +38,9 @@ class ErrorCorrectReads(CapTask):
     def version(cls):
         return 'v0.2.1'
 
+    def tool_version(self):
+        return self.run_cmd(f'{self.pkg.bin} --version').stderr.decode('utf-8')
+
     @classmethod
     def dependencies(cls):
         return ["spades", RemoveHumanReads]

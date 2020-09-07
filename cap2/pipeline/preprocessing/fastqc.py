@@ -33,6 +33,9 @@ class FastQC(CapTask):
     def _module_name(cls):
         return 'fastqc'
 
+    def tool_version(self):
+        return self.run_cmd(f'{self.pkg.bin} --version').stderr.decode('utf-8')
+
     @classmethod
     def version(cls):
         return 'v0.2.1'

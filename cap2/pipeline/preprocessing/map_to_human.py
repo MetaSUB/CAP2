@@ -44,6 +44,13 @@ class RemoveHumanReads(CapTask):
     def version(cls):
         return 'v0.2.1'
 
+    def tool_version(self):
+        version = '[BOWTIE2]\n'
+        version += self.run_cmd(f'{self.pkg.bin} --version').stderr.decode('utf-8')
+        version += '\n[SAMTOOLS]\n'
+        version += self.run_cmd(f'{self.samtools.bin} --version').stderr.decode('utf-8')
+        return version
+
     @classmethod
     def dependencies(cls):
         return ["samtools", "bowtie2", HumanRemovalDB, AdapterRemoval]

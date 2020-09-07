@@ -76,6 +76,9 @@ class BaseCapTask(luigi.Task):
     def tool_version(self):
         return 'tool_version_unknown'
 
+    def get_run_metadata_filepath(self):
+        return self.get_target('run_metadata', 'json').path
+
     def get_run_metadata(self):
         blob = {
             'current_time': datetime.datetime.now().isoformat(),
@@ -92,7 +95,7 @@ class BaseCapTask(luigi.Task):
         for hook in self.pre_run_hooks:
             hook()
         run = self._run()
-        with open(self.get_target('run_metadata', 'json').path, 'w') as metafile:
+        with open(self.get_run_metadata_filepath(), 'w') as metafile:
             metafile.write(json.dumps(self.get_run_metadata()))
         return run
 

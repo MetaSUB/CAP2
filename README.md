@@ -33,7 +33,6 @@ my-sample-2,/path/to/my-sample-2.R1.fq.gz,/path/to/my-sample-2.R2.fq.gz
 my-sample-3,/path/to/my-sample-3.R1.fq.gz,/path/to/my-sample-3.R2.fq.gz
 ```
 
-
 ### Configuration
 
 By default CAP2 downloads all necessary programs and databases when it is run. For users running CAP2 multiple times on the same system it will be beneficial to set up configuration so that downloads only occur once.
@@ -47,6 +46,25 @@ CAP2_CONDA_BASE_PATH=<some local path...>
 ```
 
 You can also use a yaml configuration file. See `cap2/pipeline/config.py` for details and all options.
+
+### Running the CAP2 in the Cloud
+
+Running the CAP2 in the cloud often requires some additional setup. This is what we needed to do to get the CAP2 running on DigitalOcean Ubuntu Servers:
+
+```
+sudo apt update
+sudo apt install build-essential python-dev libfreetype6-dev config
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+bash Miniconda3-latest-Linux-x86_64.sh
+source ~/.bashrc
+cd CAP2/
+git checkout feat/single-ended-reads
+python setup.py develop
+cd
+mkdir workdir
+cd workdir
+cap2 --help
+```
 
 
 ## Tools and Status

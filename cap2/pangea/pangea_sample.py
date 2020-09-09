@@ -92,8 +92,10 @@ class PangeaGroup:
         self.grp = org.sample_group(grp_name).get()
         self.name = grp_name
 
-    def pangea_samples(self, randomize=False):
+    def pangea_samples(self, randomize=False, seed=None):
         if randomize:
+            if seed:
+                random.seed(seed)
             samples = list(self.grp.get_samples())
             random.shuffle(samples)
         else:

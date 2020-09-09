@@ -104,8 +104,9 @@ class PangeaBaseLoadTask(BaseCapTask):
         ar = self.pangea_obj.analysis_result(
             pangea_module_name(self.wrapped),
             replicate=replicate,
-            metadata=metadata,
         ).idem()
+        ar.metadata = metadata
+        ar.save()
         for field_name, local_target in self.wrapped.output().items():
             field = ar.field(field_name).idem()
             field.upload_file(local_target.path)

@@ -111,17 +111,18 @@ def cli_run_sample(config, upload, scheduler_url, workers, threads,
 @click.option('-e', '--email', envvar='PANGEA_USER')
 @click.option('-p', '--password', envvar='PANGEA_PASS')
 @click.option('-s', '--stage', default='reads')
+@click.option('--random-seed', type=int, default=None)
 @click.argument('org_name')
 @click.argument('grp_name')
 def cli_run_samples(config, clean_reads, upload, scheduler_url, max_attempts,
                     batch_size, workers, threads, timelimit,
-                    endpoint, email, password, stage,
+                    endpoint, email, password, stage, random_seed,
                     org_name, grp_name):
     set_config(endpoint, email, password, org_name, grp_name)
     group = PangeaGroup(grp_name, email, password, endpoint, org_name)
     start_time, completed = time.time(), []
     samples = [
-        samp for samp in group.pangea_samples(randomize=True)
+        samp for samp in group.pangea_samples(randomize=True, seed=random_seed)
         if not clean_reads or samp.has_clean_reads()
     ]
     click.echo(f'Processing {len(samples)} samples', err=True)

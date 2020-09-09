@@ -28,7 +28,9 @@ STAGES = [
 ]
 
 
-def wrap_task(sample, module, requires_reads=False, upload=True, config_path='', cores=1):
+def wrap_task(sample, module,
+              requires_reads=False, upload=True, download_only=False,
+              config_path='', cores=1):
     task = PangeaLoadTask(
         pe1=sample.r1,
         pe2=sample.r2,
@@ -40,23 +42,25 @@ def wrap_task(sample, module, requires_reads=False, upload=True, config_path='',
     task.upload_allowed = upload
     task.wrapped_module = module
     task.requires_reads = requires_reads
+    task.download_only = download_only
     return task
 
 
-def get_task_list_for_read_stage(sample, clean_reads, upload=True, config_path='', cores=1):
-    dmnd_uniref90 = wrap_task(sample, MicaUniref90, config_path=config_path, cores=cores)
+def get_task_list_for_read_stage(sample, clean_reads, upload=True, download_only=False, config_path='', cores=1):
+    wrapit = lambda module: wrap_task(sample, module, config_path=config_path, cores=cores, upload=upload, download_only=download_only)
+    dmnd_uniref90 = wrapit(MicaUniref90)
     dmnd_uniref90.wrapped.reads = clean_reads
-    humann2 = wrap_task(sample, Humann2, config_path=config_path, cores=cores)
+    humann2 = wrapit(Humann2)
     humann2.wrapped.alignment = dmnd_uniref90
-    mash = wrap_task(sample, Mash, config_path=config_path, cores=cores)
+    mash = wrapit(Mash)
     mash.wrapped.reads = clean_reads
-    hmp = wrap_task(sample, HmpComparison, config_path=config_path, cores=cores)
+    hmp = wrapit(HmpComparison)
     hmp.wrapped.mash = mash
-    read_stats = wrap_task(sample, ReadStats, config_path=config_path, cores=cores)
+    read_stats = wrapit(ReadStats)
     read_stats.wrapped.reads = clean_reads
-    kraken2 = wrap_task(sample, Kraken2, config_path=config_path, cores=cores)
+    kraken2 = wrapit(Kraken2)
     kraken2.wrapped.reads = clean_reads
-    braken = wrap_task(sample, BrakenKraken2, config_path=config_path, cores=cores)
+    braken = wrapit(BrakenKraken2)
     braken.wrapped.report = kraken2
     braken.wrapped.reads = clean_reads
 
@@ -66,10 +70,10 @@ def get_task_list_for_read_stage(sample, clean_reads, upload=True, config_path='
     processed.kraken2 = braken
     processed.mash = mash
     processed.read_stats = read_stats
-    return processed
+    return processed, [dmnd_uniref90, humann2, mash, hmp, read_stats, kraken2, braken]
 
 
-def get_task_list_for_sample(sample, stage, upload=True, config_path='', cores=1, require_clean_reads=False):
+def get_task_list_for_sample(sample, stage, upload=True, download_only=False, config_path='', cores=1, require_clean_reads=False):
     reads = wrap_task(
         sample, BaseReads,
         upload=False, config_path=config_path, cores=cores, requires_reads=True
@@ -81,14 +85,14 @@ def get_task_list_for_sample(sample, stage, upload=True, config_path='', cores=1
     fastqc.wrapped.reads = reads
     # pre stage
     clean_reads = wrap_task(
-        sample, CleanReads, upload=upload, config_path=config_path, cores=cores
+        sample, CleanReads, upload=upload, download_only=download_only, config_path=config_path, cores=cores
     )
     clean_reads.wrapped.ec_reads.nonhuman_reads.adapter_removed_reads.reads = reads
     if require_clean_reads:
         clean_reads.download_only = True
     # reads stage
-    processed = get_task_list_for_read_stage(
-        sample, clean_reads, upload=upload, config_path=config_path, cores=cores
+    processed, read_task_list = get_task_list_for_read_stage(
+        sample, clean_reads, upload=upload, download_only=download_only, config_path=config_path, cores=cores
     )
     # assembly stage
     assembly = wrap_task(
@@ -107,7 +111,7 @@ def get_task_list_for_sample(sample, stage, upload=True, config_path='', cores=1
     if stage == 'pre':
         tasks = [clean_reads]
     if stage == 'reads':
-        tasks = [clean_reads, processed]
+        tasks = [clean_reads, processed] + read_task_list
     if stage == 'assembly':
         tasks = [clean_reads, assembly]
     if stage == 'all':

@@ -101,6 +101,7 @@ def cli_run_sample(config, upload, scheduler_url, workers, threads,
 @click.option('-c', '--config', type=click.Path(), default='', envvar='CAP2_CONFIG')
 @click.option('--clean-reads/--all-reads', default=False)
 @click.option('--upload/--no-upload', default=True)
+@click.option('--download-only/--run', default=False)
 @click.option('--scheduler-url', default=None, envvar='CAP2_LUIGI_SCHEDULER_URL')
 @click.option('--max-attempts', default=2)
 @click.option('-b', '--batch-size', default=10, help='Number of samples to process in parallel')
@@ -114,7 +115,8 @@ def cli_run_sample(config, upload, scheduler_url, workers, threads,
 @click.option('--random-seed', type=int, default=None)
 @click.argument('org_name')
 @click.argument('grp_name')
-def cli_run_samples(config, clean_reads, upload, scheduler_url, max_attempts,
+def cli_run_samples(config, clean_reads, upload, download_only, scheduler_url,
+                    max_attempts,
                     batch_size, workers, threads, timelimit,
                     endpoint, email, password, stage, random_seed,
                     org_name, grp_name):
@@ -135,7 +137,8 @@ def cli_run_samples(config, clean_reads, upload, scheduler_url, max_attempts,
         for sample in chunk:
             tasks += get_task_list_for_sample(
                 sample, stage,
-                upload=upload, config_path=config, cores=threads, require_clean_reads=clean_reads
+                upload=upload, download_only=download_only,
+                config_path=config, cores=threads, require_clean_reads=clean_reads
             )
         if not scheduler_url:
             luigi.build(tasks, local_scheduler=True, workers=workers)

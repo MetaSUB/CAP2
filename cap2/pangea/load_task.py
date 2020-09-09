@@ -65,6 +65,9 @@ class PangeaBaseLoadTask(BaseCapTask):
         wrapped_out['upload_flag'] = self.get_target('uploaded', 'flag')
         return wrapped_out
 
+    def results_available_locally(self):
+        return self.wrapped.complete()
+
     def results_available(self):
         """Check for results on Pangea."""
         try:
@@ -165,8 +168,11 @@ class PangeaLoadTask(PangeaBaseLoadTask, CapTask):
         if self.results_available():
             print('RESULTS AVAILABLE')
             return None
-        if not self.download_only:
+        elif not self.download_only:
             print('RESULTS WRAPPED', self.wrapped.module_name())
+            return self.wrapped
+        if self.results_available_locally():
+            print('RESULTS LOCAL', self.wrapped.module_name())
             return self.wrapped
         raise PangeaLoadTaskError('Running tasks is not permitted AND results are not available')
 

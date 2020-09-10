@@ -56,15 +56,17 @@ def cli_run_samples(config, clean_reads, upload, download_only, scheduler_url,
         if timelimit and (time.time() - start_time) > (60 * 60 * timelimit):
             click.echo(f'Timelimit reached. Stopping.', err=True)
             break
-        reads = wrap_task(
-            sample, BaseReads,
-            upload=False, config_path=config, cores=threads, requires_reads=True
-        )
-        fast_detect = wrap_task(
-            sample, Kraken2FastDetectCovid, config_path=config, cores=threads
-        )
-        fast_detect.wrapped.reads = reads
-        tasks = [fast_detect]
+        tasks = []
+        for sample in chunk:
+            reads = wrap_task(
+                sample, BaseReads,
+                upload=False, config_path=config, cores=threads, requires_reads=True
+            )
+            fast_detect = wrap_task(
+                sample, Kraken2FastDetectCovid, config_path=config, cores=threads
+            )
+            fast_detect.wrapped.reads = reads
+            tasks.append(fast_detect)
         if not scheduler_url:
             luigi.build(tasks, local_scheduler=True, workers=workers)
         else:

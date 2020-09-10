@@ -15,7 +15,12 @@ def covid_cli():
     pass
 
 
-@run.command('samples')
+@covid_cli.group('run')
+def run_cli():
+    pass
+
+
+@run_cli.command('samples')
 @click.option('-c', '--config', type=click.Path(), default='', envvar='CAP2_CONFIG')
 @click.option('--clean-reads/--all-reads', default=False)
 @click.option('--upload/--no-upload', default=True)

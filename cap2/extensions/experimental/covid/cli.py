@@ -8,6 +8,7 @@ from ....pangea.cli import set_config
 from ....pangea.api import wrap_task
 from ....pangea.pangea_sample import PangeaGroup
 from ....pipeline.preprocessing import BaseReads
+from ....utils import chunks
 
 
 @click.group('covid')
@@ -34,14 +35,13 @@ def run_cli():
 @click.option('--endpoint', default='https://pangea.gimmebio.com')
 @click.option('-e', '--email', envvar='PANGEA_USER')
 @click.option('-p', '--password', envvar='PANGEA_PASS')
-@click.option('-s', '--stage', default='reads')
 @click.option('--random-seed', type=int, default=None)
 @click.argument('org_name')
 @click.argument('grp_name')
 def cli_run_samples(config, clean_reads, upload, download_only, scheduler_url,
                     max_attempts,
                     batch_size, workers, threads, timelimit,
-                    endpoint, email, password, stage, random_seed,
+                    endpoint, email, password, random_seed,
                     org_name, grp_name):
     set_config(endpoint, email, password, org_name, grp_name)
     group = PangeaGroup(grp_name, email, password, endpoint, org_name)

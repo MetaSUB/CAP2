@@ -12,6 +12,16 @@ from ..preprocessing.clean_reads import CleanReads
 
 
 class Kraken2(CapTask):
+    module_description = """
+    This module provides taxonomic assignments for short reads.
+
+    Motivation: Taxonomic identification is critical for understanding
+    microbiomes. Kraken2 is a well benchmarked tool that is computationally
+    efficient. 
+
+    Negatives: Kraken2 uses pseudo-alignment which is somewhat less sensitive
+    and specific than true alignment.
+    """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -42,6 +52,9 @@ class Kraken2(CapTask):
     @classmethod
     def _module_name(cls):
         return 'kraken2'
+
+    def tool_version(self):
+        return self.run_cmd(f'{self.pkg.bin} --version').stderr.decode('utf-8')
 
     def requires(self):
         return self.rsync_pkg, self.pkg, self.db, self.reads

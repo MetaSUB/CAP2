@@ -13,6 +13,11 @@ class CleanReads(CapTask):
     """This class represents the culmination of the
     preprocessing pipeline.
     """
+    module_description = """
+    This module contains cleaned paired end short reads.
+
+    It is the end of the preprocessing stage of the pipeline.
+    """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

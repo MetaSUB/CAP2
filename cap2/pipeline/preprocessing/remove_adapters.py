@@ -11,6 +11,16 @@ from .base_reads import BaseReads
 
 
 class AdapterRemoval(CapTask):
+    module_description = """
+    This module removes adapter sequences and low wuality sequences.
+
+    Motivation: adapter sequences can be misidentified or lead to
+    issues with assembly or k-mer profiles. Removing adapters is
+    fast and reduces this issue.
+
+    Negatives: adapter sequences may not always be properly 
+    identified.
+    """
     ILLUMINA_SHARED_PREFIX = 'AGATCGGAAGAGC'
 
     def __init__(self, *args, **kwargs):

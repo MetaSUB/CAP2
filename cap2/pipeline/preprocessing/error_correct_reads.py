@@ -12,6 +12,20 @@ from .map_to_human import RemoveHumanReads
 
 
 class ErrorCorrectReads(CapTask):
+    module_description = """
+    This module error corrects reads using BayesHammer.
+
+    Motivation: reads can contain base errors introduced
+    during sequencing. Running error correction reduces
+    the total number of errors. This can improve the
+    classification rate and decrease the misclassification
+    rate.
+
+    Negatives: error correction can remove SNPs present in
+    secondary strains as such error corrected reads should
+    not be used to call SNPs.
+    """
+
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

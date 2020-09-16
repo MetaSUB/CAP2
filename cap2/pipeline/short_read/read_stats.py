@@ -42,6 +42,11 @@ def stats_one_fastq(fastq, dropout):
 
 
 class ReadStats(CapTask):
+    module_description = """
+    This module calculates various read statistics from samples.
+
+    Motivation: Read statistics can help uncover basic patterns.
+    """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

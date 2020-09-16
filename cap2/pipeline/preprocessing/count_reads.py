@@ -8,6 +8,9 @@ from ..config import PipelineConfig
 
 
 class CountRawReads(CapTask):
+    module_description = """
+    This module counts the number of reads in the sample.
+    """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

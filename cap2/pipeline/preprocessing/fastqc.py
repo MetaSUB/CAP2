@@ -10,6 +10,16 @@ from .base_reads import BaseReads
 
 
 class FastQC(CapTask):
+    module_description = """
+    FastQC computes a number of quality control metrics.
+
+    Motivation: Quality control is important to identify
+    systematic errors and sequencing issues. FastQC
+    includes a broad suite of checks.
+
+    Negatives: FastQC only runs on a subset of reads though
+    this is usually sufficient.
+    """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

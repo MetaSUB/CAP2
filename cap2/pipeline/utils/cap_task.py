@@ -15,6 +15,7 @@ from ..config import PipelineConfig
 class BaseCapTask(luigi.Task):
     config_filename = luigi.Parameter(default='')
     cores = luigi.IntParameter(default=1)
+    module_description = "No description for this module."
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

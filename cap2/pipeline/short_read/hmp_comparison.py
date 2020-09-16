@@ -11,6 +11,15 @@ from .mash import Mash
 
 
 class HmpComparison(CapTask):
+    module_description = """
+    This module compares samples to reference samples from the HMP.
+
+    Motivation: Similarity to human commensal microbiomes helps to
+    contextualize samples. 
+
+    Negatives: HMP samples are a useful reference but do not provide
+    the full gamut of human microbiome diversity.
+    """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

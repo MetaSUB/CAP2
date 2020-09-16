@@ -13,6 +13,9 @@ from ..utils.conda import CondaPackage
 
 
 class MultiQC(CapGroupTask):
+    module_description = """
+    MultiQC condenses the results of FastQC.
+    """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

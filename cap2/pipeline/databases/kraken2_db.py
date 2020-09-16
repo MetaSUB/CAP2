@@ -35,6 +35,9 @@ class Kraken2DBDataDown(CapDbTask):
         self.kraken_db_dir = 'taxa_kraken2'
         self.download_libs = True
 
+    def tool_version(self):
+        return self.run_cmd(f'{self.pkg.bin} --version').stderr.decode('utf-8')
+
     def requires(self):
         return [self.pkg]
 

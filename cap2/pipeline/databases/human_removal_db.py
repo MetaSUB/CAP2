@@ -29,6 +29,9 @@ class HumanRemovalDB(CapDbTask):
         self.db_dir = self.config.db_dir
         self.fastas = list(glob(join(self.db_dir, 'hg38') + '/*.fa.gz'))
 
+    def tool_version(self):
+        return self.run_cmd(f'{self.pkg.bin} --version').stderr.decode('utf-8')
+
     def requires(self):
         return self.pkg
 

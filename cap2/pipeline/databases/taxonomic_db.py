@@ -26,6 +26,9 @@ class TaxonomicDB(CapDbTask):
         self.db_dir = self.config.db_dir
         self.kraken_db_dir = ''
 
+    def tool_version(self):
+        return self.run_cmd(f'{self.pkg.bin} --version').stderr.decode('utf-8')
+
     def requires(self):
         return self.pkg
 

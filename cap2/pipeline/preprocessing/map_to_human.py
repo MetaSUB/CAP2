@@ -11,6 +11,18 @@ from ..databases.human_removal_db import HumanRemovalDB
 
 
 class RemoveHumanReads(CapTask):
+    module_description = """
+    This module removes reads likely to be human.
+
+    Motivation: nearly every metagenomic sample can contain
+    human DNA some of which resembles microbial sequences.
+    Removing likely human DNA decreases the chance of
+    incorrectly mis-identifying human DNA as microbial.
+
+    Negatives: in some samples the sequences that resemble
+    human DNA may actually be microbial though in most cases
+    part of the microbial genome will not resemble human.
+    """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

@@ -13,6 +13,9 @@ class ProcessedReads(CapTask):
     """This class represents the culmination of the
     shortread pipeline.
     """
+    module_description = """
+    This module is a proxy for the end of the short read stage.
+    """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

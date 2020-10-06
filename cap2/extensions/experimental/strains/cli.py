@@ -6,6 +6,7 @@ import time
 from .make_pileup import MakePileup
 from .align_to_genome import AlignReadsToGenome
 from ....pangea.cli import set_config
+from ....pangea.pangea_sample import PangeaGroup
 from ....pipeline.preprocessing import BaseReads
 from ....utils import chunks
 from .tasks import StrainPangeaLoadTask

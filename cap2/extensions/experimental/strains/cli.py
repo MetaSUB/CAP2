@@ -6,10 +6,9 @@ import time
 from .make_pileup import MakePileup
 from .align_to_genome import AlignReadsToGenome
 from ....pangea.cli import set_config
-from ....pangea.api import wrap_task
-from ....pangea.pangea_sample import PangeaGroup
 from ....pipeline.preprocessing import BaseReads
 from ....utils import chunks
+from .tasks import StrainPangeaLoadTask
 
 
 @click.group('strains')
@@ -20,6 +19,25 @@ def strain_cli():
 @strain_cli.group('run')
 def run_cli():
     pass
+
+
+def wrap_task(sample, module,
+              requires_reads=False, upload=True, download_only=False,
+              config_path='', cores=1, **kwargs):
+    task = StrainPangeaLoadTask(
+        pe1=sample.r1,
+        pe2=sample.r2,
+        sample_name=sample.name,
+        wraps=module.module_name(),
+        config_filename=config_path,
+        cores=cores,
+        **kwargs,
+    )
+    task.upload_allowed = upload
+    task.wrapped_module = module
+    task.requires_reads = requires_reads
+    task.download_only = download_only
+    return task
 
 
 def get_task_list_for_sample(sample, config, threads, genome_name, genome_path):

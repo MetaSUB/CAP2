@@ -4,16 +4,14 @@ from os.path import join, dirname
 from glob import glob
 import subprocess
 
-from ....pipeline.utils.cap_task import CapDbTask
+from .tasks import StrainCapDbTask
 from ....pipeline.config import PipelineConfig
 from ....pipeline.utils.conda import CondaPackage
 
 
-class AlignReadsToGenomeDb(CapDbTask):
+class AlignReadsToGenomeDb(StrainCapDbTask):
     """
     """
-    genome_name = luigi.Parameter()
-    genome_path = luigi.Parameter(significant=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

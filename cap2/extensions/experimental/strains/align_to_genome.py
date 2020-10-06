@@ -6,7 +6,7 @@ from os.path import join, dirname, basename
 
 from .align_to_genome_db import AlignReadsToGenomeDb
 
-from ....pipeline.utils.cap_task import CapTask
+from .tasks import StrainCapTask
 from ....pipeline.config import PipelineConfig
 from ....pipeline.utils.conda import CondaPackage
 from ....pipeline.preprocessing.map_to_human import RemoveHumanReads
@@ -14,7 +14,7 @@ from ....pipeline.preprocessing.map_to_human import RemoveHumanReads
 logger = logging.getLogger('experimental::strains')
 
 
-class AlignReadsToGenome(CapTask):
+class AlignReadsToGenome(StrainCapTask):
     genome_name = luigi.Parameter()  # A genome name with only lowercase characters and underscores
     genome_path = luigi.Parameter(significant=False)  # A filepath to a folder containing fastas
     module_description = """

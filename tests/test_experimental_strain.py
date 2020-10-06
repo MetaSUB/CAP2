@@ -68,7 +68,7 @@ class TestPipelinePreprocessing(TestCase):
 
     def tearDownClass():
         pass
-        # rmtree('test_out')
+        rmtree('test_out')
 
     def test_align_to_genome_db(self):
         instance = AlignReadsToGenomeDb(

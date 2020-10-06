@@ -30,7 +30,7 @@ STAGES = [
 
 def wrap_task(sample, module,
               requires_reads=False, upload=True, download_only=False,
-              config_path='', cores=1):
+              config_path='', cores=1, **kwargs):
     task = PangeaLoadTask(
         pe1=sample.r1,
         pe2=sample.r2,
@@ -38,6 +38,7 @@ def wrap_task(sample, module,
         wraps=module.module_name(),
         config_filename=config_path,
         cores=cores,
+        **kwargs,
     )
     task.upload_allowed = upload
     task.wrapped_module = module

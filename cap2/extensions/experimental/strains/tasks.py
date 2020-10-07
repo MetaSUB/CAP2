@@ -11,7 +11,7 @@ from ....pipeline.utils.cap_task import (
 
 class StrainBaseCapTask(BaseCapTask):
     genome_name = luigi.Parameter()  # A genome name with only lowercase characters and underscores
-    genome_path = luigi.Parameter(significant=False)  # A filepath to a folder containing fastas
+    genome_path = luigi.Parameter(default='', significant=False)  # A filepath to a folder containing fastas
 
 
 class StrainCapTask(CapTask, StrainBaseCapTask):

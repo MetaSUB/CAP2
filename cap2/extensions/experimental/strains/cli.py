@@ -76,15 +76,16 @@ def get_task_list_for_sample(sample, config, threads, genome_name, genome_path):
 @click.option('-e', '--email', envvar='PANGEA_USER')
 @click.option('-p', '--password', envvar='PANGEA_PASS')
 @click.option('--random-seed', type=int, default=None)
+@click.option('-g', '--genome-path', default='', help='Path to local fastas (instead of downloading from NCBI)')
 @click.argument('org_name')
 @click.argument('grp_name')
 @click.argument('genome_name')
-@click.argument('genome_path')
 def cli_run_samples(config, clean_reads, upload, download_only, scheduler_url,
                     max_attempts,
                     batch_size, workers, threads, timelimit,
                     endpoint, email, password, random_seed,
-                    org_name, grp_name, genome_name, genome_path):
+                    genome_path,
+                    org_name, grp_name, genome_name):
     set_config(endpoint, email, password, org_name, grp_name)
     group = PangeaGroup(grp_name, email, password, endpoint, org_name)
     start_time, completed = time.time(), []

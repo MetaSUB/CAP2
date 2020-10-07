@@ -11,7 +11,7 @@ from cap2.extensions.experimental.strains import (
     AlignReadsToGenomeDb,
     MakePileup,
 )
-from cap2.extensions.experimental.strains.bacterial_genome_getter import get_microbial_genome
+from cap2.extensions.experimental.strains.get_microbial_genome import get_microbial_genome
 
 logging.basicConfig(level=logging.INFO)
 
@@ -75,6 +75,15 @@ class TestPipelinePreprocessing(TestCase):
         instance = AlignReadsToGenomeDb(
             genome_name='my_test_genome_name',
             genome_path=join(dirname(__file__), 'data/krakenuniq'),
+            config_filename=TEST_CONFIG,
+            cores=1
+        )
+        luigi.build([instance], local_scheduler=True)
+        self.assertTrue(isfile(instance.output()['bt2_index_1'].path))
+
+    def test_align_to_genome_db_with_fetch(self):
+        instance = AlignReadsToGenomeDb(
+            genome_name='serratia_proteamaculans',
             config_filename=TEST_CONFIG,
             cores=1
         )

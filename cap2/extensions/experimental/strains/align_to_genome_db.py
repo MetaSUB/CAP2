@@ -4,6 +4,7 @@ from os.path import join, dirname
 from glob import glob
 import subprocess
 
+from .bacterial_genome_getter import GenomeFastaGetterDb
 from .tasks import StrainCapDbTask
 from ....pipeline.config import PipelineConfig
 from ....pipeline.utils.conda import CondaPackage
@@ -23,15 +24,26 @@ class AlignReadsToGenomeDb(StrainCapDbTask):
         )
         self.config = PipelineConfig(self.config_filename)
         self.db_dir = self.config.db_dir
-        self.fastas = []
-        for ext in ['.fa', '.fa.gz', '.fna', '.fna.gz']:
-            self.fastas += list(glob(self.genome_path + f'/*{ext}'))
+        self._fastas = []
+        if self.genome_path:
+            for ext in ['.fa', '.fa.gz', '.fna', '.fna.gz']:
+                self._fastas += list(glob(self.genome_path + f'/*{ext}'))
+        else:
+            self._genome_getter = GenomeFastaGetterDb(
+                genome_name=self.genome_name,
+                genome_path=self.genome_path,
+                config_filename=self.config_filename,
+                cores=self.cores,
+            )
 
     def tool_version(self):
         return self.run_cmd(f'{self.pkg.bin} --version').stderr.decode('utf-8')
 
     def requires(self):
-        return self.pkg
+        reqs = [self.pkg]
+        if self._genome_getter:
+            reqs.append(self._genome_getter)
+        return reqs
 
     @classmethod
     def _module_name(cls):
@@ -46,6 +58,13 @@ class AlignReadsToGenomeDb(StrainCapDbTask):
         return ['bowtie2==2.4.1']
 
     @property
+    def fastas(self):
+        if self._fastas:
+            return self._fastas
+        # if we get here it implies `genome_path` was null
+        self._fastas = self._genome_getter.fastas
+
+    @property
     def bowtie2_index(self):
         return join(self.db_dir, 'align_to_genomes', self.genome_name, f'{self.genome_name}.bt2')
 
@@ -57,6 +76,7 @@ class AlignReadsToGenomeDb(StrainCapDbTask):
         }
 
     def build_bowtie2_index_from_fasta(self):
+        print(self.fastas)
         cmd = ''.join((
             self.pkg.bin,
             f' --threads {self.cores} ',

@@ -11,6 +11,7 @@ from cap2.extensions.experimental.strains import (
     AlignReadsToGenomeDb,
     MakePileup,
 )
+from cap2.extensions.experimental.strains.bacterial_genome_getter import get_microbial_genome
 
 logging.basicConfig(level=logging.INFO)
 
@@ -109,3 +110,8 @@ class TestPipelinePreprocessing(TestCase):
         instance.bam = DummyAlignReadsToGenome()
         luigi.build([instance], local_scheduler=True)
         self.assertTrue(isfile(instance.pileup_path))
+
+    def test_bacterial_genome_getter(self):
+        genomes = get_microbial_genome('serratia_proteamaculans', outdir='test_out/serratia_proteamaculans')
+        for filepath in genomes:
+            self.assertTrue(isfile(filepath))

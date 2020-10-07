@@ -79,13 +79,13 @@ def get_task_list_for_sample(sample, config, threads, genome_name, genome_path):
 @click.option('-g', '--genome-path', default='', help='Path to local fastas (instead of downloading from NCBI)')
 @click.argument('org_name')
 @click.argument('grp_name')
-@click.argument('genome_name')
+@click.argument('genome_name_list', type=click.File('r'))
 def cli_run_samples(config, clean_reads, upload, download_only, scheduler_url,
                     max_attempts,
                     batch_size, workers, threads, timelimit,
                     endpoint, email, password, random_seed,
                     genome_path,
-                    org_name, grp_name, genome_name):
+                    org_name, grp_name, genome_name_list):
     set_config(endpoint, email, password, org_name, grp_name)
     group = PangeaGroup(grp_name, email, password, endpoint, org_name)
     start_time, completed = time.time(), []
@@ -94,18 +94,20 @@ def cli_run_samples(config, clean_reads, upload, download_only, scheduler_url,
         if not clean_reads or samp.has_clean_reads()
     ]
     click.echo(f'Processing {len(samples)} samples', err=True)
+    genome_names = [line.strip() for line in genome_name_list if line.strip()]
     for chunk in chunks(samples, batch_size):
-        click.echo(f'Completed processing {len(completed)} samples', err=True)
-        if timelimit and (time.time() - start_time) > (60 * 60 * timelimit):
-            click.echo(f'Timelimit reached. Stopping.', err=True)
-            break
-        tasks = []
-        for sample in chunk:
-            tasks += get_task_list_for_sample(sample, config, threads, genome_name, genome_path)
-        if not scheduler_url:
-            luigi.build(tasks, local_scheduler=True, workers=workers)
-        else:
-            luigi.build(
-                tasks, scheduler_url=scheduler_url, workers=workers
-            )
-        completed += chunk
+        for genome_name in genome_names:
+            click.echo(f'Completed processing {len(completed)} samples for {genome_name}', err=True)
+            if timelimit and (time.time() - start_time) > (60 * 60 * timelimit):
+                click.echo(f'Timelimit reached. Stopping.', err=True)
+                break
+            tasks = []
+            for sample in chunk:
+                tasks += get_task_list_for_sample(sample, config, threads, genome_name, genome_path)
+            if not scheduler_url:
+                luigi.build(tasks, local_scheduler=True, workers=workers)
+            else:
+                luigi.build(
+                    tasks, scheduler_url=scheduler_url, workers=workers
+                )
+            completed += chunk

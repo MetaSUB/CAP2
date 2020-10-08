@@ -7,6 +7,7 @@ from ....pipeline.utils.cap_task import (
     CapTask,
     CapDbTask,
 )
+from .utils import clean_microbe_name
 
 
 class StrainBaseCapTask(BaseCapTask):
@@ -15,8 +16,8 @@ class StrainBaseCapTask(BaseCapTask):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if self.genome_name != self.genome_name.lower():
-            raise ValueError(f'genome_name `{self.genome_name}` is not lowercase')
+        if self.genome_name != clean_microbe_name(self.genome_name):
+            raise ValueError(f'genome_name `{self.genome_name}` is not cleaned')
         if ' ' in self.genome_name:
             raise ValueError(f'genome_name `{self.genome_name}` contains whitespace')
 

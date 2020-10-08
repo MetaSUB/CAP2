@@ -13,6 +13,13 @@ class StrainBaseCapTask(BaseCapTask):
     genome_name = luigi.Parameter()  # A genome name with only lowercase characters and underscores
     genome_path = luigi.Parameter(default='', significant=False)  # A filepath to a folder containing fastas
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.genome_name != self.genome_name.lower():
+            raise ValueError(f'genome_name `{self.genome_name}` is not lowercase')
+        if ' ' in self.genome_name:
+            raise ValueError(f'genome_name `{self.genome_name}` contains whitespace')
+
 
 class StrainCapTask(CapTask, StrainBaseCapTask):
     pass

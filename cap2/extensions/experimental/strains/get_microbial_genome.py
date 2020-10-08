@@ -5,6 +5,7 @@ import subprocess
 from glob import glob
 from ftplib import FTP
 from random import shuffle
+from .utils import clean_microbe_name
 
 
 NCBI_FTP = 'ftp.ncbi.nlm.nih.gov'
@@ -51,13 +52,6 @@ def remove_excess_files(new_files, max_n_genomes=100):
         os.remove(filepath)
     kept_files = new_files[:max_n_genomes]
     return kept_files
-
-
-def clean_microbe_name(microbe_name):
-    microbe_name = microbe_name.replace(' ', '_')
-    microbe_name = microbe_name.replace('-', '_')
-    microbe_name = microbe_name[0].upper() + microbe_name[1:].lower()
-    return microbe_name
 
 
 def get_microbial_genome(microbe_name,

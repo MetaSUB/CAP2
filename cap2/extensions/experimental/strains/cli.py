@@ -11,6 +11,7 @@ from ....pangea.pangea_sample import PangeaGroup
 from ....pipeline.preprocessing import BaseReads
 from ....utils import chunks
 from .tasks import StrainPangeaLoadTask
+from .utils import clean_microbe_name
 
 
 @click.group('strains')
@@ -97,6 +98,7 @@ def cli_run_samples(config, clean_reads, upload, download_only, scheduler_url,
     genome_names = [line.strip() for line in genome_name_list if line.strip()]
     for chunk in chunks(samples, batch_size):
         for genome_name in genome_names:
+            genome_name = clean_microbe_name(genome_name)
             click.echo(f'Completed processing {len(completed)} samples for {genome_name}', err=True)
             if timelimit and (time.time() - start_time) > (60 * 60 * timelimit):
                 click.echo(f'Timelimit reached. Stopping.', err=True)

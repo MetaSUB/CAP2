@@ -14,6 +14,7 @@ from ..pipeline.short_read import (
     Humann2,
     HmpComparison,
     ProcessedReads,
+    Jellyfish,
 )
 from ..pipeline.preprocessing import BaseReads
 from ..pipeline.assembly.metaspades import MetaspadesAssembly
@@ -56,6 +57,8 @@ def get_task_list_for_read_stage(sample, clean_reads, upload=True, download_only
     humann2.wrapped.alignment = dmnd_uniref90
     mash = wrapit(Mash)
     mash.wrapped.reads = clean_reads
+    jellyfish = wrapit(Jellyfish)
+    jellyfish.wrapped.reads = clean_reads
     hmp = wrapit(HmpComparison)
     hmp.wrapped.mash = mash
     read_stats = wrapit(ReadStats)

@@ -44,7 +44,7 @@ class CovidGenomeCoverage(CapTask):
         )
 
     def requires(self):
-        return self.samtools, self.pkg, self.bam
+        return self.pkg, self.bam
 
     @classmethod
     def version(cls):

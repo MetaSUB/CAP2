@@ -10,6 +10,7 @@ from cap2.extensions.experimental.covid import (
     CovidGenomeDb,
     AlignReadsToCovidGenome,
     MakeCovidPileup,
+    CovidGenomeCoverage,
 )
 
 logging.basicConfig(level=logging.INFO)
@@ -71,7 +72,8 @@ class DummyAlignReadsToCovidGenome(luigi.ExternalTask):
             'bam_index': luigi.LocalTarget(BAM_INDEX_FILEPATH),
         }
 
-class TestPipelinePreprocessing(TestCase):
+
+class TestCovidPipeline(TestCase):
 
     def tearDownClass():
         pass
@@ -109,3 +111,15 @@ class TestPipelinePreprocessing(TestCase):
         instance.bam = DummyAlignReadsToCovidGenome()
         luigi.build([instance], local_scheduler=True)
         self.assertTrue(isfile(instance.pileup_path))
+
+    def test_genome_coverage(self):
+        instance = CovidGenomeCoverage(
+            pe1=RAW_READS_1,
+            pe2=RAW_READS_2,
+            sample_name='test_sample',
+            config_filename=TEST_CONFIG,
+            cores=1
+        )
+        instance.bam = DummyAlignReadsToCovidGenome()
+        luigi.build([instance], local_scheduler=True)
+        self.assertTrue(isfile(instance.genomecov_path))

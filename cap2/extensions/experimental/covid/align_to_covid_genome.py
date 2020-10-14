@@ -1,22 +1,21 @@
 
 import luigi
+import logging
 import subprocess
 import logging
 from os.path import join, dirname, basename
 
-from .align_to_genome_db import AlignReadsToGenomeDb
+from .covid_genome_db import CovidGenomeDb
 
-from .tasks import StrainCapTask
+from ....pipeline.utils.cap_task import CapTask
 from ....pipeline.config import PipelineConfig
 from ....pipeline.utils.conda import CondaPackage
 from ....pipeline.preprocessing.map_to_human import RemoveHumanReads
 
-logger = logging.getLogger('experimental::strains')
+logger = logging.getLogger('experimental::covid')
 
 
-class AlignReadsToGenome(StrainCapTask):
-    genome_name = luigi.Parameter()  # A genome name with only lowercase characters and underscores
-    genome_path = luigi.Parameter(significant=False)  # A filepath to a folder containing fastas
+class AlignReadsToCovidGenome(CapTask):
     module_description = """
     This module 
 
@@ -41,9 +40,7 @@ class AlignReadsToGenome(StrainCapTask):
         )
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
-        self.db = AlignReadsToGenomeDb(
-            genome_name=self.genome_name,
-            genome_path=self.genome_path,
+        self.db = CovidGenomeDb(
             config_filename=self.config_filename,
             cores=self.cores,
         )
@@ -61,26 +58,27 @@ class AlignReadsToGenome(StrainCapTask):
 
     @classmethod
     def version(cls):
-        return 'v0.1.1'
+        return 'v0.1.0'
 
     def tool_version(self):
         version = '[BOWTIE2]\n'
-        version += self.run_cmd(f'{self.pkg.bin} --version').stderr.decode('utf-8')
+        version += self.run_cmd(f'{self.pkg.bin} --version').stdout.decode('utf-8')
         version += '\n[SAMTOOLS]\n'
-        version += self.run_cmd(f'{self.samtools.bin} --version').stderr.decode('utf-8')
+        version += self.run_cmd(f'{self.samtools.bin} --version').stdout.decode('utf-8')
         return version
 
     @classmethod
     def dependencies(cls):
-        return ["samtools", "bowtie2", AlignReadsToGenomeDb, RemoveHumanReads]
+        return ["samtools", "bowtie2", CovidGenomeDb, RemoveHumanReads]
 
     @classmethod
     def _module_name(cls):
-        return 'experimental::align_to_genome'
+        return 'experimental::align_to_covid_genome'
 
     def output(self):
         out = {
-            f'bam__{self.genome_name}': self.get_target(f'genome_alignment__{self.genome_name}', 'bam'),
+            'bam': self.get_target(f'genome_alignment', 'bam'),
+            'bam_index': self.get_target(f'genome_alignment', 'bai'),
         }
         return out
 
@@ -90,10 +88,13 @@ class AlignReadsToGenome(StrainCapTask):
 
     @property
     def bam_path(self):
-        return self.output()[f'bam__{self.genome_name}'].path
+        return self.output()[f'bam'].path
+
+    @property
+    def bam_index_path(self):
+        return self.output()[f'bam_index'].path
 
     def _run(self):
-        logger.info(f'running {self.module_name()} for {self.genome_name}')
         if self.paired:
             return self._run_paired()
         return self._run_single()
@@ -102,10 +103,20 @@ class AlignReadsToGenome(StrainCapTask):
         cmd = (
             f'{self.samtools.bin} '
             'sort '
+            f'-@ {self.cores} '
             f'{self.temp_bam_path} '
             f'-o {self.bam_path} '
-            f'-@ {self.cores} '
             f'&& rm {self.temp_bam_path}'
+        )
+        self.run_cmd(cmd)
+
+    def _index_bam(self):
+        cmd = (
+            f'{self.samtools.bin} '
+            'index '
+            f'-b -@ {self.cores} '
+            f'{self.bam_path} '
+            f'{self.bam_index_path} '
         )
         self.run_cmd(cmd)
 
@@ -120,7 +131,8 @@ class AlignReadsToGenome(StrainCapTask):
             f'{self.temp_bam_path}'
         ))
         self.run_cmd(cmd)
-        return self._sort_bam()
+        self._sort_bam()
+        self._index_bam()
 
     def _run_paired(self):
         cmd = ''.join((
@@ -135,4 +147,5 @@ class AlignReadsToGenome(StrainCapTask):
 
         ))
         self.run_cmd(cmd)
-        return self._sort_bam()
+        self._sort_bam()
+        self._index_bam()

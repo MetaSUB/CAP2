@@ -4,10 +4,15 @@ import luigi
 import time
 
 from .fast_detect import Kraken2FastDetectCovid
+from .align_to_covid_genome import AlignReadsToCovidGenome
+from .genome_coverage import CovidGenomeCoverage
+from .make_pileup import MakeCovidPileup
+
 from ....pangea.cli import set_config
 from ....pangea.api import wrap_task
 from ....pangea.pangea_sample import PangeaGroup
 from ....pipeline.preprocessing import BaseReads
+from ....pipeline.preprocessing.map_to_human import RemoveHumanReads
 from ....utils import chunks
 
 
@@ -19,6 +24,33 @@ def covid_cli():
 @covid_cli.group('run')
 def run_cli():
     pass
+
+
+def get_task_list_for_sample(sample, config, threads):
+    base_reads = wrap_task(
+        sample, BaseReads,
+        upload=False, config_path=config, cores=threads, requires_reads=True
+    )
+
+    wrapit = lambda x: wrap_task(sample, x, config_path=config, cores=threads)
+
+    fast_detect = wrapit(Kraken2FastDetectCovid)
+    fast_detect.wrapped.reads = base_reads
+
+    nonhuman_reads = wrapit(RemoveHumanReads)
+    nonhuman_reads.wrapped.adapter_removed_reads.reads = base_reads
+
+    align_to_covid = wrapit(AlignReadsToCovidGenome)
+    align_to_covid.wrapped.reads = nonhuman_reads
+
+    covid_genome_coverage = wrapit(CovidGenomeCoverage)
+    covid_genome_coverage.wrapped.bam = align_to_covid
+
+    covid_pileup = wrapit(MakeCovidPileup)
+    covid_pileup.wrapped.bam = align_to_covid
+
+    tasks = [fast_detect, covid_pileup, covid_genome_coverage, align_to_covid]
+    return tasks
 
 
 @run_cli.command('samples')
@@ -58,15 +90,7 @@ def cli_run_samples(config, clean_reads, upload, download_only, scheduler_url,
             break
         tasks = []
         for sample in chunk:
-            reads = wrap_task(
-                sample, BaseReads,
-                upload=False, config_path=config, cores=threads, requires_reads=True
-            )
-            fast_detect = wrap_task(
-                sample, Kraken2FastDetectCovid, config_path=config, cores=threads
-            )
-            fast_detect.wrapped.reads = reads
-            tasks.append(fast_detect)
+            tasks += get_task_list_for_sample(sample, config, threads)
         if not scheduler_url:
             luigi.build(tasks, local_scheduler=True, workers=workers)
         else:

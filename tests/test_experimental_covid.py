@@ -77,7 +77,7 @@ class TestCovidPipeline(TestCase):
 
     def tearDownClass():
         pass
-        rmtree('test_out')
+        #rmtree('test_out')
 
     def test_covid_genome_db(self):
         instance = CovidGenomeDb(

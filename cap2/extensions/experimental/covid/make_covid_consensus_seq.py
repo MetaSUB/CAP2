@@ -73,9 +73,11 @@ class MakeCovidConsensusSeq(CapTask):
     def _run(self):
         out_prefix = self.fasta_path.replace('.fa', '')
         cmd = (
+            'gunzip -c '
+            f'{self.pileup.pileup_path} '
+            '| '
             f'{self.ivar.bin} '
             'consensus '
-            f'-i {self.pileup.pileup_path} '
             f'-p {out_prefix} '
             '-m 1 -t 0.6 -n N '
         )

@@ -73,10 +73,12 @@ class CallCovidVariants(CapTask):
     def _run(self):
         out_prefix = self.variants_path.replace('.tsv', '')
         cmd = (
+            'gunzip -c '
+            f'{self.pileup.pileup_path} '
+            '| '
             f'{self.ivar.bin} '
             'variants '
-            '-t 0.6 -m 10 '
+            '-t 0.6 -q 10 '
             f'-p {out_prefix} '
-            f'-i {self.pileup.pileup_path} '
         )
         self.run_cmd(cmd)

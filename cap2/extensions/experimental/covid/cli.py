@@ -7,6 +7,8 @@ from .fast_detect import Kraken2FastDetectCovid
 from .align_to_covid_genome import AlignReadsToCovidGenome
 from .genome_coverage import CovidGenomeCoverage
 from .make_pileup import MakeCovidPileup
+from .make_covid_consensus_seq import MakeCovidConsensusSeq
+from .call_covid_variants import CallCovidVariants
 
 from ....pangea.cli import set_config
 from ....pangea.api import wrap_task
@@ -49,7 +51,16 @@ def get_task_list_for_sample(sample, config, threads):
     covid_pileup = wrapit(MakeCovidPileup)
     covid_pileup.wrapped.bam = align_to_covid
 
-    tasks = [fast_detect, covid_pileup, covid_genome_coverage, align_to_covid]
+    covid_consensus = wrapit(MakeCovidConsensusSeq)
+    covid_consensus.wrapped.pileup = covid_pileup
+
+    covid_variants = wrapit(CallCovidVariants)
+    covid_variants.wrapped.pileup = covid_pileup
+
+    tasks = [
+        fast_detect, covid_pileup, covid_genome_coverage, align_to_covid,
+        covid_consensus, covid_variants
+    ]
     return tasks
 
 

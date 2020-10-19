@@ -2,6 +2,7 @@
 import click
 import luigi
 import time
+import logging
 
 from .fast_detect import Kraken2FastDetectCovid
 from .align_to_covid_genome import AlignReadsToCovidGenome
@@ -16,6 +17,8 @@ from ....pangea.pangea_sample import PangeaGroup
 from ....pipeline.preprocessing import BaseReads
 from ....pipeline.preprocessing.map_to_human import RemoveHumanReads
 from ....utils import chunks
+
+logging.basicConfig(level=logging.INFO)
 
 
 @click.group('covid')

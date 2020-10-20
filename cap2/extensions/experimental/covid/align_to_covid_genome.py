@@ -62,7 +62,9 @@ class AlignReadsToCovidGenome(CapTask):
 
     def tool_version(self):
         version = '[BOWTIE2]\n'
-        version += self.run_cmd(f'{self.pkg.bin} --version').stdout.decode('utf-8')
+        bowtie2_version = self.run_cmd(f'{self.pkg.bin} --version').stdout.decode('utf-8')
+        bowtie2_version = '\n'.join(bowtie2_version.split('\n')[:3])
+        version += bowtie2_version
         version += '\n[SAMTOOLS]\n'
         version += self.run_cmd(f'{self.samtools.bin} --version').stdout.decode('utf-8')
         return version

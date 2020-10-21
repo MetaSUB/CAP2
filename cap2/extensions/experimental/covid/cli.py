@@ -72,6 +72,7 @@ def get_task_list_for_sample(sample, config, threads):
 
 @run_cli.command('samples')
 @click.option('-c', '--config', type=click.Path(), default='', envvar='CAP2_CONFIG')
+@click.option('-l', '--log-level', default=30)
 @click.option('--clean-reads/--all-reads', default=False)
 @click.option('--upload/--no-upload', default=True)
 @click.option('--download-only/--run', default=False)
@@ -87,11 +88,15 @@ def get_task_list_for_sample(sample, config, threads):
 @click.option('--random-seed', type=int, default=None)
 @click.argument('org_name')
 @click.argument('grp_name')
-def cli_run_samples(config, clean_reads, upload, download_only, scheduler_url,
+def cli_run_samples(config, log_level, clean_reads, upload, download_only, scheduler_url,
                     max_attempts,
                     batch_size, workers, threads, timelimit,
                     endpoint, email, password, random_seed,
                     org_name, grp_name):
+    logging.basicConfig(
+        level=log_level,
+        format='%(levelname)s:%(message)s',
+    )
     set_config(endpoint, email, password, org_name, grp_name)
     group = PangeaGroup(grp_name, email, password, endpoint, org_name)
     start_time, completed = time.time(), []

@@ -19,7 +19,7 @@ from ....pipeline.preprocessing.map_to_human import RemoveHumanReads
 from ....utils import chunks
 
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.WARNING,
     format='%(levelname)s:%(message)s',
 )
 

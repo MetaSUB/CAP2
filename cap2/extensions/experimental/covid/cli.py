@@ -107,7 +107,7 @@ def cli_run_samples(config, log_level, clean_reads, upload, download_only, sched
     click.echo(f'Processing {len(samples)} samples', err=True)
     for i, chunk in enumerate(chunks(samples, batch_size)):
         logging.basicConfig(
-            level=logging.INFO,
+            level=log_level,
             format=f'(batch {i + 1}) ' + '%(levelname)s:%(message)s',
         )
         click.echo(f'Completed processing {len(completed)} samples', err=True)

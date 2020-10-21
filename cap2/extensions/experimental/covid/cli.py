@@ -18,7 +18,10 @@ from ....pipeline.preprocessing import BaseReads
 from ....pipeline.preprocessing.map_to_human import RemoveHumanReads
 from ....utils import chunks
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(levelname)s:%(message)s',
+)
 
 
 @click.group('covid')
@@ -97,7 +100,11 @@ def cli_run_samples(config, clean_reads, upload, download_only, scheduler_url,
         if not clean_reads or samp.has_clean_reads()
     ]
     click.echo(f'Processing {len(samples)} samples', err=True)
-    for chunk in chunks(samples, batch_size):
+    for i, chunk in enumerate(chunks(samples, batch_size)):
+        logging.basicConfig(
+            level=logging.INFO,
+            format=f'(batch {i + 1}) ' + '%(levelname)s:%(message)s',
+        )
         click.echo(f'Completed processing {len(completed)} samples', err=True)
         if timelimit and (time.time() - start_time) > (60 * 60 * timelimit):
             click.echo(f'Timelimit reached. Stopping.', err=True)

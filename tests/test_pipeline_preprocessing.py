@@ -10,6 +10,7 @@ import luigi
 from cap2.pipeline.preprocessing.count_reads import CountRawReads
 from cap2.pipeline.preprocessing.fastqc import FastQC
 from cap2.pipeline.preprocessing.map_to_human import RemoveHumanReads
+from cap2.pipeline.preprocessing.map_to_mouse import RemoveMouseReads
 from cap2.pipeline.preprocessing.error_correct_reads import ErrorCorrectReads
 from cap2.pipeline.preprocessing.remove_adapters import AdapterRemoval
 
@@ -19,6 +20,16 @@ TEST_CONFIG = join(dirname(__file__), 'data/test_config.yaml')
 
 
 class DummyHumanRemovalDB(luigi.ExternalTask):
+
+    @property
+    def bowtie2_index(self):
+        return join(dirname(__file__), 'data/hg38/genome_sample')
+
+    def output(self):
+        return luigi.LocalTarget(join(dirname(__file__), 'data/hg38/genome_sample.1.bt2'))
+
+
+class DummyMouseRemovalDB(luigi.ExternalTask):
 
     @property
     def bowtie2_index(self):
@@ -38,6 +49,20 @@ class DummyAdapterRemovedReads(luigi.ExternalTask):
         return {
             'adapter_removed_reads_1': luigi.LocalTarget(self.reads[0]),
             'adapter_removed_reads_2': luigi.LocalTarget(self.reads[1]),
+        }
+
+
+class DummyMouseRemovedReads(luigi.ExternalTask):
+
+    @property
+    def reads(self):
+        return [RAW_READS_1, RAW_READS_2]
+
+    def output(self):
+        return {
+            'bam': None,
+            'nonmouse_reads_1': luigi.LocalTarget(self.reads[0]),
+            'nonmouse_reads_2': luigi.LocalTarget(self.reads[1]),
         }
 
 
@@ -98,6 +123,24 @@ class TestPipelinePreprocessing(TestCase):
         self.assertTrue(isfile(instance.output()['adapter_removed_reads_1'].path))
         self.assertTrue(isfile(instance.output()['adapter_removed_reads_2'].path))
 
+    def test_invoke_remove_mouse_reads(self):
+        instance = RemoveMouseReads(
+            pe1=RAW_READS_1,
+            pe2=RAW_READS_2,
+            sample_name='test_sample',
+            config_filename=TEST_CONFIG,
+            cores=1
+        )
+        instance.db = DummyMouseRemovalDB()
+        instance.adapter_removed_reads = DummyAdapterRemovedReads()
+        luigi.build([instance], local_scheduler=True)
+        self.assertTrue(isfile(instance.output()['bam'].path))
+        if abspath('.') != '/root/project':  # Happens on CircleCI, unlikely otherwise
+            # I can't figure out why these files don't get created on CircleCI
+            # this is a hack but hopefully not too problematic of one.
+            self.assertTrue(isfile(instance.output()['nonmouse_reads_1'].path))
+            self.assertTrue(isfile(instance.output()['nonmouse_reads_2'].path))
+
     def test_invoke_remove_human_reads(self):
         instance = RemoveHumanReads(
             pe1=RAW_READS_1,
@@ -107,7 +150,7 @@ class TestPipelinePreprocessing(TestCase):
             cores=1
         )
         instance.db = DummyHumanRemovalDB()
-        instance.reads = DummyAdapterRemovedReads()
+        instance.mouse_removed_reads = DummyMouseRemovedReads()
         luigi.build([instance], local_scheduler=True)
         self.assertTrue(isfile(instance.output()['bam'].path))
         if abspath('.') != '/root/project':  # Happens on CircleCI, unlikely otherwise

@@ -5,6 +5,7 @@ import time
 
 from .make_pileup import MakePileup
 from .align_to_genome import AlignReadsToGenome
+from .make_snp_graph import MakeSNPGraph
 from ....pangea.cli import set_config
 from ....pangea.api import wrap_task
 from ....pangea.pangea_sample import PangeaGroup
@@ -58,7 +59,13 @@ def get_task_list_for_sample(sample, config, threads, genome_name, genome_path):
         genome_name=genome_name, genome_path=genome_path
     )
     make_pileup.wrapped.bam = align_genome
-    tasks = [make_pileup]
+    make_snp_graph = strain_wrap_task(
+        sample, MakeSNPGraph, config_path=config, cores=threads,
+        genome_name=genome_name, genome_path=genome_path
+    )
+    make_snp_graph.wrapped.bam = align_genome
+
+    tasks = [make_pileup, make_snp_graph]
     return tasks
 
 

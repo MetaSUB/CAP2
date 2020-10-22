@@ -1,6 +1,7 @@
 
 import luigi
 import subprocess
+import networkx as nx
 from os.path import join, dirname, basename
 
 from .align_to_genome import AlignReadsToGenome
@@ -10,7 +11,7 @@ from ....pipeline.config import PipelineConfig
 from ....pipeline.utils.conda import CondaPackage
 from ....pipeline.preprocessing.map_to_human import RemoveHumanReads
 
-from .strainotyping import VERSION
+from .strainotyping import VERSION, graph_from_bam_filepath
 
 
 class MakeSNPGraph(StrainCapTask):

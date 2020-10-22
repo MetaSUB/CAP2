@@ -6,16 +6,18 @@ from shutil import rmtree
 from os.path import join, dirname, isfile, isdir, abspath
 from unittest import TestCase
 
+from cap2.extensions.experimental.strains.strainotyping import graph_from_bam_filepath
 from cap2.extensions.experimental.strains import (
     AlignReadsToGenome,
     AlignReadsToGenomeDb,
     MakePileup,
+    MakeSNPGraph,
 )
 from cap2.extensions.experimental.strains.get_microbial_genome import get_microbial_genome
 
 logging.basicConfig(level=logging.INFO)
 
-BAM_FILEPATH = join(dirname(__file__), 'data/a_sorted_bam_file.bam')
+BAM_FILEPATH = join(dirname(__file__), 'data/covid/covid_alignment_test_bam.bam')
 RAW_READS_1 = join(dirname(__file__), 'data/zymo_pos_cntrl.r1.fq.gz')
 RAW_READS_2 = join(dirname(__file__), 'data/zymo_pos_cntrl.r2.fq.gz')
 TEST_CONFIG = join(dirname(__file__), 'data/test_config.yaml')
@@ -25,11 +27,11 @@ class DummyAlignReadsToGenome(luigi.ExternalTask):
 
     @property
     def bam_path(self):
-        return join(dirname(__file__), 'data/hg38/genome_sample')
+        return BAM_FILEPATH
 
     def output(self):
         return {
-            'bam__my_test_genome_name': luigi.LocalTarget(join(
+            'bam__Genometest_fakegenome': luigi.LocalTarget(join(
                 dirname(__file__),
                 'data/a_sorted_bam_file.bam'
             )),
@@ -73,7 +75,7 @@ class TestPipelinePreprocessing(TestCase):
 
     def test_align_to_genome_db(self):
         instance = AlignReadsToGenomeDb(
-            genome_name='my_test_genome_name',
+            genome_name='Genometest_fakegenome',
             genome_path=join(dirname(__file__), 'data/krakenuniq'),
             config_filename=TEST_CONFIG,
             cores=1
@@ -83,7 +85,7 @@ class TestPipelinePreprocessing(TestCase):
 
     def test_align_to_genome_db_with_fetch(self):
         instance = AlignReadsToGenomeDb(
-            genome_name='serratia_proteamaculans',
+            genome_name='Serratia_proteamaculans',
             config_filename=TEST_CONFIG,
             cores=1
         )
@@ -92,7 +94,7 @@ class TestPipelinePreprocessing(TestCase):
 
     def test_align_to_genome(self):
         instance = AlignReadsToGenome(
-            genome_name='my_test_genome_name',
+            genome_name='Genometest_fakegenome',
             genome_path='/this/is/not/a/real/path',
             pe1=RAW_READS_1,
             pe2=RAW_READS_2,
@@ -108,7 +110,7 @@ class TestPipelinePreprocessing(TestCase):
 
     def test_make_pileup(self):
         instance = MakePileup(
-            genome_name='my_test_genome_name',
+            genome_name='Genometest_fakegenome',
             genome_path='/this/is/not/a/real/path',
             pe1=RAW_READS_1,
             pe2=RAW_READS_2,
@@ -119,6 +121,24 @@ class TestPipelinePreprocessing(TestCase):
         instance.bam = DummyAlignReadsToGenome()
         luigi.build([instance], local_scheduler=True)
         self.assertTrue(isfile(instance.pileup_path))
+
+    def test_make_snp_graph(self):
+        instance = MakeSNPGraph(
+            genome_name='Genometest_fakegenome',
+            genome_path='/this/is/not/a/real/path',
+            pe1=RAW_READS_1,
+            pe2=RAW_READS_2,
+            sample_name='test_sample',
+            config_filename=TEST_CONFIG,
+            cores=1
+        )
+        instance.bam = DummyAlignReadsToGenome()
+        luigi.build([instance], local_scheduler=True)
+        self.assertTrue(isfile(instance.graph_path))
+
+    def test_make_snp_graph_inner(self):
+        graph_from_bam_filepath(BAM_FILEPATH)
+
 
     def test_bacterial_genome_getter(self):
         genomes = get_microbial_genome('serratia_proteamaculans', outdir='test_out/serratia_proteamaculans')

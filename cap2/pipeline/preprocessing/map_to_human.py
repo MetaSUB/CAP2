@@ -3,7 +3,7 @@ import luigi
 import subprocess
 from os.path import join, dirname, basename
 
-from .remove_adapters import AdapterRemoval
+from .map_to_mouse import RemoveMouseReads
 from ..utils.cap_task import CapTask
 from ..config import PipelineConfig
 from ..utils.conda import CondaPackage
@@ -41,7 +41,7 @@ class RemoveHumanReads(CapTask):
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
         self.db = HumanRemovalDB(config_filename=self.config_filename)
-        self.adapter_removed_reads = AdapterRemoval(
+        self.mouse_removed_reads = RemoveMouseReads(
             pe1=self.pe1,
             pe2=self.pe2,
             sample_name=self.sample_name,
@@ -51,7 +51,7 @@ class RemoveHumanReads(CapTask):
         )
 
     def requires(self):
-        return self.samtools, self.pkg, self.db, self.adapter_removed_reads
+        return self.samtools, self.pkg, self.db, self.mouse_removed_reads
 
     @classmethod
     def version(cls):
@@ -66,7 +66,7 @@ class RemoveHumanReads(CapTask):
 
     @classmethod
     def dependencies(cls):
-        return ["samtools", "bowtie2", HumanRemovalDB, AdapterRemoval]
+        return ["samtools", "bowtie2", HumanRemovalDB, RemoveMouseReads]
 
     @classmethod
     def _module_name(cls):
@@ -91,7 +91,7 @@ class RemoveHumanReads(CapTask):
         cmd = ''.join((
             self.pkg.bin,
             ' -x ', self.db.bowtie2_index,
-            ' -U ', self.adapter_removed_reads.output()['adapter_removed_reads_1'].path,
+            ' -U ', self.mouse_removed_reads.output()['nonmouse_reads_1'].path,
             f' --un-gz ', self.output()['nonhuman_reads_1'].path,
             ' --threads ', str(self.cores),
             ' --very-sensitive ',
@@ -105,8 +105,8 @@ class RemoveHumanReads(CapTask):
         cmd = ''.join((
             self.pkg.bin,
             ' -x ', self.db.bowtie2_index,
-            ' -1 ', self.adapter_removed_reads.output()['adapter_removed_reads_1'].path,
-            ' -2 ', self.adapter_removed_reads.output()['adapter_removed_reads_2'].path,
+            ' -1 ', self.mouse_removed_reads.output()['nonmouse_reads_1'].path,
+            ' -2 ', self.mouse_removed_reads.output()['nonmouse_reads_2'].path,
             f' --un-conc-gz {fastq_out} ',
             ' --threads ', str(self.cores),
             ' --very-sensitive ',

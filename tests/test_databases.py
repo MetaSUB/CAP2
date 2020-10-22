@@ -6,6 +6,7 @@ from unittest import TestCase, skip
 
 from cap2.pipeline.databases.human_removal_db import HumanRemovalDB
 from cap2.pipeline.databases.hmp_db import HmpDB
+from cap2.pipeline.databases.mouse_removal_db import MouseRemovalDB
 from cap2.pipeline.databases.taxonomic_db import TaxonomicDB
 from cap2.pipeline.databases.kraken2_db import Kraken2DB, BrakenKraken2DB
 from cap2.pipeline.databases.uniref import Uniref90
@@ -55,6 +56,12 @@ class TestDatabases(TestCase):
         instance.kraken2_db_task.db_size = 10 * 1000 * 1000
         luigi.build([instance], local_scheduler=True)
         self.assertTrue(isfile(instance.output()['kraken2_db_taxa'].path +'/hash.k2d'))
+
+    def test_download_mouse_genome_fasta(self):
+        instance = MouseRemovalDB(config_filename=TEST_CONFIG)
+        local_path = instance.download_mouse_genome()
+        self.assertTrue(isfile(local_path))
+        rmtree('test_db')
 
     def test_build_hmp_db(self):
         instance = HmpDB(config_filename=TEST_CONFIG)

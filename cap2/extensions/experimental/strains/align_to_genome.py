@@ -61,7 +61,7 @@ class AlignReadsToGenome(StrainCapTask):
 
     @classmethod
     def version(cls):
-        return 'v0.1.0'
+        return 'v0.1.1'
 
     def tool_version(self):
         version = '[BOWTIE2]\n'
@@ -104,6 +104,7 @@ class AlignReadsToGenome(StrainCapTask):
             'sort '
             f'{self.temp_bam_path} '
             f'-o {self.bam_path} '
+            f'-@ {self.cores} '
             f'&& rm {self.temp_bam_path}'
         )
         self.run_cmd(cmd)

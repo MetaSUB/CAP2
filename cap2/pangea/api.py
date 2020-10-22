@@ -2,6 +2,7 @@
 from .load_task import PangeaLoadTask
 from ..pipeline.preprocessing import FastQC
 from ..pipeline.preprocessing import CleanReads
+from ..pipeline.preprocessing import RemoveMouseReads
 from ..pipeline.preprocessing import RemoveHumanReads
 from ..pipeline.preprocessing import AdapterRemoval
 from ..pipeline.short_read import (
@@ -92,7 +93,7 @@ def get_task_list_for_sample(sample, stage, upload=True, download_only=False, co
     nonhuman_reads = wrap_task(
         sample, RemoveHumanReads, upload=upload, download_only=download_only, config_path=config_path, cores=cores
     )
-    nonhuman_reads.wrapped.adapter_removed_reads.reads = reads
+    nonhuman_reads.wrapped.mouse_removed_reads.adapter_removed_reads.reads = reads
     clean_reads = wrap_task(
         sample, CleanReads, upload=upload, download_only=download_only, config_path=config_path, cores=cores
     )

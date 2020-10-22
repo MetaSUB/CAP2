@@ -53,7 +53,7 @@ def get_task_list_for_sample(sample, config, threads, genome_name, genome_path):
         sample, AlignReadsToGenome, config_path=config, cores=threads,
         genome_name=genome_name, genome_path=genome_path
     )
-    align_genome.wrapped.reads.adapter_removed_reads.reads = base_reads
+    align_genome.wrapped.reads.mouse_removed_reads.reads = base_reads
     make_pileup = strain_wrap_task(
         sample, MakePileup, config_path=config, cores=threads,
         genome_name=genome_name, genome_path=genome_path

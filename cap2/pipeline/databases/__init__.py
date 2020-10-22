@@ -1,4 +1,5 @@
 
+from .mouse_removal_db import MouseRemovalDB
 from .human_removal_db import HumanRemovalDB
 from .hmp_db import HmpDB
 from .uniref import Uniref90

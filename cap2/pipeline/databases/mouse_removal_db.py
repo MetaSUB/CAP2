@@ -3,6 +3,7 @@ import luigi
 from os.path import join, dirname
 from glob import glob
 import subprocess
+from os import makedirs
 
 from ..config import PipelineConfig
 from ..utils.conda import CondaPackage
@@ -33,13 +34,14 @@ class MouseRemovalDB(CapDbTask):
 
     def download_mouse_genome(self):
         local_dir = join(self.config.db_dir, 'GRCm39')
+        makedirs(local_dir, exist_ok=True)
         cmd = (
             'wget '
             f'--directory-prefix={local_dir} '
             f'{MOUSE_GENOME_URL} '
         )
         self.run_cmd(cmd)
-        local_path = join(local_path, 'GCA_000001635.9_GRCm39_genomic.fna.gz')
+        local_path = join(local_dir, 'GCA_000001635.9_GRCm39_genomic.fna.gz')
         return local_path
 
     @property

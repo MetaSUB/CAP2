@@ -10,6 +10,18 @@ from ..preprocessing.clean_reads import CleanReads
 
 
 class MicrobeCensus(CapTask):
+    module_description = """
+    This module provides an estimate of the average genome size in a microbiome.
+
+    Motivation: AGS estimate can help uncover ecological relationships
+    and adaptation.
+
+    About: AGS is estimated by aligning reads to ~30 Universal Single Copy
+    Genes and comparing the number of copies of USiCGs to the total DNA in
+    a sample.
+
+    Negatives: AGS estiamtion sometimes produces implausible estimates.
+    """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -27,6 +39,9 @@ class MicrobeCensus(CapTask):
             pe2=self.pe2,
             config_filename=self.config_filename
         )
+
+    def tool_version(self):
+        return self.run_cmd(f'{self.pkg.bin} --version').stderr.decode('utf-8')
 
     @classmethod
     def _module_name(self):

@@ -34,6 +34,7 @@ class PangeaSample:
         self.name = sample_name
         self.r1 = f'downloaded_data/{self.name}.R1.fq.gz'
         self.r2 = f'downloaded_data/{self.name}.R2.fq.gz'
+        self.kind = 'short_read'  # TODO
         self.cap_sample = Sample(self.name, self.r1, self.r2)
 
     def has_reads(self):
@@ -91,8 +92,10 @@ class PangeaGroup:
         self.grp = org.sample_group(grp_name).get()
         self.name = grp_name
 
-    def pangea_samples(self, randomize=False):
+    def pangea_samples(self, randomize=False, seed=None):
         if randomize:
+            if seed:
+                random.seed(seed)
             samples = list(self.grp.get_samples())
             random.shuffle(samples)
         else:

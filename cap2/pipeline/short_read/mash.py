@@ -11,6 +11,17 @@ from ..preprocessing.clean_reads import CleanReads
 
 
 class Mash(CapTask):
+    module_description = """
+    This module provides small sketches of samples.
+
+    Motivation: MASH sketches provide an efficient way to compute the
+    distance between microbiome samples. Since MASH sketches are not
+    based on any database they aren't biased towards certain sample
+    types.
+
+    Negatives: Small MASH sketch sizes can obscure differences between
+    samples. As such this module produces two different sketch sizes.
+    """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -28,6 +39,9 @@ class Mash(CapTask):
             pe2=self.pe2,
             config_filename=self.config_filename
         )
+
+    def tool_version(self):
+        return self.run_cmd(f'{self.pkg.bin} --version').stderr.decode('utf-8')
 
     @classmethod
     def _module_name(cls):

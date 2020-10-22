@@ -11,6 +11,17 @@ from ..preprocessing.clean_reads import CleanReads
 
 
 class MicaUniref90(CapTask):
+    module_description = """
+    This module aligns reads to UniRef90 in
+    preparation for functional profiling.
+
+    Motivation: UniRef90 is a large database of functional genes. 
+
+    Negatives: Fairly slow. Many of the genes in UniRef90 are
+    merely predicted functions.
+
+    Note: this module currently uses Diamond not MiCA
+    """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -29,6 +40,9 @@ class MicaUniref90(CapTask):
             pe2=self.pe2,
             config_filename=self.config_filename
         )
+
+    def tool_version(self):
+        return self.run_cmd(f'{self.pkg.bin} --version').stderr.decode('utf-8')
 
     def requires(self):
         return self.pkg, self.db, self.reads
@@ -63,6 +77,17 @@ class MicaUniref90(CapTask):
 
 
 class Humann2(CapTask):
+    module_description = """
+    This module provides functional profiles of microbiomes.
+
+    Motivation: Functional profiles are sometimes more stable than
+    taxonomic profiles and can provided metabolic and adaptive
+    insights. 
+
+    Negatives: Functional profiling is somewhat less well benchmarked
+    than taxonomic profiling and metabolic pathways are often based on
+    model organisms.
+    """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -74,6 +99,9 @@ class Humann2(CapTask):
             pe2=self.pe2,
             config_filename=self.config_filename
         )
+
+    def tool_version(self):
+        return self.run_cmd(f'{self.pkg.bin} --version').stderr.decode('utf-8')
 
     def requires(self):
         return self.alignment

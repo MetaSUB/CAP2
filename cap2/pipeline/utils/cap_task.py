@@ -3,6 +3,7 @@ import luigi
 import subprocess
 import datetime
 import json
+import os
 
 from hashlib import sha256
 from sys import stderr
@@ -14,10 +15,12 @@ from ..config import PipelineConfig
 class BaseCapTask(luigi.Task):
     config_filename = luigi.Parameter(default='')
     cores = luigi.IntParameter(default=1)
+    module_description = "No description for this module."
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.version()  # force this method to be implemented
+        self.task_build_time = datetime.datetime.now().isoformat()
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
         self.pre_run_hooks = []
@@ -80,11 +83,22 @@ class BaseCapTask(luigi.Task):
         return self.get_target('run_metadata', 'json').path
 
     def get_run_metadata(self):
+        uname = os.uname()
         blob = {
+            'task_build_time': self.task_build_time,
+            'run_start_time': self.run_start_time,
+            'cores': self.cores,
             'current_time': datetime.datetime.now().isoformat(),
             'tool_version': self.tool_version(),
             'version_hash': self.version_hash(),
             'module_version': self.version(),
+            'host_info': {
+                'system_name': uname.sysname,
+                'node_name': uname.nodename,
+                'release': uname.release,
+                'version': uname.version,
+                'machine': uname.machine,
+            },
         }
         return blob
 
@@ -92,6 +106,7 @@ class BaseCapTask(luigi.Task):
         raise NotImplementedError()
 
     def run(self):
+        self.run_start_time = datetime.datetime.now().isoformat()
         for hook in self.pre_run_hooks:
             hook()
         run = self._run()
@@ -125,6 +140,7 @@ class CapTask(BaseCapTask):
     sample_name = luigi.Parameter()
     pe1 = luigi.Parameter()
     pe2 = luigi.Parameter()
+    data_type = luigi.Parameter(default='short_read')
 
     def get_target(self, field_name, ext):
         filename = '.'.join([
@@ -135,6 +151,10 @@ class CapTask(BaseCapTask):
         target.makedirs()
         return target
 
+    @property
+    def paired(self):
+        return self.pe2 and self.data_type == 'short_read'
+
     @classmethod
     def from_sample(cls, sample, config_path, cores=1):
         return cls(
@@ -142,7 +162,8 @@ class CapTask(BaseCapTask):
             pe2=sample.r2,
             sample_name=sample.name,
             config_filename=config_path,
-            cores=cores
+            cores=cores,
+            data_type=sample.kind
         )
 
 

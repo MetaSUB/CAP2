@@ -11,6 +11,16 @@ from .base_reads import BaseReads
 
 
 class AdapterRemoval(CapTask):
+    module_description = """
+    This module removes adapter sequences and low wuality sequences.
+
+    Motivation: adapter sequences can be misidentified or lead to
+    issues with assembly or k-mer profiles. Removing adapters is
+    fast and reduces this issue.
+
+    Negatives: adapter sequences may not always be properly 
+    identified.
+    """
     ILLUMINA_SHARED_PREFIX = 'AGATCGGAAGAGC'
 
     def __init__(self, *args, **kwargs):
@@ -27,6 +37,7 @@ class AdapterRemoval(CapTask):
             sample_name=self.sample_name,
             config_filename=self.config_filename,
             cores=self.cores,
+            data_type=self.data_type,
         )
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
@@ -52,13 +63,39 @@ class AdapterRemoval(CapTask):
         return 'adapter_removal'
 
     def output(self):
-        return {
+        out = {
             'adapter_removed_reads_1': self.get_target('adapter_removed', 'R1.fastq.gz'),
-            'adapter_removed_reads_2': self.get_target('adapter_removed', 'R2.fastq.gz'),
             'settings': self.get_target('settings', 'txt'),
         }
+        if self.paired:
+            out['adapter_removed_reads_2'] = self.get_target('adapter_removed', 'R2.fastq.gz')
+        return out
 
     def _run(self):
+        if self.paired:
+            return self._run_paired()
+        return self._run_single()
+
+    def _run_single(self):
+        basename = f'ar_temp_{self.sample_name}'
+        cmd = (
+            f'{self.pkg.bin} '
+            f'--file1 {self.reads.output()["base_reads_1"].path} '
+            '--trimns '
+            '--trimqualities '
+            '--gzip '
+            f'--adapter1 {self.adapter1} '
+            f'--output1 {self.output()["adapter_removed_reads_1"].path} '
+            f'--settings {self.output()["settings"].path} '
+            f'--basename {basename} '
+            '--minquality 2 '
+            f'--threads {self.cores} '
+            '; '
+            f'rm {basename}*'
+        )
+        self.run_cmd(cmd)
+
+    def _run_paired(self):
         basename = f'ar_temp_{self.sample_name}'
         cmd = (
             f'{self.pkg.bin} '

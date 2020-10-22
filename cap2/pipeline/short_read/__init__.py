@@ -8,6 +8,7 @@ from .hmp_comparison import HmpComparison
 from .microbe_census import MicrobeCensus
 from .read_stats import ReadStats
 from .amrs import GrootAMR
+from .jellyfish import Jellyfish
 
 MODULES = [
     ProcessedReads,

@@ -11,6 +11,14 @@ from ..preprocessing import CleanReads
 
 
 class MetaspadesAssembly(CapTask):
+    module_description = """
+    This module assembles reads into contigs.
+
+    Motivation: Assembly can help to find large order genetic structures.
+
+    Negatives: assembly is consistently being refined to be more efficient
+    and effective. Misassemblies are possible.
+    """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -31,6 +39,9 @@ class MetaspadesAssembly(CapTask):
         if self.config.exc_metaspades is not None:
             self.exc = self.config.exc_metaspades
 
+    def tool_version(self):
+        return self.run_cmd(f'{self.pkg.bin} --version').stderr.decode('utf-8')
+
     @classmethod
     def _module_name(cls):
         return 'metaspades'
@@ -45,9 +56,6 @@ class MetaspadesAssembly(CapTask):
     @classmethod
     def dependencies(cls):
         return ['spades', CleanReads]
-
-    def tool_version(self):
-        return self.run_cmd(f'{self.exc} --version').stderr.decode('utf-8')
 
     def output(self):
         return {

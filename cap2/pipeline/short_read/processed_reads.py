@@ -7,11 +7,15 @@ from .humann2 import Humann2
 from .kraken2 import BrakenKraken2
 from .mash import Mash
 from .read_stats import ReadStats
+from .jellyfish import Jellyfish
 
 
 class ProcessedReads(CapTask):
     """This class represents the culmination of the
     shortread pipeline.
+    """
+    module_description = """
+    This module is a proxy for the end of the short read stage.
     """
 
     def __init__(self, *args, **kwargs):
@@ -44,6 +48,13 @@ class ProcessedReads(CapTask):
             config_filename=self.config_filename,
             cores=self.cores,
         )
+        self.jellyfish = Jellyfish(
+            sample_name=self.sample_name,
+            pe1=self.pe1,
+            pe2=self.pe2,
+            config_filename=self.config_filename,
+            cores=self.cores,
+        )
         self.read_stats = ReadStats(
             sample_name=self.sample_name,
             pe1=self.pe1,
@@ -58,14 +69,14 @@ class ProcessedReads(CapTask):
 
     @classmethod
     def dependencies(cls):
-        return [HmpComparison, Humann2, Kraken2, Mash, ReadStats]
+        return [HmpComparison, Humann2, Kraken2, Mash, ReadStats, Jellyfish]
 
     @classmethod
     def _module_name(cls):
         return 'processed_reads'
 
     def requires(self):
-        return self.hmp, self.humann2, self.kraken2, self.mash, self.read_stats
+        return self.hmp, self.humann2, self.kraken2, self.mash, self.read_stats, self.jellyfish
 
     def output(self):
         return {}

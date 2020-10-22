@@ -14,3 +14,5 @@ DEFAULT_STAGE = 'reads'
 STAGES_GROUP = {
     'qc': QC_GRP_MODULES,
 }
+
+DATA_TYPES = ['short_read',]

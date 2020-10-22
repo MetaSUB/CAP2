@@ -30,6 +30,9 @@ class Uniref90(CapDbTask):
         self.db_dir = self.config.db_dir
         self.fasta = join(self.db_dir, 'uniref90', 'uniref90.fasta.gz')
 
+    def tool_version(self):
+        return self.run_cmd(f'{self.pkg.bin} --version').stderr.decode('utf-8')
+
     def requires(self):
         return [self.pkg]
 

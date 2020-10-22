@@ -42,9 +42,6 @@ class PangeaBaseLoadTask(BaseCapTask):
         password = luigi.configuration.get_config().get('pangea', 'password')
         self.org_name = luigi.configuration.get_config().get('pangea', 'org_name')
         self.grp_name = luigi.configuration.get_config().get('pangea', 'grp_name')
-        self.s3_bucket_name = luigi.configuration.get_config().get('pangea', 's3_bucket_name')
-        self.s3_endpoint_url = luigi.configuration.get_config().get('pangea', 's3_endpoint_url')
-        self.s3_profile = luigi.configuration.get_config().get('pangea', 's3_profile')
         self.knex = Knex(self.endpoint)
         User(self.knex, user, password).login()
         org = Organization(self.knex, self.org_name).get()
@@ -55,9 +52,12 @@ class PangeaBaseLoadTask(BaseCapTask):
     def module_name(self):
         return 'pangea_load_task_' + self.wrapped.module_name()
 
+    def __getattr__(self, key):
+        return getattr(self.wrapped, key)
+
     @classmethod
     def version(cls):
-        return 'v1.0.0'
+        return 'v1.1.0'
 
     @classmethod
     def dependencies(cls):
@@ -67,6 +67,9 @@ class PangeaBaseLoadTask(BaseCapTask):
         wrapped_out = self.wrapped.output()
         wrapped_out['upload_flag'] = self.get_target('uploaded', 'flag')
         return wrapped_out
+
+    def results_available_locally(self):
+        return self.wrapped.complete()
 
     def results_available(self):
         """Check for results on Pangea."""
@@ -96,9 +99,9 @@ class PangeaBaseLoadTask(BaseCapTask):
 
     def _download_results(self):
         ar = self.pangea_obj.analysis_result(pangea_module_name(self.wrapped)).get()
-        for field_name, local_path in self.wrapped.output().items():
+        for field_name, local_target in self.wrapped.output().items():
             field = ar.field(field_name).get()
-            field.download_file(filename=local_path.path)
+            field.download_file(filename=local_target.path)
         open(self.output()['upload_flag'].path, 'w').close()  # we do this just for consistency. If we downloaded the results it means they were uploaded at some point
 
     def _upload_results(self):
@@ -107,22 +110,12 @@ class PangeaBaseLoadTask(BaseCapTask):
         ar = self.pangea_obj.analysis_result(
             pangea_module_name(self.wrapped),
             replicate=replicate,
-            metadata=metadata,
         ).idem()
-        for field_name, local_path in self.wrapped.output().items():
-            uri = self._uri(local_path.path)
-            cmd = (
-                'aws '
-                f'--profile {self.s3_profile} '
-                f's3 --endpoint-url={self.s3_endpoint_url} '
-                f'cp {local_path.path} {uri}'
-            )
-            self.run_cmd(cmd)
-            field = ar.field(field_name, data={
-                '__type__': 's3',
-                'uri': uri,
-                'endpoint_url': self.s3_endpoint_url,
-            }).idem()
+        ar.metadata = metadata
+        ar.save()
+        for field_name, local_target in self.wrapped.output().items():
+            field = ar.field(field_name).idem()
+            field.upload_file(local_target.path)
         open(self.output()['upload_flag'].path, 'w').close()
 
     def _run(self):
@@ -178,15 +171,14 @@ class PangeaLoadTask(PangeaBaseLoadTask, CapTask):
         if self.results_available():
             print('RESULTS AVAILABLE')
             return None
-        if not self.download_only:
+        elif not self.download_only:
             print('RESULTS WRAPPED', self.wrapped.module_name())
+            return self.wrapped
+        if self.results_available_locally():
+            print('RESULTS LOCAL', self.wrapped.module_name())
             return self.wrapped
         raise PangeaLoadTaskError('Running tasks is not permitted AND results are not available')
 
-
-    def _uri(self, local_path):
-        uri = f's3://{self.s3_bucket_name}/analysis/metasub_cap/v2/{self.sample_name}/{basename(local_path)}'
-        return uri
 
 
 class PangeaGroupLoadTask(PangeaBaseLoadTask, CapGroupTask):
@@ -222,8 +214,3 @@ class PangeaGroupLoadTask(PangeaBaseLoadTask, CapGroupTask):
         if self.requires_reads:
             raise NotImplementedError('Group modules that rely directly on reads not yet supported.')
         return self.wrapped
-
-    def _uri(self, local_path):
-        name = self.grp_name.lower().replace(' ', '_')
-        uri = f's3://{self.s3_bucket_name}/analysis/metasub_cap/v2/groups/{name}/{basename(local_path)}'
-        return uri

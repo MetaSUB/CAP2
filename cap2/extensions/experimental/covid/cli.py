@@ -41,7 +41,7 @@ def get_task_list_for_sample(sample, config, threads):
     fast_detect.wrapped.reads = base_reads
 
     nonhuman_reads = wrapit(RemoveHumanReads)
-    nonhuman_reads.wrapped.adapter_removed_reads.reads = base_reads
+    nonhuman_reads.wrapped.mouse_removed_reads.reads = base_reads
 
     align_to_covid = wrapit(AlignReadsToCovidGenome)
     align_to_covid.wrapped.reads = nonhuman_reads

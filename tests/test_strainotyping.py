@@ -74,6 +74,7 @@ class TestStrainotyping(TestCase):
             write_graph_to_filepath(G, 'tmp_graph_path')
             G = load_graph_from_filepath('tmp_graph_path')
         self.assertEqual(list(G.edges(data=True)), list(original_graph.edges(data=True)))
+        os.remove('tmp_graph_path')
 
     def test_graph_file_gz_roundtrip(self):
         G = nx.Graph()
@@ -85,3 +86,5 @@ class TestStrainotyping(TestCase):
             write_graph_to_filepath(G, 'tmp_graph_path.gz')
             G = load_graph_from_filepath('tmp_graph_path.gz')
         self.assertEqual(list(G.edges(data=True)), list(original_graph.edges(data=True)))
+        os.remove('tmp_graph_path.gz')
+

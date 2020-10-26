@@ -90,6 +90,20 @@ class StrainPangeaGroupLoadTask(PangeaGroupLoadTask, StrainCapGroupTask):
         instance._make_req_module = self._make_req_module
         return instance
 
+    def _make_req_module(self, module_type, pe1, pe2, sample_name, config_filename):
+        task = StrainPangeaLoadTask(
+            pe1=pe1,
+            pe2=pe2,
+            wraps=module_type.module_name(),
+            sample_name=sample_name,
+            config_filename=config_filename,
+            genome_name=self.genome_name,
+            genome_path=self.genome_path,
+        )
+        task.wrapped_module = module_type
+        task.requires_reads = self.module_requires_reads.get(module_type, False)
+        return task
+
     @classmethod
     def from_samples(cls, group_name, samples, wraps, config_path='', cores=1, genome_name='', genome_path=''):
         samples = [s if isinstance(s, tuple) else s.as_tuple() for s in samples]

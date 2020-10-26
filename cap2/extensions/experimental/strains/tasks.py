@@ -89,3 +89,16 @@ class StrainPangeaGroupLoadTask(PangeaGroupLoadTask, StrainCapGroupTask):
         )
         instance._make_req_module = self._make_req_module
         return instance
+
+    @classmethod
+    def from_samples(cls, group_name, samples, wraps, config_path='', cores=1, genome_name='', genome_path=''):
+        samples = [s if isinstance(s, tuple) else s.as_tuple() for s in samples]
+        return cls(
+            group_name=group_name,
+            samples=tuple(samples),
+            wraps=wraps,
+            config_filename=config_path,
+            cores=cores,
+            genome_name=genome_name,
+            genome_path=genome_path,
+        )

@@ -97,7 +97,7 @@ def cli_run_group(config, upload, download_only, scheduler_url,
     for genome_name in genome_names:
         genome_name = clean_microbe_name(genome_name)
         snp_graph_task = StrainPangeaGroupLoadTask.from_samples(
-            grp_name, group.cap_samples(), genome_name=genome_name
+            grp_name, group.cap_samples(), MergeSNPGraph.module_name(), genome_name=genome_name
         )
         snp_graph_task.wrapped_module = MergeSNPGraph
         tasks.append(snp_graph_task)

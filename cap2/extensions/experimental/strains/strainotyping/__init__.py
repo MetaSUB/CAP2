@@ -9,4 +9,4 @@ from .io import (
     load_graph_from_filepath,
     write_graph_to_filepath,
 )
-from .graph import graph_node_table
+from .graphs import graph_node_table

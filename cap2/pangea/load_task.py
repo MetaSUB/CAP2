@@ -201,6 +201,7 @@ class PangeaGroupLoadTask(PangeaBaseLoadTask, CapGroupTask):
         task = PangeaLoadTask(
             pe1=pe1,
             pe2=pe2,
+            wraps=module_type.module_name(),
             sample_name=sample_name,
             config_filename=config_filename,
         )

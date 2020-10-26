@@ -13,11 +13,15 @@ from ....pipeline.preprocessing import BaseReads
 from ....utils import chunks
 from .tasks import StrainPangeaLoadTask
 from .utils import clean_microbe_name
+from .strainotyping.cli import strainotype_cli
 
 
 @click.group('strains')
 def strain_cli():
     pass
+
+
+strain_cli.add_command(strainotype_cli)
 
 
 @strain_cli.group('run')

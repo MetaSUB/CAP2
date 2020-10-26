@@ -57,6 +57,40 @@ def build_graph(rec_iter, G=nx.Graph(), contig=None, coords=None):
     return G
 
 
-def merge_graphs(graphs, contig=None, coords=None):
+def append_graph(target_graph, new_graph, contig=None, coords=None):
+    for s, t, d in new_graph.edges(data=True):
+        if not filter_to_region(s, contig=contig, coords=coords):
+            continue
+        if not filter_to_region(t, contig=contig, coords=coords):
+            continue
+        try:
+            w = target_graph[s][t]['weight']
+        except KeyError:
+            w = 0
+        w += d['weight']
+        target_graph.add_edge(s, t, weight=w)
+    return target_graph
+
+
+def merge_graphs(graphs, G=nx.Graph(), contig=None, coords=None):
     """Return a graph that is the concatenation of `graphs`."""
-    pass
+    for graph in graphs:
+        G = append_graph(G, graph, contig=contig, coords=coords)
+    return G
+
+
+def get_node_weights(G):
+    node_weights = {}
+    for node in G.nodes():
+        total_weight = 0
+        for el in G.edges(node, data=True):
+            total_weight += el[2]['weight']
+        node_weights[node] = total_weight
+    return node_weights
+
+
+def filter_graph_by_weight(G, min_weight=2):
+    for node, w in get_node_weights(G).items():
+        if w < min_weight:
+            G.remove_node(node)
+    return G

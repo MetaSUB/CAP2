@@ -1,11 +1,12 @@
 
 import luigi
 
-from ....pangea.load_task import PangeaLoadTask
+from ....pangea.load_task import PangeaLoadTask, PangeaGroupLoadTask
 from ....pipeline.utils.cap_task import (
     BaseCapTask,
     CapTask,
     CapDbTask,
+    CapGroupTask,
 )
 from .utils import clean_microbe_name
 
@@ -30,6 +31,31 @@ class StrainCapDbTask(CapDbTask, StrainBaseCapTask):
     pass
 
 
+class StrainCapGroupTask(CapGroupTask, StrainBaseCapTask):
+
+    def _make_req_module(self, module_type, pe1, pe2, sample_name, config_filename):
+        return module_type(
+            pe1=pe1,
+            pe2=pe2,
+            sample_name=sample_name,
+            config_filename=config_filename,
+            genome_name=self.genome_name,
+            genome_path=self.genome_path,
+        )
+
+    @classmethod
+    def from_samples(cls, group_name, samples, config_path='', cores=1, genome_name='', genome_path=''):
+        samples = [s if isinstance(s, tuple) else s.as_tuple() for s in samples]
+        return cls(
+            group_name=group_name,
+            samples=tuple(samples),
+            config_filename=config_path,
+            cores=cores,
+            genome_name=genome_name,
+            genome_path=genome_path,
+        )
+
+
 class StrainPangeaLoadTask(PangeaLoadTask, StrainCapTask):
 
     @property
@@ -48,3 +74,18 @@ class StrainPangeaLoadTask(PangeaLoadTask, StrainCapTask):
         instance.pre_run_hooks.append(self._download_reads)
         self._wrapped = instance
         return self._wrapped
+
+
+class StrainPangeaGroupLoadTask(PangeaGroupLoadTask, StrainCapGroupTask):
+
+    @property
+    def wrapped(self):
+        instance = self.wrapped_module.from_samples(
+            self.group_name,
+            self.samples,
+            self.config_filename,
+            genome_name=self.genome_name,
+            genome_path=self.genome_path,
+        )
+        instance._make_req_module = self._make_req_module
+        return instance

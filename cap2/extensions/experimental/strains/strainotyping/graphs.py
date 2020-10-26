@@ -1,5 +1,6 @@
 from gimmebio.seqs import reverseComplement
 import networkx as nx
+import pandas as pd
 
 
 def get_mismatches(rec):
@@ -88,6 +89,21 @@ def get_node_weights(G):
         node_weights[node] = total_weight
     return node_weights
 
+
+def graph_node_table(G):
+    """Return a DataFrame with nodes and weights."""
+    rows = []
+    for node, w in get_node_weights(G).items():
+        ((seq, coord), (original, changed)) = node
+        rows.append({
+            'seq': seq,
+            'coord': coord,
+            'original': original,
+            'changed': changed,
+            'weight': w
+        })
+    tbl = pd.DataFrame(rows)
+    return tbl
 
 def filter_graph_by_weight(G, min_weight=2):
     for node, w in get_node_weights(G).items():

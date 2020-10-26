@@ -6,12 +6,13 @@ import time
 from .make_pileup import MakePileup
 from .align_to_genome import AlignReadsToGenome
 from .make_snp_graph import MakeSNPGraph
+from .merge_snp_graph import MergeSNPGraph
 from ....pangea.cli import set_config
 from ....pangea.api import wrap_task
 from ....pangea.pangea_sample import PangeaGroup
 from ....pipeline.preprocessing import BaseReads
 from ....utils import chunks
-from .tasks import StrainPangeaLoadTask
+from .tasks import StrainPangeaLoadTask, StrainPangeaGroupLoadTask
 from .utils import clean_microbe_name
 from .strainotyping.cli import strainotype_cli
 
@@ -71,6 +72,40 @@ def get_task_list_for_sample(sample, config, threads, genome_name, genome_path):
 
     tasks = [make_pileup, make_snp_graph]
     return tasks
+
+
+@run_cli.command('group')
+@click.option('-c', '--config', type=click.Path(), default='', envvar='CAP2_CONFIG')
+@click.option('--upload/--no-upload', default=True)
+@click.option('--download-only/--run', default=False)
+@click.option('--scheduler-url', default=None, envvar='CAP2_LUIGI_SCHEDULER_URL')
+@click.option('--endpoint', default='https://pangea.gimmebio.com')
+@click.option('-e', '--email', envvar='PANGEA_USER')
+@click.option('-p', '--password', envvar='PANGEA_PASS')
+@click.option('-w', '--workers', default=1)
+@click.option('-t', '--threads', default=1)
+@click.argument('org_name')
+@click.argument('grp_name')
+@click.argument('genome_name_list', type=click.File('r'))
+def cli_run_group(config, upload, download_only, scheduler_url,
+                  endpoint, email, password, workers, threads,
+                  org_name, grp_name, genome_name_list):
+    set_config(endpoint, email, password, org_name, grp_name)
+    group = PangeaGroup(grp_name, email, password, endpoint, org_name)
+    tasks = []
+    genome_names = [line.strip() for line in genome_name_list if line.strip()]
+    for genome_name in genome_names:
+        genome_name = clean_microbe_name(genome_name)
+        snp_graph_task = StrainPangeaGroupLoadTask.from_samples(
+            grp_name, group.cap_samples(), genome_name=genome_name
+        )
+        snp_graph_task.wrapped_module = MergeSNPGraph
+        tasks.append(snp_graph_task)
+
+    if not scheduler_url:
+        luigi.build(tasks, local_scheduler=True, workers=workers)
+    else:
+        luigi.build(tasks, scheduler_url=scheduler_url, workers=workers)
 
 
 @run_cli.command('samples')

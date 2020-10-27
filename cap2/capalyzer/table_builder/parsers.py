@@ -3,7 +3,7 @@ import pandas as pd
 
 def parse_pileup(local_path, sparse=1):
     """Return a pandas dataframe with info from a pileup file.
-    
+
     `sparse` is an int >= 1 if `sparse` is > 1 values will be averaged
     making the table more smaller.
     """
@@ -39,5 +39,4 @@ def parse_taxa_report(local_path):
                     continue
                 out[tkns[1]] = float(tkns[3])
                 abundance_sum += float(tkns[3])
-    out = {k: v for k, v in out.items() if 's__' in k and 't__' not in k}
     return out

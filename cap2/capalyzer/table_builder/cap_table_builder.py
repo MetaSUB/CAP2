@@ -1,9 +1,13 @@
 import os
+import logging
 import pandas as pd
 from .parsers import (
     parse_taxa_report,
     parse_pileup,
 )
+
+logger = logging.getLogger(__name__)  # Same name as calling module
+logger.addHandler(logging.NullHandler())  # No output unless configured by calling program
 
 
 class CAPFileSource:
@@ -28,49 +32,21 @@ class CAPTableBuilder:
     def sample_names(self):
         return self.file_source.sample_names()
 
-    def pandas_cache(self, name, func, *args, **kwargs):
-        if os.path.isfile(name):
-            return pd.read_csv(name, index_col=0)
-        tbl = func(self, *args, **kwargs)
-        tbl.to_csv(name)
-        return tbl
-
-    def taxa_read_counts(self, *args, **kwargs):
-        return self.pandas_cache(
-            f'{self.name}__taxa_read_counts.csv',
-            self._taxa_read_counts,
-            *args,
-            **kwargs,
-        )
-
-    def _taxa_read_counts(self, *args, **kwargs):
-        logger = kwargs.get('logger', lambda i, x: None)
+    def taxa_read_counts(self):
         taxa = {}
         for i, (sample_name, report_path) in enumerate(self.file_source('cap2::kraken2', 'report')):
             taxa[sample_name] = parse_taxa_report(report_path)
-            logger(i + 1, sample_name)
+            logger.info(f'[TaxaReadCounts] Parsed {sample_name} ({i + 1})')
         taxa = pd.DataFrame.from_dict(taxa, orient='index')
         return taxa
-    
-    def pileup(self, *args, **kwargs):
-        organism = kwargs.get('organism')
-        sparse = kwargs.get('sparse', 1)
-        return self.pandas_cache(
-            f'{self.name}__pileup_{organism}_sparse-{sparse}.csv',
-            self._pileup,
-            *args,
-            **kwargs,
-        )
 
-    def _pileup(self, *args, **kwargs):
-        logger = kwargs.get('logger', lambda i, x: None)
-        organism = kwargs['organism'].replace(' ', '_')
+    def strain_pileup(self, organism, sparse=1):
+        organism = organism.replace(' ', '_')
         tbls = []
         for i, (sample_name, path) in enumerate(self.file_source('cap2::experimental::make_pileup', f'pileup__{organism}')):
-            tbl = parse_pileup(path, sparse=kwargs.get('sparse', 1))
+            tbl = parse_pileup(path, sparse=sparse)
             tbl['sample_name'] = sample_name
             tbls.append(tbl)
-            logger(i + 1, sample_name)
+            logger.info(f'[StrainPileup] Parsed {sample_name} for {organism} ({i + 1})')
         tbl = pd.concat(tbls)
         return tbl
-            

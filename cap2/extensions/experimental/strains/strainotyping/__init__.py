@@ -10,3 +10,4 @@ from .io import (
     write_graph_to_filepath,
 )
 from .graphs import graph_node_table
+from .clustering import partition

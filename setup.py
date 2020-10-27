@@ -22,6 +22,8 @@ setuptools.setup(
         'multiqc==1.8',  # hackish, tbd if I'm okay with this
         'humann2==2.8.2',
         'pangea_api',
+        'pysam',
+        'python-louvain',
     ],
     entry_points={
         'console_scripts': [

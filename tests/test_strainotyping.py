@@ -7,7 +7,10 @@ from shutil import rmtree
 from os.path import join, dirname, isfile, isdir, abspath
 from unittest import TestCase
 
-from cap2.extensions.experimental.strains.strainotyping import graph_from_bam_filepath
+from cap2.extensions.experimental.strains.strainotyping import (
+    graph_from_bam_filepath,
+    partition,
+)
 from cap2.extensions.experimental.strains.strainotyping.graphs import (
     merge_graphs,
     filter_graph_by_weight,
@@ -63,6 +66,21 @@ class TestStrainotyping(TestCase):
         self.assertTrue(G.has_edge(self.NODES[0], self.NODES[1]))
         self.assertTrue(G.has_edge(self.NODES[1], self.NODES[2]))
         self.assertFalse(G.has_edge(self.NODES[4], self.NODES[5]))
+
+    def test_partition_graph(self):
+        G = nx.Graph()
+        for n1 in self.NODES[:4]:
+            for n2 in self.NODES[:4]:
+                if n1 == n2:
+                    continue
+                G.add_edge(n1, n2, weight=1)
+        for n1 in self.NODES[4:]:
+            for n2 in self.NODES[4:]:
+                if n1 == n2:
+                    continue
+                G.add_edge(n1, n2, weight=1)
+        tbl = partition(G)
+        self.assertEqual(tbl['cluster'].nunique(), 2)
 
     def test_graph_file_roundtrip(self):
         G = nx.Graph()

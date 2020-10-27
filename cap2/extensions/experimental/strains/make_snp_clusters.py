@@ -56,7 +56,7 @@ class MakeSNPClusters(StrainCapTask):
 
     def output(self):
         out = {
-            f'snp_clusters__{self.genome_name}': self.get_target(f'snp_clusters__{self.genome_name}', 'tsv.gz'),
+            f'snp_clusters__{self.genome_name}': self.get_target(f'snp_clusters__{self.genome_name}', 'csv.gz'),
         }
         return out
 

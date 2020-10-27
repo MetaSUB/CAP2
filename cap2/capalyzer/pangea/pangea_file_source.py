@@ -3,24 +3,15 @@ import pandas as pd
 from os import environ
 from os.path import isfile, join, basename
 from requests.exceptions import HTTPError as HTTPError1
-from pangea_api import (
-    Knex,
-    User,
-    Organization,
-    SampleAnalysisResultField,
-)
-from ..cap_table_builder import CAPFileSource
+from ..table_builder.cap_table_builder import CAPFileSource
 
 TMP_DIR = environ.get('CAP2_TMP_DIR', '/tmp')
 
+
 class PangeaFileSource(CAPFileSource):
 
-    def __init__(self, org_name, grp_name, email=None, password=None, endpoint='https://pangea.gimmebio.com'):
-        knex = Knex()
-        if email and password:
-            User(knex, email, password).login()
-        org = Organization(knex, org_name).get()
-        self.grp = org.sample_group(grp_name).get()
+    def __init__(self, pangea_group):
+        self.grp = pangea_group
 
     def sample_names(self):
         for sample in self.grp.get_samples():

@@ -13,6 +13,7 @@ from cap2.pipeline.short_read.hmp_comparison import HmpComparison
 from cap2.pipeline.short_read.microbe_census import MicrobeCensus
 from cap2.pipeline.short_read.read_stats import ReadStats
 from cap2.pipeline.short_read.amrs import GrootAMR
+from cap2.pipeline.short_read.jellyfish import Jellyfish
 
 RAW_READS_1 = join(dirname(__file__), 'data/zymo_pos_cntrl.r1.fq.gz')
 RAW_READS_2 = join(dirname(__file__), 'data/zymo_pos_cntrl.r2.fq.gz')
@@ -132,7 +133,6 @@ class TestShortRead(TestCase):
         self.assertTrue(isfile(instance.output()['report'].path))
         self.assertTrue(isfile(instance.output()['read_assignments'].path))
 
-
     def test_invoke_groot_amr(self):
         instance = GrootAMR(
             pe1=RAW_READS_1,
@@ -205,6 +205,17 @@ class TestShortRead(TestCase):
         instance.reads = DummyCleanReads()
         luigi.build([instance], local_scheduler=True)
         self.assertTrue(isfile(instance.output()['10M_mash_sketch'].path))
+
+    def test_invoke_jellyfish(self):
+        instance = Jellyfish(
+            pe1=RAW_READS_1,
+            pe2=RAW_READS_2,
+            sample_name='test_sample',
+            config_filename=TEST_CONFIG
+        )
+        instance.reads = DummyCleanReads()
+        luigi.build([instance], local_scheduler=True)
+        self.assertTrue(isfile(instance.output()['k31'].path))
 
     @skip(reason="microbecensus creates dependency conflict")
     def test_invoke_microbe_census(self):

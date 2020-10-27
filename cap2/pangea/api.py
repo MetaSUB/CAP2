@@ -2,6 +2,8 @@
 from .load_task import PangeaLoadTask
 from ..pipeline.preprocessing import FastQC
 from ..pipeline.preprocessing import CleanReads
+from ..pipeline.preprocessing import RemoveMouseReads
+from ..pipeline.preprocessing import RemoveHumanReads
 from ..pipeline.preprocessing import AdapterRemoval
 from ..pipeline.short_read import (
     MicaUniref90,
@@ -13,6 +15,7 @@ from ..pipeline.short_read import (
     Humann2,
     HmpComparison,
     ProcessedReads,
+    Jellyfish,
 )
 from ..pipeline.preprocessing import BaseReads
 from ..pipeline.assembly.metaspades import MetaspadesAssembly
@@ -30,7 +33,7 @@ STAGES = [
 
 def wrap_task(sample, module,
               requires_reads=False, upload=True, download_only=False,
-              config_path='', cores=1):
+              config_path='', cores=1, **kwargs):
     task = PangeaLoadTask(
         pe1=sample.r1,
         pe2=sample.r2,
@@ -38,6 +41,7 @@ def wrap_task(sample, module,
         wraps=module.module_name(),
         config_filename=config_path,
         cores=cores,
+        **kwargs,
     )
     task.upload_allowed = upload
     task.wrapped_module = module
@@ -54,6 +58,8 @@ def get_task_list_for_read_stage(sample, clean_reads, upload=True, download_only
     humann2.wrapped.alignment = dmnd_uniref90
     mash = wrapit(Mash)
     mash.wrapped.reads = clean_reads
+    jellyfish = wrapit(Jellyfish)
+    jellyfish.wrapped.reads = clean_reads
     hmp = wrapit(HmpComparison)
     hmp.wrapped.mash = mash
     read_stats = wrapit(ReadStats)
@@ -84,10 +90,14 @@ def get_task_list_for_sample(sample, stage, upload=True, download_only=False, co
     )
     fastqc.wrapped.reads = reads
     # pre stage
+    nonhuman_reads = wrap_task(
+        sample, RemoveHumanReads, upload=upload, download_only=download_only, config_path=config_path, cores=cores
+    )
+    nonhuman_reads.wrapped.mouse_removed_reads.adapter_removed_reads.reads = reads
     clean_reads = wrap_task(
         sample, CleanReads, upload=upload, download_only=download_only, config_path=config_path, cores=cores
     )
-    clean_reads.wrapped.ec_reads.nonhuman_reads.adapter_removed_reads.reads = reads
+    clean_reads.wrapped.ec_reads.nonhuman_reads = nonhuman_reads
     if require_clean_reads:
         clean_reads.download_only = True
     # reads stage

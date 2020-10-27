@@ -52,6 +52,9 @@ class PangeaBaseLoadTask(BaseCapTask):
     def module_name(self):
         return 'pangea_load_task_' + self.wrapped.module_name()
 
+    def __getattr__(self, key):
+        return getattr(self.wrapped, key)
+
     @classmethod
     def version(cls):
         return 'v1.1.0'

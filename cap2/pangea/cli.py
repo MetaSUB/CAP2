@@ -78,14 +78,13 @@ def cli_run_group(upload,
 @click.option('-s', '--stage', default='reads')
 @click.argument('org_name')
 @click.argument('grp_name')
-@click.argument('bucket_name')
 @click.argument('sample_name')
 def cli_run_sample(config, upload, scheduler_url, workers, threads,
                    endpoint, s3_endpoint, s3_profile, email, password,
                    stage,
-                   org_name, grp_name, bucket_name, sample_name):
+                   org_name, grp_name, sample_name):
     sample = PangeaSample(sample_name, email, password, endpoint, org_name, grp_name)
-    set_config(endpoint, email, password, org_name, grp_name, bucket_name, s3_endpoint, s3_profile)
+    set_config(endpoint, email, password, org_name, grp_name)
     tasks = get_task_list_for_sample(
         sample, stage, upload=upload, config_path=config, cores=threads
     )

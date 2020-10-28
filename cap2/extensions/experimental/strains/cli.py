@@ -3,6 +3,8 @@ import click
 import luigi
 import time
 
+from random import shuffle
+
 from .make_pileup import MakePileup
 from .align_to_genome import AlignReadsToGenome
 from .make_snp_graph import MakeSNPGraph
@@ -133,6 +135,7 @@ def cli_run_group(config, upload, download_only, scheduler_url,
     group = PangeaGroup(grp_name, email, password, endpoint, org_name)
     tasks = []
     genome_names = [line.strip() for line in genome_name_list if line.strip()]
+    shuffle(genome_names)
     for genome_name in genome_names:
         genome_name = clean_microbe_name(genome_name)
         tasks += get_task_list_for_group(group, config, threads, genome_name, genome_path)
@@ -177,6 +180,7 @@ def cli_run_samples(config, clean_reads, upload, download_only, scheduler_url,
     ]
     click.echo(f'Processing {len(samples)} samples', err=True)
     genome_names = [line.strip() for line in genome_name_list if line.strip()]
+    shuffle(genome_names)
     for chunk in chunks(samples, batch_size):
         for genome_name in genome_names:
             genome_name = clean_microbe_name(genome_name)

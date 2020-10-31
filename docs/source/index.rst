@@ -12,6 +12,7 @@ The MetaSUB Core Analysis Pipeline
 
    architecture
    modules
+   capalyzer
    api
    citation
    license

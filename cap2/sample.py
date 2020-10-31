@@ -16,13 +16,16 @@ class Sample:
 
     @property
     def paired(self):
+        """Return True iff this sample contains paired end data."""
         return self.read2 and self.kind == 'short_read'
 
     def as_tuple(self):
+        """Return a 3-ple of strigns with (sample_name, read_1_path, read_2_path)."""
         return self.name, self.r1, self.r2
 
     @classmethod
     def samples_from_manifest(cls, manifest):
+        """Return a list of samples from a manifest file handle."""
         samples = []
         for line in manifest:
             tkns = line.strip().split()

@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 The MetaSUB Core Analysis Pipeline
-=======================================
+==================================
 
 The MetaSUB Core Analysis Pipeline is a python package for metagenomic analysis. It's a consistent interface over a complex pipeline making it easy to build more complex analyses. It's the core set of tools that should be run on every metagenome. It's highly reproducible and extendable.
 

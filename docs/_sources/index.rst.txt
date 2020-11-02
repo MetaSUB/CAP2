@@ -1,0 +1,38 @@
+.. MetaSUB CAP documentation master file, created by
+   sphinx-quickstart on Fri Oct 30 10:34:55 2020.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+The MetaSUB Core Analysis Pipeline
+=======================================
+
+The MetaSUB Core Analysis Pipeline is a python package for metagenomic analysis. It's a consistent interface over a complex pipeline making it easy to build more complex analyses. It's the core set of tools that should be run on every metagenome. It's highly reproducible and extendable.
+
+It aims to take the drudgery out of analyzing microbiomes while making complex analyses easy.
+
+The CAP in three points:
+
+- best practice quality control and analysis
+- highly reproducible scientific analyses
+- consistent, extensible, interface
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Documentation:
+
+   Quickstart <quickstart>
+   Architecture and Design <architecture>
+   Pipeline modules <modules>
+   Creating and Parsing Data Tables <capalyzer>
+   API Reference <api>
+   Citing the CAP <citation>
+   License <license>
+
+
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`

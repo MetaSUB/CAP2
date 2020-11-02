@@ -4,6 +4,8 @@
 
 This repository contains code for the second version of the MetaSUB Core Analysis Pipeline. This pipeline is in Beta and under development.
 
+Documentation for the CAP may be found [here](https://metasub.github.io/CAP2/).
+
 ## Major Changes and Goals
 
 There are a number of important changes from CAP1 to CAP2

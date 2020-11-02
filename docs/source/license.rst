@@ -13,6 +13,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 Other Licenses
-==============
+^^^^^^^^^^^^^^
 
 The CAP is a pipeline that runs many other programs. Many of these programs are covered by different licenses.

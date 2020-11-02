@@ -6,16 +6,29 @@
 The MetaSUB Core Analysis Pipeline
 =======================================
 
+The MetaSUB Core Analysis Pipeline is a python package for metagenomic analysis. It's a consistent interface over a complex pipeline making it easy to build more complex analyses. It's the core set of tools that should be run on every metagenome. It's highly reproducible and extendable.
+
+It aims to take the drudgery out of analyzing microbiomes while making complex analyses easy.
+
+The CAP in three points:
+
+- best practice quality control and analysis
+- highly reproducible scientific analyses
+- consistent, extensible, interface
+
+Source Code may be found on GitHub `here <https://github.com/MetaSUB/CAP2>`_.
+
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Documentation:
 
-   architecture
-   modules
-   capalyzer
-   api
-   citation
-   license
+   Quickstart <quickstart>
+   Architecture and Design <architecture>
+   Pipeline modules <modules>
+   Creating and Parsing Data Tables <capalyzer>
+   API Reference <api>
+   Citing the CAP <citation>
+   License <license>
 
 
 

@@ -29,3 +29,10 @@ Generic Modules and CAPTasks
     :undoc-members:
 
 
+Configuration
+^^^^^^^^^^^^^
+.. _capconfig:
+
+.. autoclass:: cap2.pipeline.config.PipelineConfig
+    :members:
+    :undoc-members:

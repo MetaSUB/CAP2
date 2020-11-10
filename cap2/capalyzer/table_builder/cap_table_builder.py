@@ -48,6 +48,12 @@ class CAPTableBuilder:
 
     def taxa_read_counts(self):
         """Return a table of read counts by taxa."""
+        try:
+            local_path = self.file_source.group_module_files('cap2::capalyzer-v0_1_0::kraken2_taxa', 'read_counts')
+            taxa = pd.read_csv(local_path, index_col=0)
+            return taxa
+        except:
+            pass
         taxa = {}
         for i, (sample_name, report_path) in enumerate(self.file_source('cap2::kraken2', 'report')):
             taxa[sample_name] = parse_taxa_report(report_path)

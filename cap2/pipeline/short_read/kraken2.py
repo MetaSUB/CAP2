@@ -61,7 +61,7 @@ class Kraken2(CapTask):
 
     @classmethod
     def version(cls):
-        return 'v0.2.0'
+        return 'v0.3.0'
 
     @classmethod
     def dependencies(cls):
@@ -79,7 +79,6 @@ class Kraken2(CapTask):
             f'--db {self.db.kraken2_db} '
             f'--paired '
             f'--threads {self.cores} '
-            '--use-mpa-style '
             '--gzip-compressed '
             f'--report {self.output()["report"].path} '
             f'{self.reads.output()["clean_reads_1"].path} '

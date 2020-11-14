@@ -74,7 +74,10 @@ class PangeaBaseLoadTask(BaseCapTask):
     def results_available(self):
         """Check for results on Pangea."""
         try:
-            ar = self.pangea_obj.analysis_result(pangea_module_name(self.wrapped)).get()
+            ar = self.pangea_obj.analysis_result(
+                pangea_module_name(self.wrapped),
+                replicate=self._replicate()
+            ).get()
         except HTTPError:
             return False
         for field_name in self.wrapped.output().keys():
@@ -98,18 +101,23 @@ class PangeaBaseLoadTask(BaseCapTask):
         return True
 
     def _download_results(self):
-        ar = self.pangea_obj.analysis_result(pangea_module_name(self.wrapped)).get()
+        ar = self.pangea_obj.analysis_result(
+            pangea_module_name(self.wrapped),
+            relicate=self._replicate()
+        ).get()
         for field_name, local_target in self.wrapped.output().items():
             field = ar.field(field_name).get()
             field.download_file(filename=local_target.path)
         open(self.output()['upload_flag'].path, 'w').close()  # we do this just for consistency. If we downloaded the results it means they were uploaded at some point
 
+    def _replicate(self):
+        return f'{self.wrapped.version()} {self.wrapped.short_version_hash()}'
+
     def _upload_results(self):
-        replicate = f'{self.wrapped.version()} {self.wrapped.short_version_hash()}'
         metadata = json.loads(open(self.wrapped.get_run_metadata_filepath()).read())
         ar = self.pangea_obj.analysis_result(
             pangea_module_name(self.wrapped),
-            replicate=replicate,
+            replicate=self._replicate(),
         ).idem()
         ar.metadata = metadata
         ar.save()

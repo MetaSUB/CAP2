@@ -67,7 +67,6 @@ class Jellyfish(CapTask):
         r1 = self.reads.output()['clean_reads_1'].path
         r2 = self.reads.output()['clean_reads_2'].path
         cmd = (
-            '/bin/bash '
             f'{self.pkg.bin} count '
             f'-m {k} '
             '-s 1G '

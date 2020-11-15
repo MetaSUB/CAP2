@@ -4,7 +4,7 @@ from ..utils.cap_task import CapTask
 from .amrs import GrootAMR
 from .hmp_comparison import HmpComparison
 from .humann2 import Humann2
-from .kraken2 import BrakenKraken2
+from .kraken2 import BrakenKraken2, Kraken2
 from .mash import Mash
 from .read_stats import ReadStats
 from .jellyfish import Jellyfish
@@ -65,11 +65,11 @@ class ProcessedReads(CapTask):
 
     @classmethod
     def version(cls):
-        return 'v0.2.0'
+        return 'v0.2.1'
 
     @classmethod
     def dependencies(cls):
-        return [HmpComparison, Humann2, Kraken2, Mash, ReadStats, Jellyfish]
+        return [HmpComparison, Humann2, BrakenKraken2, Mash, ReadStats, Jellyfish]
 
     @classmethod
     def _module_name(cls):

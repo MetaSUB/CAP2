@@ -23,8 +23,6 @@ from cap2.extensions.experimental.strains.strainotyping.io import (
 logging.basicConfig(level=logging.INFO)
 
 BAM_FILEPATH = join(dirname(__file__), 'data/covid/covid_alignment_test_bam.bam')
-RAW_READS_1 = join(dirname(__file__), 'data/zymo_pos_cntrl.r1.fq.gz')
-RAW_READS_2 = join(dirname(__file__), 'data/zymo_pos_cntrl.r2.fq.gz')
 TEST_CONFIG = join(dirname(__file__), 'data/test_config.yaml')
 
 

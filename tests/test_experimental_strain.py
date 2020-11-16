@@ -4,7 +4,7 @@ import os
 
 from shutil import rmtree
 from os.path import join, dirname, isfile, isdir, abspath
-from unittest import TestCase
+from unittest import TestCase, skip
 
 from cap2.extensions.experimental.strains.strainotyping import graph_from_bam_filepath
 from cap2.extensions.experimental.strains import (
@@ -83,6 +83,7 @@ class TestStrainPipeline(TestCase):
         luigi.build([instance], local_scheduler=True)
         self.assertTrue(isfile(instance.output()['bt2_index_1'].path))
 
+    @skip(reason="slow")
     def test_align_to_genome_db_with_fetch(self):
         instance = AlignReadsToGenomeDb(
             genome_name='Serratia_proteamaculans',
@@ -139,6 +140,7 @@ class TestStrainPipeline(TestCase):
     def test_make_snp_graph_inner(self):
         graph_from_bam_filepath(BAM_FILEPATH)
 
+    #@skip(reason="slow")
     def test_bacterial_genome_getter(self):
         genomes = get_microbial_genome('serratia_proteamaculans', outdir='test_out/serratia_proteamaculans')
         for filepath in genomes:

@@ -3,7 +3,7 @@ import setuptools
 
 setuptools.setup(
     name='cap2',
-    version='0.1.1',
+    version='0.2.0',
     description="CAP2",
     author="David C. Danko",
     author_email='dcdanko@gmail.com',
@@ -24,6 +24,7 @@ setuptools.setup(
         'pangea_api',
         'pysam',
         'python-louvain',
+        'gimmebio.seqs',
     ],
     entry_points={
         'console_scripts': [

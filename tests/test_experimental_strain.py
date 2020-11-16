@@ -140,7 +140,7 @@ class TestStrainPipeline(TestCase):
     def test_make_snp_graph_inner(self):
         graph_from_bam_filepath(BAM_FILEPATH)
 
-    #@skip(reason="slow")
+    @skip(reason="slow, no rsync on circleci")
     def test_bacterial_genome_getter(self):
         genomes = get_microbial_genome('serratia_proteamaculans', outdir='test_out/serratia_proteamaculans')
         for filepath in genomes:

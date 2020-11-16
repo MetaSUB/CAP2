@@ -213,6 +213,7 @@ class TestShortRead(TestCase):
             sample_name='test_sample',
             config_filename=TEST_CONFIG
         )
+        instance.RAM = '10M'
         instance.reads = DummyCleanReads()
         luigi.build([instance], local_scheduler=True)
         self.assertTrue(isfile(instance.output()['k31'].path))

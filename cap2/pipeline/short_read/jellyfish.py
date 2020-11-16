@@ -12,6 +12,7 @@ from ..preprocessing.clean_reads import CleanReads
 
 
 class Jellyfish(CapTask):
+    RAM = '1G'
     Ks = [31, 15]
     module_description = """
     This module coutns kmer abundances.
@@ -69,7 +70,7 @@ class Jellyfish(CapTask):
         cmd = (
             f'{self.pkg.bin} count '
             f'-m {k} '
-            '-s 1G '
+            f'-s {self.RAM} '
             '-t 8 '
             '-C '
             f'-o  {outfile} '

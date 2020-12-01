@@ -13,6 +13,7 @@ from pangea_api import (
 from sys import stderr
 from os.path import join, isfile
 
+from .sra_utils import sra_to_fastqs
 from ..sample import Sample
 
 
@@ -32,6 +33,7 @@ class PangeaSample:
             grp = org.sample_group(grp_name).get()
             self.sample = grp.sample(sample_name).get()
         self.name = sample_name
+        self.sra = f'downloaded_data/{self.name}.sra'
         self.r1 = f'downloaded_data/{self.name}.R1.fq.gz'
         self.r2 = f'downloaded_data/{self.name}.R2.fq.gz'
         self.kind = 'short_read'  # TODO
@@ -74,6 +76,13 @@ class PangeaSample:
             ar = self.sample.analysis_result('raw::raw_reads').get()
         except HTTPError:
             ar = self.sample.analysis_result('raw_reads').get()
+        try:
+            ar.field('read_1').get()
+            self.download_fastqs(ar)
+        except:  # TODO: broad except
+            self.download_sra(ar)
+
+    def download_fastqs(self, ar):
         r1 = ar.field('read_1').get()
         r2 = ar.field('read_2').get()
         os.makedirs('downloaded_data', exist_ok=True)
@@ -81,6 +90,11 @@ class PangeaSample:
             r1.download_file(filename=self.r1)
         if not isfile(self.r2):
             r2.download_file(filename=self.r2)
+
+    def download_sra(self, ar):
+        sra = ar.field('sra_run').get()
+        sra.download_file(filename=self.sra)
+        sra_to_fastqs(self.name, self.sra, exc='fasterq-dump', dirpath='.')
 
 
 class PangeaGroup:

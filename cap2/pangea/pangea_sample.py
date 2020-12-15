@@ -9,6 +9,8 @@ from pangea_api import (
     User,
     Organization,
 )
+from pangea_api.contrib.tagging import Tag
+from pangea_api.blob_constructors import sample_from_uuid
 
 from sys import stderr
 from os.path import join, isfile
@@ -23,15 +25,18 @@ class PangeaSampleError(Exception):
 
 class PangeaSample:
 
-    def __init__(self, sample_name, email, password, endpoint, org_name, grp_name, knex=None, sample=None):
+    def __init__(self, sample_name, email, password, endpoint, org_name, grp_name, knex=None, sample=None, name_is_uuid=False):
         if not knex:
             knex = Knex(endpoint)
             User(knex, email, password).login()
         self.sample = sample
         if self.sample is None:
-            org = Organization(knex, org_name).get()
-            grp = org.sample_group(grp_name).get()
-            self.sample = grp.sample(sample_name).get()
+            if name_is_uuid:
+                self.sample = sample_from_uuid(knex, sample_name)
+            else:
+                org = Organization(knex, org_name).get()
+                grp = org.sample_group(grp_name).get()
+                self.sample = grp.sample(sample_name).get()
         self.name = sample_name
         self.sra = f'downloaded_data/{self.name}.sra'
         self.r1 = f'downloaded_data/{self.name}.R1.fq.gz'
@@ -71,7 +76,7 @@ class PangeaSample:
         return ar
 
     def download(self):
-        print('DOWNLOADING READS')
+        print('DOWNLOADING READS', self.name)
         try:
             ar = self.sample.analysis_result('raw::raw_reads').get()
         except HTTPError:
@@ -117,6 +122,41 @@ class PangeaGroup:
         for sample in samples:
             psample = PangeaSample(
                 sample.name,
+                None,
+                None,
+                None,
+                None,
+                None,
+                knex=self.knex,
+                sample=sample,
+            )
+            if psample.has_reads():
+                yield psample
+
+    def cap_samples(self):
+        for sample in self.pangea_samples():
+            yield sample.cap_sample
+
+
+class PangeaTag:
+
+    def __init__(self, tag_name, email, password, endpoint):
+        self.knex = Knex(endpoint)
+        User(self.knex, email, password).login()
+        self.tag = Tag(self.knex, tag_name).get()
+        self.name = tag_name
+
+    def pangea_samples(self, randomize=False, seed=None):
+        if randomize:
+            if seed:
+                random.seed(seed)
+            samples = list(self.tag.get_samples())
+            random.shuffle(samples)
+        else:
+            samples = self.tag.get_samples()
+        for sample in samples:
+            psample = PangeaSample(
+                sample.uuid,
                 None,
                 None,
                 None,

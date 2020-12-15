@@ -94,7 +94,7 @@ def get_task_list_for_sample(sample, stage, upload=True, download_only=False, co
     )
     # qc stage
     fastqc = wrap_task(
-        sample, FastQC, upload=upload, config_path=config_path, cores=cores
+        sample, FastQC, upload=upload, config_path=config_path, cores=cores, requires_reads=True
     )
     fastqc.wrapped.reads = reads
     # pre stage

@@ -6,6 +6,7 @@ from pangea_api import (
     User,
     Organization,
 )
+from pangea_api.blob_constructors import sample_from_uuid, sample_group_from_uuid
 
 from sys import stderr
 from os.path import join, basename
@@ -40,12 +41,18 @@ class PangeaBaseLoadTask(BaseCapTask):
         self.requires_reads = False
         user = luigi.configuration.get_config().get('pangea', 'user')
         password = luigi.configuration.get_config().get('pangea', 'password')
-        self.org_name = luigi.configuration.get_config().get('pangea', 'org_name')
-        self.grp_name = luigi.configuration.get_config().get('pangea', 'grp_name')
+        self.name_is_uuid = luigi.configuration.get_config().get('pangea', 'name_is_uuid')
         self.knex = Knex(self.endpoint)
         User(self.knex, user, password).login()
-        org = Organization(self.knex, self.org_name).get()
-        self.grp = org.sample_group(self.grp_name).get()
+        if self.name_is_uuid:
+            self.org_name = None
+            self.grp_name = None
+            self.grp = None
+        else:
+            self.org_name = luigi.configuration.get_config().get('pangea', 'org_name')
+            self.grp_name = luigi.configuration.get_config().get('pangea', 'grp_name')
+            org = Organization(self.knex, self.org_name).get()
+            self.grp = org.sample_group(self.grp_name).get()
         self.upload_allowed = True
         self.download_only = False
 
@@ -143,7 +150,10 @@ class PangeaLoadTask(PangeaBaseLoadTask, CapTask):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.sample = self.grp.sample(self.sample_name).get()
+        if self.name_is_uuid:
+            self.sample = sample_from_uuid(self.knex, self.sample_name)
+        else:
+            self.sample = self.grp.sample(self.sample_name).get()
         self.pangea_obj = self.sample
         self._wrapped = None
 
@@ -165,7 +175,7 @@ class PangeaLoadTask(PangeaBaseLoadTask, CapTask):
     def _download_reads(self):
         if self.requires_reads:
             PangeaSample(
-                self.sample.name,
+                self.sample_name,
                 None,
                 None,
                 None,
@@ -193,14 +203,15 @@ class PangeaGroupLoadTask(PangeaBaseLoadTask, CapGroupTask):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        assert self.grp_name == self.group_name
+        if self.name_is_uuid:
+            self.grp = sample_group_from_uuid(self.knex, self.grp_name)
         self.pangea_obj = self.grp
         self.module_requires_reads = {}
 
     @property
     def wrapped(self):
         instance = self.wrapped_module.from_samples(
-            self.group_name, self.samples, self.config_filename
+            self.grp_name, self.samples, self.config_filename
         )
         instance._make_req_module = self._make_req_module
         return instance

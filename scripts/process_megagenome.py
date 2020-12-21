@@ -108,9 +108,12 @@ def run_sample(email, password, outdir, fasterq_exc, mash_exc):
     samples = list(grp.get_samples())
     shuffle(samples)
     for sample in samples:
-        click.echo(sample.name, err=True)
-        makedirs(outdir, exist_ok=True)
-        process_sample(sample, outdir=outdir, fasterq_exc=fasterq_exc, mash_exc=mash_exc)
+        try:
+            click.echo(sample.name, err=True)
+            makedirs(outdir, exist_ok=True)
+            process_sample(sample, outdir=outdir, fasterq_exc=fasterq_exc, mash_exc=mash_exc)
+        except:
+            click.echo(f'failed {sample.name}', err=True)
 
 
 if __name__ == '__main__':

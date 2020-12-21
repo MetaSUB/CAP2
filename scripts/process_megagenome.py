@@ -10,6 +10,7 @@ from pangea_api import (
     User,
     Organization,
 )
+from pangea_api.contrib.tagging import Tag
 
 MASH_MODULE_NAME = 'megagenome::v1::mash'
 
@@ -103,9 +104,8 @@ def run_sample(email, password, outdir, fasterq_exc, mash_exc, sample_name):
 def run_sample(email, password, outdir, fasterq_exc, mash_exc):
     knex = Knex()
     User(knex, email, password).login()
-    org = Organization(knex, 'MegaGenome').get()
-    grp = org.sample_group('SRA').get()
-    samples = list(grp.get_samples())
+    tag = Tag(knex, 'MegaGenome').get()
+    samples = list(tag.get_samples())
     shuffle(samples)
     for sample in samples:
         click.echo(sample.name, err=True)

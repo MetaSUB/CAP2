@@ -11,6 +11,7 @@ from pangea_api import (
     Organization,
 )
 from pangea_api.contrib.tagging import Tag
+from requests.exceptions import HTTPError
 
 MASH_MODULE_NAME = 'megagenome::v1::mash'
 
@@ -68,8 +69,9 @@ def process_sample(sample, outdir='.', fasterq_exc='fasterq-dump', mash_exc='mas
     try:
         sample.analysis_result(MASH_MODULE_NAME).get()
         return
-    except:
-        pass
+    except Exception as e:
+        if not isinstance(e, HTTPError):
+            raise
     return _process_sample(sample, outdir=outdir, fasterq_exc=fasterq_exc, mash_exc=mash_exc)
 
 
@@ -112,7 +114,9 @@ def run_sample(email, password, outdir, fasterq_exc, mash_exc):
             click.echo(sample.name, err=True)
             makedirs(outdir, exist_ok=True)
             process_sample(sample, outdir=outdir, fasterq_exc=fasterq_exc, mash_exc=mash_exc)
-        except:
+        except Exception as e:
+            if not isinstance(e, HTTPError):
+                raise
             click.echo(f'failed {sample.name}', err=True)
 
 

@@ -58,7 +58,7 @@ def _process_sample(sample, outdir='.', fasterq_exc='fasterq-dump', mash_exc='ma
         remove(sra_path)
     sra.download_file(filename=sra_path)
     fastqs = sra_to_fastqs(sample.name, sra_path, exc=fasterq_exc, dirpath=outdir)
-    run_mash(fastqs[0], mash_path, exc='mash')
+    run_mash(fastqs[0], mash_path, exc=mash_exc)
     upload_mash(sample, mash_path)
 
 

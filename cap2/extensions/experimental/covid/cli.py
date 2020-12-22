@@ -84,7 +84,7 @@ def _process_samples_in_chunks(samples,
                                batch_size, timelimit):
     start_time, completed = time.time(), []
     click.echo(f'Processing {len(samples)} samples', err=True)
-    for i, chunk in enumerate(chunks(samples, batch_size))
+    for i, chunk in enumerate(chunks(samples, batch_size)):
         logging.basicConfig(
             level=log_level,
             format=f'(batch {i + 1}) ' + '%(levelname)s:%(message)s',

@@ -101,7 +101,7 @@ def _process_samples_in_chunks(samples,
     return completed
 
 
-@run.command('tag')
+@run_cli.command('tag')
 @click.option('-c', '--config', type=click.Path(), default='', envvar='CAP2_CONFIG')
 @click.option('--clean-reads/--all-reads', default=False)
 @click.option('--upload/--no-upload', default=True)

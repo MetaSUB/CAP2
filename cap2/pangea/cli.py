@@ -178,6 +178,7 @@ def cli_run_samples(config, clean_reads, upload, download_only, scheduler_url,
 @click.option('--scheduler-url', default=None, envvar='CAP2_LUIGI_SCHEDULER_URL')
 @click.option('--max-attempts', default=2)
 @click.option('-b', '--batch-size', default=10, help='Number of samples to process in parallel')
+@click.option('-n', '--num-samples', default=100, help='Max number of samples for this worker to process')
 @click.option('-w', '--workers', default=1)
 @click.option('-t', '--threads', default=1)
 @click.option('--timelimit', default=0, help='Stop adding jobs after N hours')
@@ -189,13 +190,13 @@ def cli_run_samples(config, clean_reads, upload, download_only, scheduler_url,
 @click.option('--tag-name', default='MetaSUB CAP')
 def cli_run_samples_from_tag(config, clean_reads, upload, download_only, scheduler_url,
                              max_attempts,
-                             batch_size, workers, threads, timelimit,
+                             batch_size, num_samples, workers, threads, timelimit,
                              endpoint, email, password, stage, random_seed,
                              tag_name):
     set_config(endpoint, email, password, None, None, name_is_uuid=True)
     tag = PangeaTag(tag_name, email, password, endpoint)
     samples = [
-        samp for samp in tag.pangea_samples(randomize=True, seed=random_seed)
+        samp for samp in tag.pangea_samples(randomize=True, n=num_samples)
         if not clean_reads or samp.has_clean_reads()
     ]
     completed = _process_samples_in_chunks(

@@ -146,12 +146,9 @@ class PangeaTag:
         self.tag = Tag(self.knex, tag_name).get()
         self.name = tag_name
 
-    def pangea_samples(self, randomize=False, seed=None):
+    def pangea_samples(self, randomize=False, seed=None, n=100):
         if randomize:
-            if seed:
-                random.seed(seed)
-            samples = list(self.tag.get_samples())
-            random.shuffle(samples)
+            samples = list(self.tag.get_random_samples(n=n))
         else:
             samples = self.tag.get_samples()
         for sample in samples:

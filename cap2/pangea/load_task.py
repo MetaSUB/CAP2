@@ -110,7 +110,7 @@ class PangeaBaseLoadTask(BaseCapTask):
     def _download_results(self):
         ar = self.pangea_obj.analysis_result(
             pangea_module_name(self.wrapped),
-            relicate=self._replicate()
+            replicate=self._replicate()
         ).get()
         for field_name, local_target in self.wrapped.output().items():
             field = ar.field(field_name).get()

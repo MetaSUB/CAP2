@@ -73,7 +73,7 @@ def get_fastq_tarball(sample, tar, outdir='.'):
     if isfile(tar_path):
         remove(tar_path)
     tar.download_file(filename=tar_path)
-    fastq = tarball_to_fastqs(sample.name, sra_path, dirpath=outdir)
+    fastq = tarball_to_fastqs(sample.name, tar_path, dirpath=outdir)
     return fastq
 
 

@@ -21,6 +21,16 @@ def run_cmd(cmd):
     sp.check_call(cmd, shell=True)
 
 
+def tarball_to_fastqs(sample_name, tar_filepath, dirpath='.'):
+    cmd = f'tar -xjf {tar_filepath}'
+    run_cmd(cmd)
+    unzipped_file = glob(f'{dirpath}/{sample_name}/*.denovo_duplicates_marked.trimmed.1.fastq')[0]
+    gzip_cmd = f'yes n | gzip {unzipped_file}'
+    run_cmd(gzip_cmd)
+    zipped_file = unzipped_file + '.gz'
+    return zipped_file
+
+
 def sra_to_fastqs(sample_name, sra_filepath, exc='fasterq-dump', dirpath='.'):
     """Return a list of gzipped fastq files."""
     sra_dump_cmd = f'yes n | {exc} --split-files -O {dirpath} -o {sample_name} {sra_filepath}'
@@ -58,19 +68,32 @@ def get_fastq_sra(sample, sra, outdir='.', fasterq_exc='fasterq-dump'):
     return fastqs[0]
 
 
+def get_fastq_tarball(sample, tar, outdir='.'):
+    tar_path = f'{outdir}/{sample.name}.tar.bz2'
+    if isfile(tar_path):
+        remove(tar_path)
+    tar.download_file(filename=tar_path)
+    fastq = tarball_to_fastqs(sample.name, sra_path, dirpath=outdir)
+    return fastq
+
+
 def get_fastq(sample, ar, outdir='.', fasterq_exc='fasterq-dump'):
     try:
         sra = ar.field('sra_run').get()
         return get_fastq_sra(sample, sra, outdir=outdir, fasterq_exc=fasterq_exc)
     except HTTPError:
-        r1 = ar.field('read_1').get()
-        fq_path = f'{outdir}/{sample.name}.R1.fq.gz'
-        if isfile(fq_path):
-            remove(fq_path)
-        r1.download_file(filename=fq_path)
-        return fq_path
-        
-    
+        try:
+            sra = ar.field('tarball').get()
+            return get_fastq_tarball(sample, sra, outdir=outdir)
+        except HTTPError:
+            r1 = ar.field('read_1').get()
+            fq_path = f'{outdir}/{sample.name}.R1.fq.gz'
+            if isfile(fq_path):
+                remove(fq_path)
+            r1.download_file(filename=fq_path)
+            return fq_path
+
+
 def _process_sample(sample, outdir='.', fasterq_exc='fasterq-dump', mash_exc='mash'):
     mash_path = f'{outdir}/{sample.name}.{MASH_MODULE_NAME}.v0-0-1.10K.msh'
     ar = sample.analysis_result('raw::raw_reads').get()

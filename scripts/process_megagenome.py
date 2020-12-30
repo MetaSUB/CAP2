@@ -49,16 +49,33 @@ def upload_mash(sample, mash_path):
     arf.upload_file(mash_path)
 
 
-def _process_sample(sample, outdir='.', fasterq_exc='fasterq-dump', mash_exc='mash'):
-    mash_path = f'{outdir}/{sample.name}.{MASH_MODULE_NAME}.v0-0-1.10K.msh'
-    ar = sample.analysis_result('raw::raw_reads').get()
-    sra = ar.field('sra_run').get()
+def get_fastq_sra(sample, sra, outdir='.', fasterq_exc='fasterq-dump'):
     sra_path = f'{outdir}/{sample.name}.sra'
     if isfile(sra_path):
         remove(sra_path)
     sra.download_file(filename=sra_path)
     fastqs = sra_to_fastqs(sample.name, sra_path, exc=fasterq_exc, dirpath=outdir)
-    run_mash(fastqs[0], mash_path, exc=mash_exc)
+    return fastqs[0]
+
+
+def get_fastq(sample, ar, outdir='.', fasterq_exc='fasterq-dump'):
+    try:
+        sra = ar.field('sra_run').get()
+        return get_fastq_sra(sample, sra, outdir=outdir, fasterq_exc=fasterq_exc)
+    except HTTPError:
+        r1 = ar.field('read_1').get()
+        fq_path = f'{outdir}/{sample.name}.R1.fq.gz'
+        if isfile(fq_path):
+            remove(fq_path)
+        r1.download_file(filename=fq_path)
+        return fq_path
+        
+    
+def _process_sample(sample, outdir='.', fasterq_exc='fasterq-dump', mash_exc='mash'):
+    mash_path = f'{outdir}/{sample.name}.{MASH_MODULE_NAME}.v0-0-1.10K.msh'
+    ar = sample.analysis_result('raw::raw_reads').get()
+    fastq = get_fastq(sample, ar, outdir=outdir, fasterq_exc=fasterq_exc)
+    run_mash(fastq, mash_path, exc=mash_exc)
     upload_mash(sample, mash_path)
 
 

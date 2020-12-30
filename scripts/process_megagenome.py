@@ -107,7 +107,7 @@ def run_sample(email, password, outdir, fasterq_exc, mash_exc):
     knex = Knex()
     User(knex, email, password).login()
     tag = Tag(knex, 'MegaGenome').get()
-    samples = list(tag.get_samples())
+    samples = list(tag.get_random_samples())
     shuffle(samples)
     for sample in samples:
         try:

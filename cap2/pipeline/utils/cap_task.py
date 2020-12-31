@@ -127,8 +127,10 @@ class BaseCapTask(luigi.Task):
         return run
 
     def run_cmd(self, cmd):
-        """Run a shell command with some defaults and error logging."""
-        job = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        job = subprocess.run(
+            cmd,
+            shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, executable='/bin/bash'
+        )
         if job.returncode != 0:
             msg = f'''
             cmd_failed: "{cmd}"

@@ -28,13 +28,13 @@ class AlignReadsToGenome(StrainCapTask):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.pkg = CondaPackage(
-            package="bowtie2",
+            package="bowtie2==2.4.1",
             executable="bowtie2",
             channel="bioconda",
             config_filename=self.config_filename,
         )
         self.samtools = CondaPackage(
-            package="samtools=1.09",
+            package="samtools==1.09",
             executable="samtools",
             channel="bioconda",
             config_filename=self.config_filename,

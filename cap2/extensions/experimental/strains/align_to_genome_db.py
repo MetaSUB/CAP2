@@ -25,6 +25,7 @@ class AlignReadsToGenomeDb(StrainCapDbTask):
         self.config = PipelineConfig(self.config_filename)
         self.db_dir = self.config.db_dir
         self._fastas = []
+        self._genome_getter = None
         if self.genome_path:
             for ext in ['.fa', '.fa.gz', '.fna', '.fna.gz']:
                 self._fastas += list(glob(self.genome_path + f'/*{ext}'))

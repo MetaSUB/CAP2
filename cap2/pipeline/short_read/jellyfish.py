@@ -12,7 +12,8 @@ from ..preprocessing.clean_reads import CleanReads
 
 
 class Jellyfish(CapTask):
-    K = 31
+    RAM = '1G'
+    Ks = [31, 15]
     module_description = """
     This module coutns kmer abundances.
 
@@ -50,7 +51,7 @@ class Jellyfish(CapTask):
 
     @classmethod
     def version(cls):
-        return 'v0.1.0'
+        return 'v0.2.0'
 
     @classmethod
     def dependencies(cls):
@@ -58,17 +59,18 @@ class Jellyfish(CapTask):
 
     def output(self):
         return {
-            f'k{self.K}': self.get_target(f'k{self.K}', 'jf'),
+            f'k{K}': self.get_target(f'k{K}', 'jf')
+            for K in self.Ks
         }
 
-    def _cmd(self, k=31):
+    def _cmd(self, k):
         outfile = self.output()[f'k{k}'].path
         r1 = self.reads.output()['clean_reads_1'].path
         r2 = self.reads.output()['clean_reads_2'].path
         cmd = (
             f'{self.pkg.bin} count '
             f'-m {k} '
-            '-s 1G '
+            f'-s {self.RAM} '
             '-t 8 '
             '-C '
             f'-o  {outfile} '
@@ -78,7 +80,8 @@ class Jellyfish(CapTask):
         return cmd
 
     def _run(self):
-        self.run_cmd(self._cmd(self.K))
-        path = self.output()[f'k31'].path
-        if isfile(path + '_0'):
-            os.rename(path + '_0', path)
+        for K in self.Ks:
+            self.run_cmd(self._cmd(K))
+            path = self.output()[f'k{K}'].path
+            if isfile(path + '_0'):
+                os.rename(path + '_0', path)

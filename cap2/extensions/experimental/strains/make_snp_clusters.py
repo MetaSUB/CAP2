@@ -1,20 +1,19 @@
 
-import luigi
-import subprocess
 import networkx as nx
-from os.path import join, dirname, basename
 
-from .align_to_genome import AlignReadsToGenome
+from .make_snp_graph import MakeSNPGraph
 
 from .tasks import StrainCapTask
 from ....pipeline.config import PipelineConfig
-from ....pipeline.utils.conda import CondaPackage
-from ....pipeline.preprocessing.map_to_human import RemoveHumanReads
 
-from .strainotyping import VERSION, graph_from_bam_filepath
+from .strainotyping import (
+    VERSION,
+    partition,
+    load_graph_from_filepath,
+)
 
 
-class MakeSNPGraph(StrainCapTask):
+class MakeSNPClusters(StrainCapTask):
     module_description = """
     This module 
 
@@ -26,7 +25,7 @@ class MakeSNPGraph(StrainCapTask):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.config = PipelineConfig(self.config_filename)
-        self.bam = AlignReadsToGenome(
+        self.graph = MakeSNPGraph(
             genome_name=self.genome_name,
             genome_path=self.genome_path,
             pe1=self.pe1,
@@ -38,7 +37,7 @@ class MakeSNPGraph(StrainCapTask):
         )
 
     def requires(self):
-        return self.bam
+        return self.graph
 
     @classmethod
     def version(cls):
@@ -49,24 +48,23 @@ class MakeSNPGraph(StrainCapTask):
 
     @classmethod
     def dependencies(cls):
-        return [AlignReadsToGenome]
+        return [MakeSNPGraph]
 
     @classmethod
     def _module_name(cls):
-        return 'experimental::make_snp_graph'
+        return 'experimental::make_snp_clusters'
 
     def output(self):
         out = {
-            f'snp_graph__{self.genome_name}': self.get_target(f'snp_graph__{self.genome_name}', 'gml.gz'),
+            f'snp_clusters__{self.genome_name}': self.get_target(f'snp_clusters__{self.genome_name}', 'csv.gz'),
         }
         return out
 
     @property
-    def graph_path(self):
-        return self.output()[f'snp_graph__{self.genome_name}'].path
+    def cluster_path(self):
+        return self.output()[f'snp_clusters__{self.genome_name}'].path
 
     def _run(self):
-        graph = graph_from_bam_filepath(self.bam.bam_path)
-        prezip_path = self.graph_path.replace('.gz', '')
-        nx.write_graphml(graph, prezip_path)
-        self.run_cmd(f'gzip {prezip_path}')
+        graph = load_graph_from_filepath(self.graph.graph_path)
+        tbl = partition(graph)
+        tbl.to_csv(self.cluster_path, compression='gzip')

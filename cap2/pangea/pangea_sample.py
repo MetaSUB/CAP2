@@ -9,10 +9,13 @@ from pangea_api import (
     User,
     Organization,
 )
+from pangea_api.contrib.tagging import Tag
+from pangea_api.blob_constructors import sample_from_uuid
 
 from sys import stderr
 from os.path import join, isfile
 
+from .sra_utils import sra_to_fastqs
 from ..sample import Sample
 
 
@@ -22,16 +25,20 @@ class PangeaSampleError(Exception):
 
 class PangeaSample:
 
-    def __init__(self, sample_name, email, password, endpoint, org_name, grp_name, knex=None, sample=None):
+    def __init__(self, sample_name, email, password, endpoint, org_name, grp_name, knex=None, sample=None, name_is_uuid=False):
         if not knex:
             knex = Knex(endpoint)
             User(knex, email, password).login()
         self.sample = sample
         if self.sample is None:
-            org = Organization(knex, org_name).get()
-            grp = org.sample_group(grp_name).get()
-            self.sample = grp.sample(sample_name).get()
+            if name_is_uuid:
+                self.sample = sample_from_uuid(knex, sample_name)
+            else:
+                org = Organization(knex, org_name).get()
+                grp = org.sample_group(grp_name).get()
+                self.sample = grp.sample(sample_name).get()
         self.name = sample_name
+        self.sra = f'downloaded_data/{self.name}.sra'
         self.r1 = f'downloaded_data/{self.name}.R1.fq.gz'
         self.r2 = f'downloaded_data/{self.name}.R2.fq.gz'
         self.kind = 'short_read'  # TODO
@@ -69,11 +76,18 @@ class PangeaSample:
         return ar
 
     def download(self):
-        print('DOWNLOADING READS')
+        print('DOWNLOADING READS', self.name)
         try:
             ar = self.sample.analysis_result('raw::raw_reads').get()
         except HTTPError:
             ar = self.sample.analysis_result('raw_reads').get()
+        try:
+            ar.field('read_1').get()
+            self.download_fastqs(ar)
+        except:  # TODO: broad except
+            self.download_sra(ar)
+
+    def download_fastqs(self, ar):
         r1 = ar.field('read_1').get()
         r2 = ar.field('read_2').get()
         os.makedirs('downloaded_data', exist_ok=True)
@@ -81,6 +95,11 @@ class PangeaSample:
             r1.download_file(filename=self.r1)
         if not isfile(self.r2):
             r2.download_file(filename=self.r2)
+
+    def download_sra(self, ar):
+        sra = ar.field('sra_run').get()
+        sra.download_file(filename=self.sra)
+        sra_to_fastqs(self.name, self.sra, exc='fasterq-dump', dirpath='.')
 
 
 class PangeaGroup:
@@ -103,6 +122,38 @@ class PangeaGroup:
         for sample in samples:
             psample = PangeaSample(
                 sample.name,
+                None,
+                None,
+                None,
+                None,
+                None,
+                knex=self.knex,
+                sample=sample,
+            )
+            if psample.has_reads():
+                yield psample
+
+    def cap_samples(self):
+        for sample in self.pangea_samples():
+            yield sample.cap_sample
+
+
+class PangeaTag:
+
+    def __init__(self, tag_name, email, password, endpoint):
+        self.knex = Knex(endpoint)
+        User(self.knex, email, password).login()
+        self.tag = Tag(self.knex, tag_name).get()
+        self.name = tag_name
+
+    def pangea_samples(self, randomize=False, seed=None, n=100):
+        if randomize:
+            samples = list(self.tag.get_random_samples(n=n))
+        else:
+            samples = self.tag.get_samples()
+        for sample in samples:
+            psample = PangeaSample(
+                sample.uuid,
                 None,
                 None,
                 None,

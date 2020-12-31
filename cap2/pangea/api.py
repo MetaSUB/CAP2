@@ -28,6 +28,7 @@ STAGES = [
     'reads',
     'assembly',
     'all',
+    'kmer',
 ]
 
 
@@ -49,6 +50,13 @@ def wrap_task(sample, module,
     task.download_only = download_only
     return task
 
+
+def get_task_list_for_kmer_stage(sample, clean_reads, upload=True, download_only=False, config_path='', cores=1):
+    wrapit = lambda module: wrap_task(sample, module, config_path=config_path, cores=cores, upload=upload, download_only=download_only)
+    jellyfish = wrapit(Jellyfish)
+    jellyfish.wrapped.reads = clean_reads
+
+    return [jellyfish]
 
 def get_task_list_for_read_stage(sample, clean_reads, upload=True, download_only=False, config_path='', cores=1):
     wrapit = lambda module: wrap_task(sample, module, config_path=config_path, cores=cores, upload=upload, download_only=download_only)
@@ -86,7 +94,7 @@ def get_task_list_for_sample(sample, stage, upload=True, download_only=False, co
     )
     # qc stage
     fastqc = wrap_task(
-        sample, FastQC, upload=upload, config_path=config_path, cores=cores
+        sample, FastQC, upload=upload, config_path=config_path, cores=cores, requires_reads=True
     )
     fastqc.wrapped.reads = reads
     # pre stage
@@ -104,6 +112,11 @@ def get_task_list_for_sample(sample, stage, upload=True, download_only=False, co
     processed, read_task_list = get_task_list_for_read_stage(
         sample, clean_reads, upload=upload, download_only=download_only, config_path=config_path, cores=cores
     )
+    # kmer stage
+    kmer_task_list = get_task_list_for_kmer_stage(
+        sample, clean_reads, upload=upload, download_only=download_only, config_path=config_path, cores=cores
+    )
+
     # assembly stage
     assembly = wrap_task(
         sample, MetaspadesAssembly, upload=upload, config_path=config_path, cores=cores
@@ -122,6 +135,8 @@ def get_task_list_for_sample(sample, stage, upload=True, download_only=False, co
         tasks = [clean_reads]
     if stage == 'reads':
         tasks = [clean_reads, processed] + read_task_list
+    if stage == 'kmer':
+        tasks = [clean_reads] + kmer_task_list
     if stage == 'assembly':
         tasks = [clean_reads, assembly]
     if stage == 'all':

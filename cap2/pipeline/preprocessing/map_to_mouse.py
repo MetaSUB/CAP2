@@ -71,7 +71,7 @@ class RemoveMouseReads(CapTask):
 
     @classmethod
     def _module_name(cls):
-        return 'remove_human'
+        return 'remove_mouse'
 
     def output(self):
         out = {

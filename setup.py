@@ -3,7 +3,7 @@ import setuptools
 
 setuptools.setup(
     name='cap2',
-    version='0.1.1',
+    version='0.2.0',
     description="CAP2",
     author="David C. Danko",
     author_email='dcdanko@gmail.com',
@@ -21,7 +21,10 @@ setuptools.setup(
         'Jinja2==3.0.0a1',  # for multiqc
         'multiqc==1.8',  # hackish, tbd if I'm okay with this
         'humann2==2.8.2',
-        'pangea_api',
+        'pangea_api>=0.8.3',
+        'pysam',
+        'python-louvain',
+        'gimmebio.seqs',
     ],
     entry_points={
         'console_scripts': [

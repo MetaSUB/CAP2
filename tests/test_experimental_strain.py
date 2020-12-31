@@ -103,7 +103,7 @@ class TestStrainPipeline(TestCase):
             config_filename=TEST_CONFIG,
             cores=1
         )
-        instance.nonhuman_reads = DummyHumanRemovedReads()
+        instance.reads = DummyHumanRemovedReads()
         instance.db = DummyAlignReadsToGenomeDb()
         luigi.build([instance], local_scheduler=True)
         self.assertFalse(isfile(instance.temp_bam_path))

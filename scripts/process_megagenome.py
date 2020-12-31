@@ -156,7 +156,7 @@ def run_sample(email, password, outdir, fasterq_exc, mash_exc):
             process_sample(sample, outdir=outdir, fasterq_exc=fasterq_exc, mash_exc=mash_exc)
         except Exception as e:
             if not isinstance(e, HTTPError):
-                raise
+                continue
             click.echo(f'failed {sample.name}', err=True)
 
 

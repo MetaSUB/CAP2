@@ -22,7 +22,7 @@ def run_cmd(cmd):
 
 
 def tarball_to_fastqs(sample_name, tar_filepath, dirpath='.'):
-    cmd = f'mkdir {sample_name} ; tar -xjf {tar_filepath} -C {dirpath}/{sample_name}'
+    cmd = f'mkdir {dirpath}/{sample_name} ; tar -xjf {tar_filepath} -C {dirpath}/{sample_name}'
     run_cmd(cmd)
     unzipped_file = glob(f'{dirpath}/{sample_name}/*/*.denovo_duplicates_marked.trimmed.1.fastq')[0]
     gzip_cmd = f'yes n | gzip {unzipped_file}'

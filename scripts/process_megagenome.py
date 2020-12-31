@@ -22,9 +22,9 @@ def run_cmd(cmd):
 
 
 def tarball_to_fastqs(sample_name, tar_filepath, dirpath='.'):
-    cmd = f'tar -xjf {tar_filepath}'
+    cmd = f'mkdir {sample_name} ; tar -xjf {tar_filepath} -C {sample_name}'
     run_cmd(cmd)
-    unzipped_file = glob(f'{dirpath}/{sample_name}/*.denovo_duplicates_marked.trimmed.1.fastq')[0]
+    unzipped_file = glob(f'{dirpath}/{sample_name}/*/*.denovo_duplicates_marked.trimmed.1.fastq')[0]
     gzip_cmd = f'yes n | gzip {unzipped_file}'
     run_cmd(gzip_cmd)
     zipped_file = unzipped_file + '.gz'
@@ -97,6 +97,7 @@ def get_fastq(sample, ar, outdir='.', fasterq_exc='fasterq-dump'):
 def _process_sample(sample, outdir='.', fasterq_exc='fasterq-dump', mash_exc='mash'):
     mash_path = f'{outdir}/{sample.name}.{MASH_MODULE_NAME}.v0-0-1.10K.msh'
     ar = sample.analysis_result('raw::raw_reads').get()
+    click.echo(f'Getting data for sample {sample.name}')
     fastq = get_fastq(sample, ar, outdir=outdir, fasterq_exc=fasterq_exc)
     run_mash(fastq, mash_path, exc=mash_exc)
     upload_mash(sample, mash_path)
@@ -123,15 +124,16 @@ def main():
 @main.command('sample')
 @click.option('-e', '--email')
 @click.option('-p', '--password')
-@click.option('-o', '--outdir')
+@click.option('-o', '--outdir', default='.')
+@click.option('-g', '--group', default='SRA')
 @click.option('--fasterq-exc', default='fasterq-dump')
 @click.option('--mash-exc', default='mash')
 @click.argument('sample_name')
-def run_sample(email, password, outdir, fasterq_exc, mash_exc, sample_name):
+def run_sample(email, password, outdir, group, fasterq_exc, mash_exc, sample_name):
     knex = Knex()
     User(knex, email, password).login()
     org = Organization(knex, 'MegaGenome').get()
-    grp = org.sample_group('SRA').get()
+    grp = org.sample_group(group).get()
     sample = grp.sample(sample_name).get()
     makedirs(outdir, exist_ok=True)
     process_sample(sample, outdir=outdir, fasterq_exc=fasterq_exc, mash_exc=mash_exc)

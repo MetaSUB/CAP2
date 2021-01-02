@@ -1,4 +1,7 @@
 import pandas as pd
+import logging
+
+logger = logging.getLogger(__name__)  # Same name as calling module
 
 
 def parse_pileup(local_path, sparse=1):
@@ -23,6 +26,14 @@ def parse_pileup(local_path, sparse=1):
 
 
 def parse_taxa_report(local_path):
+    try:
+        return _parse_taxa_report(local_path)
+    except Exception:
+        logger.debug(f'[ParseTaxaReport] failed to parse {local_path}')
+        raise
+
+
+def _parse_taxa_report(local_path):
     """Return a dict of taxa_name to read_counts."""
     out, abundance_sum = {}, 0
     with open(local_path) as taxa_file:

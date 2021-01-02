@@ -27,10 +27,15 @@ class BaseCapTask(luigi.Task):
 
     @classmethod
     def version(cls):
+        """Return a string giving a human readable version for this module only."""
         raise NotImplementedError()
 
     @classmethod
     def dependencies(cls):
+        """Return a list of modules this module depends on.
+
+        Modules are either other `BaseCapTask` classes or strings.
+        """
         raise NotImplementedError()
 
     @classmethod
@@ -50,6 +55,7 @@ class BaseCapTask(luigi.Task):
 
     @classmethod
     def version_hash(cls):
+        """Return a hash string giving the version of this task and all upstream tasks."""
         try:
             version = cls.version()
         except:
@@ -65,6 +71,7 @@ class BaseCapTask(luigi.Task):
 
     @classmethod
     def short_version_hash(cls):
+        """Return a 12 character hash string giving the version of this task and all upstream tasks."""
         myhash = cls.version_hash()
         return myhash[:4] + myhash[20:24] + myhash[-4:]
 
@@ -74,15 +81,19 @@ class BaseCapTask(luigi.Task):
 
     @classmethod
     def module_name(cls):
+        """Return a string giving the human readable name for this task."""
         return 'cap2::' + cls._module_name()
 
     def tool_version(self):
+        """Return a string giving a version for any software used."""
         return 'tool_version_unknown'
 
     def get_run_metadata_filepath(self):
+        """Return a local filepath with metadata about a completed run of this task."""
         return self.get_target('run_metadata', 'json').path
 
     def get_run_metadata(self):
+        """Return a dict with metadata about a completed run of this task."""
         uname = os.uname()
         blob = {
             'task_build_time': self.task_build_time,
@@ -106,6 +117,7 @@ class BaseCapTask(luigi.Task):
         raise NotImplementedError()
 
     def run(self):
+        """Run an instance of this task."""
         self.run_start_time = datetime.datetime.now().isoformat()
         for hook in self.pre_run_hooks:
             hook()
@@ -140,12 +152,13 @@ class CapTask(BaseCapTask):
 
     Currently implements some basic shared logic.
     """
-    sample_name = luigi.Parameter()
-    pe1 = luigi.Parameter()
-    pe2 = luigi.Parameter()
+    sample_name = luigi.Parameter()  # Name of the sample being processed
+    pe1 = luigi.Parameter()  # Local filepath to read 1
+    pe2 = luigi.Parameter()  # Local filepath to read 2 or None if thsi is single ended
     data_type = luigi.Parameter(default='short_read')
 
     def get_target(self, field_name, ext):
+        """Return a luigi LocalTarget for this instance."""
         filename = '.'.join([
             self.sample_name, self.module_name(), self.short_version_hash(), field_name, ext
         ])
@@ -156,10 +169,12 @@ class CapTask(BaseCapTask):
 
     @property
     def paired(self):
+        """Return true iff this instance is processing paired end data."""
         return self.pe2 and self.data_type == 'short_read'
 
     @classmethod
     def from_sample(cls, sample, config_path, cores=1):
+        """Return an instance of this module from a Sample."""
         return cls(
             pe1=sample.r1,
             pe2=sample.r2,

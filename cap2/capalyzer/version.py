@@ -1,0 +1,3 @@
+
+VERSION = '0.1.0'
+VERSION_URL_SAFE = '0_1_0'

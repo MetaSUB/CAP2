@@ -13,7 +13,7 @@ from .constants import (
     STAGES,
 )
 from .pipeline.full_pipeline import FullPipeline
-
+from .capalyzer.cli import capalyzer_cli
 
 @click.group()
 def main():
@@ -22,6 +22,7 @@ def main():
 
 main.add_command(pangea)
 main.add_command(experimental_cli)
+main.add_command(capalyzer_cli)
 
 
 @main.command()

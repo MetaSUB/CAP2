@@ -10,6 +10,7 @@ from .constants import (
 
 
 def run_db_stage(config_path='', cores=1, **kwargs):
+    """Run the database stage of the pipeline."""
     instances = []
     for module in DB_MODULES:
         instances.append(
@@ -22,6 +23,7 @@ def run_db_stage(config_path='', cores=1, **kwargs):
 
 
 def run_stage(samples, stage_name, config_path='', cores=1, workers=1, **kwargs):
+    """Run a subpipeline on a list of samples. stage_name can be one of `qc`, `pre`, `reads`."""
     modules = STAGES[stage_name]
     group_modules = STAGES_GROUP.get(stage_name, [])
     run_modules(
@@ -35,6 +37,7 @@ def run_stage(samples, stage_name, config_path='', cores=1, workers=1, **kwargs)
 
 
 def run_modules(samples, modules, group_modules=[], config_path='', cores=1, workers=1, **kwargs):
+    """Run a set of modules for a list of samples."""
     instances = []
     for sample in samples:
         for module in modules:

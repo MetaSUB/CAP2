@@ -1,7 +1,7 @@
 
 from os import environ, makedirs
 from time import time
-from ..version import VERSION_URL_SAFE
+from ..version import VERSION_URL_SAFE, VERSION
 from os.path import join
 from requests.exceptions import HTTPError
 
@@ -44,11 +44,11 @@ class PangeaFileUploader:
     def replicate(self, n_samples=None):
         n_samples = n_samples if n_samples else len(list(self.grp.get_samples()))
         timestamp = int(time())
-        replicate = f'{timestamp}-{n_samples}'
+        replicate = f'{VERSION}-{timestamp}-{n_samples}'
         return replicate
 
     def module_name(self, raw_name):
-        return f'cap2::capalyzer-v{VERSION_URL_SAFE}::{raw_name}'
+        return f'cap2::capalyzer::{raw_name}'
 
     def upload_pandas(self, tbl, raw_module_name, field_name, replicate=None, n_samples=None):
         replicate = replicate if replicate else self.replicate(n_samples=n_samples)

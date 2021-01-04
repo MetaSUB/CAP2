@@ -1,0 +1,3 @@
+
+from .kraken2_taxa_table import Kraken2TaxaTableModule
+from .kraken2_covid_fast_detect import Kraken2CovidFastDetectModule

@@ -48,7 +48,7 @@ class HmpComparison(CapTask):
 
     @classmethod
     def version(cls):
-        return 'v0.2.0'
+        return 'v0.3.0'
 
     @classmethod
     def dependencies(cls):
@@ -59,7 +59,7 @@ class HmpComparison(CapTask):
 
     def _run(self):
         cmd = (
-            f'{self.pkg.bin} '
+            f'{self.pkg.bin} dist '
             f'{self.db.mash_sketch} '
             f'{self.mash.output()["10M_mash_sketch"].path} '
             f'> {self.output()["mash"].path}'

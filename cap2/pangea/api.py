@@ -84,7 +84,7 @@ def get_task_list_for_read_stage(sample, clean_reads, upload=True, download_only
     processed.kraken2 = braken
     processed.mash = mash
     processed.read_stats = read_stats
-    return processed, [dmnd_uniref90, humann2, mash, hmp, read_stats, kraken2, braken]
+    return processed, [dmnd_uniref90, humann2, mash, hmp, read_stats, kraken2, braken, jellyfish]
 
 
 def get_task_list_for_sample(sample, stage, upload=True, download_only=False, config_path='', cores=1, require_clean_reads=False):

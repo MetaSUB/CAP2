@@ -2,6 +2,7 @@
 import pandas as pd
 import logging
 from ..base_module import BaseModule
+from ..parsers import parse_taxa_report
 
 logger = logging.getLogger(__name__)  # Same name as calling module
 

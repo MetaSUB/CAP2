@@ -128,7 +128,7 @@ def _process_samples_in_chunks(samples,
         completed += _process_one_sample_chunk(
             chunk,
             scheduler_url, stage, upload, download_only,
-            config, threads, clean_reads, workers
+            config, threads, max_ram, clean_reads, workers
         )
     return completed
 

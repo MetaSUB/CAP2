@@ -88,12 +88,7 @@ class Humann2(CapTask):
         super().__init__(*args, **kwargs)
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
-        self.alignment = MicaUniref90(
-            sample_name=self.sample_name,
-            pe1=self.pe1,
-            pe2=self.pe2,
-            config_filename=self.config_filename
-        )
+        self.alignment = MicaUniref90.from_cap_task(self)
 
     def tool_version(self):
         return self.run_cmd(f'{self.pkg.bin} --version').stderr.decode('utf-8')

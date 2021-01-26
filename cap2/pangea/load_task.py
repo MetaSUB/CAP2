@@ -56,8 +56,10 @@ class PangeaBaseLoadTask(BaseCapTask):
         self.upload_allowed = True
         self.download_only = False
 
-    def module_name(self):
-        return 'pangea_load_task_' + self.wrapped.module_name()
+
+    @classmethod
+    def _module_name(self):
+        return 'pangea_load_task'
 
     def __getattr__(self, key):
         return getattr(self.wrapped, key)

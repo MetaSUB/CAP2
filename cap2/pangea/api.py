@@ -105,36 +105,36 @@ def get_task_list_for_sample(sample, stage,
                              cores=1,  max_ram=0, require_clean_reads=False):
     reads = wrap_task(
         sample, BaseReads,
-        upload=False, config_path=config_path, cores=cores, requires_reads=True
+        upload=False, config_path=config_path, cores=cores, max_ram=max_ram, requires_reads=True
     )
     # qc stage
     fastqc = wrap_task(
-        sample, FastQC, upload=upload, config_path=config_path, cores=cores, requires_reads=True
+        sample, FastQC, upload=upload, config_path=config_path, cores=cores, max_ram=max_ram, requires_reads=True
     )
     fastqc.wrapped.reads = reads
     # pre stage
     nonhuman_reads = wrap_task(
-        sample, RemoveHumanReads, upload=upload, download_only=download_only, config_path=config_path, cores=cores
+        sample, RemoveHumanReads, upload=upload, download_only=download_only, config_path=config_path, cores=cores, max_ram=max_ram
     )
     nonhuman_reads.wrapped.mouse_removed_reads.adapter_removed_reads.reads = reads
     clean_reads = wrap_task(
-        sample, CleanReads, upload=upload, download_only=download_only, config_path=config_path, cores=cores
+        sample, CleanReads, upload=upload, download_only=download_only, config_path=config_path, cores=cores, max_ram=max_ram
     )
     clean_reads.wrapped.ec_reads.nonhuman_reads = nonhuman_reads
     if require_clean_reads:
         clean_reads.download_only = True
     # reads stage
     processed, read_task_list = get_task_list_for_read_stage(
-        sample, clean_reads, upload=upload, download_only=download_only, config_path=config_path, cores=cores
+        sample, clean_reads, upload=upload, download_only=download_only, config_path=config_path, cores=cores, max_ram=max_ram
     )
     # kmer stage
     kmer_task_list = get_task_list_for_kmer_stage(
-        sample, clean_reads, upload=upload, download_only=download_only, config_path=config_path, cores=cores
+        sample, clean_reads, upload=upload, download_only=download_only, config_path=config_path, cores=cores, max_ram=max_ram
     )
 
     # assembly stage
     assembly = wrap_task(
-        sample, MetaspadesAssembly, upload=upload, config_path=config_path, cores=cores
+        sample, MetaspadesAssembly, upload=upload, config_path=config_path, cores=cores, max_ram=max_ram
     )
     assembly.wrapped.reads = clean_reads
     # all stage

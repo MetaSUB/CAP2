@@ -42,7 +42,7 @@ class BaseCapTask(luigi.Task):
     @classmethod
     def version_tree(cls, terminal=True):
         """Return a newick tree with versions."""
-        out = f'{cls._module_name()}=={cls.version()}'
+        out = f'{cls.module_name()}=={cls.version()}'
         if cls.dependencies:
             depends = [
                 el if isinstance(el, str) else el.version_tree(terminal=False)

@@ -31,14 +31,7 @@ class AdapterRemoval(CapTask):
             channel="bioconda",
             config_filename=self.config_filename,
         )
-        self.reads = BaseReads(
-            pe1=self.pe1,
-            pe2=self.pe2,
-            sample_name=self.sample_name,
-            config_filename=self.config_filename,
-            cores=self.cores,
-            data_type=self.data_type,
-        )
+        self.reads = BaseReads.from_cap_task(self)
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
         self.adapter1 = self.ILLUMINA_SHARED_PREFIX
@@ -61,6 +54,11 @@ class AdapterRemoval(CapTask):
     @classmethod
     def _module_name(cls):
         return 'adapter_removal'
+
+    def get_run_metadata(self):
+        blob = super().get_run_metadata()
+        blob['adapter_sequences'] = {'adapter1': self.adapter1, 'adapter2': self.adapter2}
+        return blob
 
     def output(self):
         out = {

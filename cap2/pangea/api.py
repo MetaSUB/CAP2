@@ -34,7 +34,7 @@ STAGES = [
 
 def wrap_task(sample, module,
               requires_reads=False, upload=True, download_only=False,
-              config_path='', cores=1, **kwargs):
+              config_path='', cores=1, max_ram=0, **kwargs):
     task = PangeaLoadTask(
         pe1=sample.r1,
         pe2=sample.r2,
@@ -42,6 +42,7 @@ def wrap_task(sample, module,
         wraps=module.module_name(),
         config_filename=config_path,
         cores=cores,
+        max_ram=max_ram,
         **kwargs,
     )
     task.upload_allowed = upload
@@ -51,15 +52,27 @@ def wrap_task(sample, module,
     return task
 
 
-def get_task_list_for_kmer_stage(sample, clean_reads, upload=True, download_only=False, config_path='', cores=1):
-    wrapit = lambda module: wrap_task(sample, module, config_path=config_path, cores=cores, upload=upload, download_only=download_only)
+def get_task_list_for_kmer_stage(sample, clean_reads,
+                                 upload=True, download_only=False, config_path='',
+                                 cores=1, max_ram=0):
+    wrapit = lambda module: wrap_task(
+        sample, module,
+        config_path=config_path, cores=cores, max_ram=max_ram,
+        upload=upload, download_only=download_only
+    )
     jellyfish = wrapit(Jellyfish)
     jellyfish.wrapped.reads = clean_reads
 
     return [jellyfish]
 
-def get_task_list_for_read_stage(sample, clean_reads, upload=True, download_only=False, config_path='', cores=1):
-    wrapit = lambda module: wrap_task(sample, module, config_path=config_path, cores=cores, upload=upload, download_only=download_only)
+def get_task_list_for_read_stage(sample, clean_reads,
+                                 upload=True, download_only=False, config_path='',
+                                 cores=1, max_ram=0):
+    wrapit = lambda module: wrap_task(
+        sample, module,
+        config_path=config_path, cores=cores, max_ram=max_ram,
+        upload=upload, download_only=download_only
+    )
     dmnd_uniref90 = wrapit(MicaUniref90)
     dmnd_uniref90.wrapped.reads = clean_reads
     humann2 = wrapit(Humann2)
@@ -87,7 +100,9 @@ def get_task_list_for_read_stage(sample, clean_reads, upload=True, download_only
     return processed, [dmnd_uniref90, humann2, mash, hmp, read_stats, kraken2, braken, jellyfish]
 
 
-def get_task_list_for_sample(sample, stage, upload=True, download_only=False, config_path='', cores=1, require_clean_reads=False):
+def get_task_list_for_sample(sample, stage,
+                             upload=True, download_only=False, config_path='',
+                             cores=1,  max_ram=0, require_clean_reads=False):
     reads = wrap_task(
         sample, BaseReads,
         upload=False, config_path=config_path, cores=cores, requires_reads=True

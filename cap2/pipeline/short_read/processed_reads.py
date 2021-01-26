@@ -20,48 +20,12 @@ class ProcessedReads(CapTask):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.hmp = HmpComparison(
-            sample_name=self.sample_name,
-            pe1=self.pe1,
-            pe2=self.pe2,
-            config_filename=self.config_filename,
-            cores=self.cores,
-        )
-        self.humann2 = Humann2(
-            sample_name=self.sample_name,
-            pe1=self.pe1,
-            pe2=self.pe2,
-            config_filename=self.config_filename,
-            cores=self.cores,
-        )
-        self.kraken2 = BrakenKraken2(
-            sample_name=self.sample_name,
-            pe1=self.pe1,
-            pe2=self.pe2,
-            config_filename=self.config_filename,
-            cores=self.cores,
-        )
-        self.mash = Mash(
-            sample_name=self.sample_name,
-            pe1=self.pe1,
-            pe2=self.pe2,
-            config_filename=self.config_filename,
-            cores=self.cores,
-        )
-        self.jellyfish = Jellyfish(
-            sample_name=self.sample_name,
-            pe1=self.pe1,
-            pe2=self.pe2,
-            config_filename=self.config_filename,
-            cores=self.cores,
-        )
-        self.read_stats = ReadStats(
-            sample_name=self.sample_name,
-            pe1=self.pe1,
-            pe2=self.pe2,
-            config_filename=self.config_filename,
-            cores=self.cores,
-        )
+        self.hmp = HmpComparison.from_cap_task(self)
+        self.humann2 = Humann2.from_cap_task(self)
+        self.kraken2 = BrakenKraken2.from_cap_task(self)
+        self.mash = Mash.from_cap_task(self)
+        self.jellyfish = Jellyfish.from_cap_task(self)
+        self.read_stats = ReadStats.from_cap_task(self)
 
     @classmethod
     def version(cls):

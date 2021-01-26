@@ -42,12 +42,7 @@ class Kraken2(CapTask):
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
         self.db = Kraken2DB(config_filename=self.config_filename)
-        self.reads = CleanReads(
-            sample_name=self.sample_name,
-            pe1=self.pe1,
-            pe2=self.pe2,
-            config_filename=self.config_filename
-        )
+        self.reads = CleanReads.from_cap_task(self)
 
     @classmethod
     def _module_name(cls):

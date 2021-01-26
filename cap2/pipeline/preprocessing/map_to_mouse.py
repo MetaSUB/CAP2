@@ -42,14 +42,7 @@ class RemoveMouseReads(CapTask):
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
         self.db = MouseRemovalDB(config_filename=self.config_filename)
-        self.adapter_removed_reads = AdapterRemoval(
-            pe1=self.pe1,
-            pe2=self.pe2,
-            sample_name=self.sample_name,
-            config_filename=self.config_filename,
-            cores=self.cores,
-            data_type=self.data_type,
-        )
+        self.adapter_removed_reads = AdapterRemoval.from_cap_task(self)
 
     def requires(self):
         return self.samtools, self.pkg, self.db, self.adapter_removed_reads

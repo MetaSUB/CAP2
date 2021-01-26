@@ -22,10 +22,9 @@ class ErrorCorrectReads(CapTask):
     rate.
 
     Negatives: error correction can remove SNPs present in
-    secondary strains as such error corrected reads should
+    secondary strains, as such error corrected reads should
     not be used to call SNPs.
     """
-
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -37,21 +36,14 @@ class ErrorCorrectReads(CapTask):
         )
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
-        self.nonhuman_reads = RemoveHumanReads(
-            pe1=self.pe1,
-            pe2=self.pe2,
-            sample_name=self.sample_name,
-            config_filename=self.config_filename,
-            cores=self.cores,
-            data_type=self.data_type,
-        )
+        self.nonhuman_reads = RemoveHumanReads.from_cap_task(self)
 
     def requires(self):
         return self.pkg, self.nonhuman_reads
 
     @classmethod
     def version(cls):
-        return 'v0.2.1'
+        return 'v0.2.2'
 
     def tool_version(self):
         return self.run_cmd(f'{self.pkg.bin} --version').stderr.decode('utf-8')
@@ -82,7 +74,9 @@ class ErrorCorrectReads(CapTask):
         cmd = self.pkg.bin
         cmd += f' --only-error-correction --meta -U {r1.path} '
         outdir = f'{self.sample_name}.error_correction_out'
-        cmd += f' -t {self.cores} -o {outdir}'
+        cmd += f' -t {self.cores} -o {outdir} '
+        if self.max_ram > 0:
+            cmd += f' -m {self.max_ram} '
         self.run_cmd(cmd)  # runs error correction but leaves output in a dir
         config_path = f'{self.sample_name}.error_correction_out/corrected/corrected.yaml'
         spades_out = load(open(config_path).read())

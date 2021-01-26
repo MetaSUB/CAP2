@@ -29,13 +29,7 @@ class FastQC(CapTask):
             channel="bioconda",
             config_filename=self.config_filename,
         )
-        self.reads = BaseReads(
-            pe1=self.pe1,
-            pe2=self.pe2,
-            sample_name=self.sample_name,
-            config_filename=self.config_filename,
-            cores=self.cores,
-        )
+        self.reads = BaseReads.from_cap_task(self)
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
 

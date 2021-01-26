@@ -15,11 +15,13 @@ class Jellyfish(CapTask):
     RAM = '1G'
     Ks = [31, 15]
     module_description = """
-    This module coutns kmer abundances.
+    This module counts kmer within samples. 
 
-    Motivation: 
+    Motivation: K-mer counts frequencies provide a database-free way to analyze samples
+    and are the basis of many other analyses.
 
-    Negatives: 
+    Negatives: K-mer counts can be large and are sensitive to read errors. The latter is
+    mitigated somewhat by read error correction.
     """
 
     def __init__(self, *args, **kwargs):
@@ -32,12 +34,7 @@ class Jellyfish(CapTask):
         )
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
-        self.reads = CleanReads(
-            sample_name=self.sample_name,
-            pe1=self.pe1,
-            pe2=self.pe2,
-            config_filename=self.config_filename
-        )
+        self.reads = CleanReads.from_cap_task(self)
 
     def tool_version(self):
         return self.run_cmd(f'{self.pkg.bin} --version').stderr.decode('utf-8')

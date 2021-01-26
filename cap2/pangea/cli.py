@@ -99,13 +99,13 @@ def cli_run_sample(config, upload, scheduler_url, workers, threads,
 
 def _process_one_sample_chunk(chunk,
                               scheduler_url, stage, upload, download_only,
-                              config, threads, clean_reads, workers):
+                              config, threads, max_ram, clean_reads, workers):
     tasks = []
     for sample in chunk:
         tasks += get_task_list_for_sample(
             sample, stage,
             upload=upload, download_only=download_only,
-            config_path=config, cores=threads, require_clean_reads=clean_reads
+            config_path=config, cores=threads, max_ram=max_ram, require_clean_reads=clean_reads
         )
     if not scheduler_url:
         luigi.build(tasks, local_scheduler=True, workers=workers)
@@ -116,7 +116,7 @@ def _process_one_sample_chunk(chunk,
 
 def _process_samples_in_chunks(samples,
                                scheduler_url, stage, upload, download_only,
-                               config, threads, clean_reads, workers,
+                               config, threads, max_ram, clean_reads, workers,
                                batch_size, timelimit):
     start_time, completed = time.time(), []
     click.echo(f'Processing {len(samples)} samples', err=True)
@@ -143,6 +143,7 @@ def _process_samples_in_chunks(samples,
 @click.option('-b', '--batch-size', default=10, help='Number of samples to process in parallel')
 @click.option('-w', '--workers', default=1)
 @click.option('-t', '--threads', default=1)
+@click.option('-m', '--max-ram', default=0)
 @click.option('--timelimit', default=0, help='Stop adding jobs after N hours')
 @click.option('--endpoint', default='https://pangea.gimmebio.com')
 @click.option('-e', '--email', envvar='PANGEA_USER')
@@ -153,7 +154,7 @@ def _process_samples_in_chunks(samples,
 @click.argument('grp_name')
 def cli_run_samples(config, clean_reads, upload, download_only, scheduler_url,
                     max_attempts,
-                    batch_size, workers, threads, timelimit,
+                    batch_size, workers, threads, max_ram, timelimit,
                     endpoint, email, password, stage, random_seed,
                     org_name, grp_name):
     set_config(endpoint, email, password, org_name, grp_name)
@@ -165,7 +166,7 @@ def cli_run_samples(config, clean_reads, upload, download_only, scheduler_url,
     completed = _process_samples_in_chunks(
         samples,
         scheduler_url, stage, upload, download_only,
-        config, threads, clean_reads, workers,
+        config, threads, max_ram, clean_reads, workers,
         batch_size, timelimit
     )
 
@@ -181,6 +182,7 @@ def cli_run_samples(config, clean_reads, upload, download_only, scheduler_url,
 @click.option('-n', '--num-samples', default=100, help='Max number of samples for this worker to process')
 @click.option('-w', '--workers', default=1)
 @click.option('-t', '--threads', default=1)
+@click.option('-m', '--max-ram', default=0)
 @click.option('--timelimit', default=0, help='Stop adding jobs after N hours')
 @click.option('--endpoint', default='https://pangea.gimmebio.com')
 @click.option('-e', '--email', envvar='PANGEA_USER')
@@ -190,7 +192,7 @@ def cli_run_samples(config, clean_reads, upload, download_only, scheduler_url,
 @click.option('--tag-name', default='MetaSUB CAP')
 def cli_run_samples_from_tag(config, clean_reads, upload, download_only, scheduler_url,
                              max_attempts,
-                             batch_size, num_samples, workers, threads, timelimit,
+                             batch_size, num_samples, workers, threads, max_ram, timelimit,
                              endpoint, email, password, stage, random_seed,
                              tag_name):
     set_config(endpoint, email, password, None, None, name_is_uuid=True)
@@ -202,6 +204,6 @@ def cli_run_samples_from_tag(config, clean_reads, upload, download_only, schedul
     completed = _process_samples_in_chunks(
         samples,
         scheduler_url, stage, upload, download_only,
-        config, threads, clean_reads, workers,
+        config, threads, max_ram, clean_reads, workers,
         batch_size, timelimit
     )

@@ -32,12 +32,7 @@ class HmpComparison(CapTask):
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
         self.db = HmpDB(config_filename=self.config_filename)
-        self.mash = Mash(
-            sample_name=self.sample_name,
-            pe1=self.pe1,
-            pe2=self.pe2,
-            config_filename=self.config_filename
-        )
+        self.mash = Mash.from_cap_task(self)
 
     @classmethod
     def _module_name(cls):

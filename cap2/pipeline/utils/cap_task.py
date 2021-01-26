@@ -15,6 +15,7 @@ from ..config import PipelineConfig
 class BaseCapTask(luigi.Task):
     config_filename = luigi.Parameter(default='')
     cores = luigi.IntParameter(default=1)
+    max_ram = luigi.IntParameter(default=0)  # maximum allowed ram in GB. 0 means no limit.
     module_description = "No description for this module."
 
     def __init__(self, *args, **kwargs):
@@ -101,8 +102,11 @@ class BaseCapTask(luigi.Task):
             'cores': self.cores,
             'current_time': datetime.datetime.now().isoformat(),
             'tool_version': self.tool_version(),
+            'short_version_hash': self.short_version_hash(),
             'version_hash': self.version_hash(),
+            'version_tree': self.version_tree(),
             'module_version': self.version(),
+            'module_description': self.module_description,
             'host_info': {
                 'system_name': uname.sysname,
                 'node_name': uname.nodename,
@@ -182,6 +186,18 @@ class CapTask(BaseCapTask):
             config_filename=config_path,
             cores=cores,
             data_type=sample.kind
+        )
+
+    @classmethod
+    def from_cap_task(cls, other):
+        return cls(
+            pe1=other.pe1,
+            pe2=other.pe2,
+            sample_name=other.sample_name,
+            config_filename=other.config_filename,
+            cores=other.cores,
+            max_ram=other.max_ram,
+            data_type=other.data_type,
         )
 
 

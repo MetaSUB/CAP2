@@ -78,7 +78,7 @@ class BaseCapTask(luigi.Task):
 
     @classmethod
     def _module_name(cls):
-        raise NotImplementedError(cls.module_name())
+        raise NotImplementedError(cls)
 
     @classmethod
     def module_name(cls):

@@ -66,11 +66,11 @@ def get_task_list_for_sample(sample, config, threads):
 
 
 def _process_one_sample_chunk(chunk, scheduler_url, workers,
-                              stage, config, clean_reads, **kwargs):
+                              config, clean_reads, **kwargs):
     tasks = []
     for sample in chunk:
         tasks += get_task_list_for_sample(
-            sample, stage,
+            sample,
             config_path=config, require_clean_reads=clean_reads, **kwargs
         )
     if not scheduler_url:
@@ -81,7 +81,7 @@ def _process_one_sample_chunk(chunk, scheduler_url, workers,
 
 
 def _process_samples_in_chunks(samples, scheduler_url, batch_size, timelimit, workers,
-                               stage, config, clean_reads, **kwargs):
+                               config, clean_reads, **kwargs):
     start_time, completed = time.time(), []
     click.echo(f'Processing {len(samples)} samples', err=True)
     for chunk in chunks(samples, batch_size):
@@ -91,7 +91,7 @@ def _process_samples_in_chunks(samples, scheduler_url, batch_size, timelimit, wo
             return completed
         completed += _process_one_sample_chunk(
             chunk, scheduler_url, workers,
-            stage, config, clean_reads, **kwargs
+            config, clean_reads, **kwargs
         )
     return completed
 
@@ -128,6 +128,10 @@ def cli_run_samples_from_tag(config, clean_reads, upload, download_only, schedul
         scheduler_url, stage, upload, download_only,
         config, threads, clean_reads, workers,
         batch_size, timelimit
+    )
+    completed = _process_samples_in_chunks(
+        samples, scheduler_url, batch_size, timelimit, workers,
+        config, clean_reads, cores=threads, max_ram=max_ram
     )
 
 
@@ -169,4 +173,8 @@ def cli_run_samples(config, log_level, clean_reads, upload, download_only, sched
         scheduler_url, stage, upload, download_only,
         config, threads, clean_reads, workers,
         batch_size, timelimit
+    )
+    completed = _process_samples_in_chunks(
+        samples, scheduler_url, batch_size, timelimit, workers,
+        config, clean_reads, cores=threads, max_ram=max_ram
     )

@@ -54,6 +54,27 @@ class TestPangea(TestCase):
         c.max_ram = 1000
         self.assertEqual(c.max_ram, 1000)
 
+    def test_pre_task_list_pangea(self):
+        psample = PangeaSample(
+            PANGEA_SAMPLE.uuid,
+            None,
+            None,
+            None,
+            None,
+            None,
+            knex=PANGEA_SAMPLE.knex,
+            sample=PANGEA_SAMPLE,
+        )
+        set_config(PANGEA_ENDPOINT, PANGEA_USER, PANGEA_PASS, '', '', name_is_uuid=True)
+        tasks = get_task_list_for_sample(psample, 'pre')
+        self.assertEqual(len(tasks), 1)
+        self.assertTrue( isinstance(tasks[0], PangeaCapTask))
+        self.assertFalse(isinstance(tasks[0].ec_reads, PangeaCapTask))
+        self.assertTrue( isinstance(tasks[0].ec_reads.nonhuman_reads, PangeaCapTask))
+        self.assertFalse(isinstance(tasks[0].ec_reads.nonhuman_reads.mouse_removed_reads, PangeaCapTask))
+        self.assertFalse(isinstance(tasks[0].ec_reads.nonhuman_reads.mouse_removed_reads.adapter_removed_reads, PangeaCapTask))
+        self.assertTrue( isinstance(tasks[0].ec_reads.nonhuman_reads.mouse_removed_reads.adapter_removed_reads.reads, PangeaCapTask))
+
     def test_pct_instance_is_pct_and_luigi_task(self):
         psample = PangeaSample(
             PANGEA_SAMPLE.uuid,

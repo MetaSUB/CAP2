@@ -12,10 +12,17 @@ from .make_covid_consensus_seq import MakeCovidConsensusSeq
 from .call_covid_variants import CallCovidVariants
 
 from ....pangea.cli import set_config
-from ....pangea.api import wrap_task
+from ....pangea.api import (
+    wrap_task,
+    recursively_wrap_task,
+    nonhuman_stage_task,
+)
 from ....pangea.pangea_sample import PangeaGroup, PangeaTag
-from ....pipeline.preprocessing import BaseReads
-from ....pipeline.preprocessing.map_to_human import RemoveHumanReads
+from ....pipeline.preprocessing import (
+    RemoveHumanReads,
+    BaseReads,
+)
+
 from ....utils import chunks
 from ....setup_logging import *
 
@@ -37,13 +44,10 @@ def get_task_list_for_sample(sample, config, **kwargs):
         sample, BaseReads, config_path=config, requires_reads=True, **kwargs
     )
 
-    wrapit = lambda x: wrap_task(sample, x, config_path=config, **kwargs)
-
-    fast_detect = wrapit(Kraken2FastDetectCovid)
+    fast_detect = wrap_task(sample, Kraken2FastDetectCovid, config_path=config, **kwargs)
     fast_detect.reads = base_reads
 
-    nonhuman_reads = wrapit(RemoveHumanReads)
-    nonhuman_reads.mouse_removed_reads.reads = base_reads
+    nonhuman_reads = nonhuman_stage_task(sample, basestring, config_path=config, **kwargs)
 
     align_to_covid = wrapit(AlignReadsToCovidGenome)
     align_to_covid.reads = nonhuman_reads

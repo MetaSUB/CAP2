@@ -200,6 +200,15 @@ class CapTask(BaseCapTask):
             data_type=other.data_type,
         )
 
+    def __str__(self):
+        try:
+            module_name = self.module_name()
+            short_hash = self.short_version_hash()
+            return f'<CapTask::{module_name}::{short_hash} {self.sample_name}/>'
+        except:
+            return repr(self)
+
+
 
 class CapGroupTask(BaseCapTask):
     group_name = luigi.Parameter()

@@ -2,6 +2,8 @@
 import click
 import luigi
 import time
+import logging
+
 
 from os import environ
 
@@ -9,6 +11,9 @@ from .api import get_task_list_for_sample
 from .pangea_sample import PangeaSample, PangeaGroup, PangeaTag
 from ..pipeline.preprocessing import FastQC, MultiQC
 from ..utils import chunks
+from ..setup_logging import *
+
+logger = logging.getLogger('cap2')
 
 
 @click.group()
@@ -122,11 +127,11 @@ def _process_one_sample_chunk(chunk, scheduler_url, workers,
 def _process_samples_in_chunks(samples, scheduler_url, batch_size, timelimit, workers,
                                stage, config, clean_reads, **kwargs):
     start_time, completed = time.time(), []
-    click.echo(f'Processing {len(samples)} samples', err=True)
+    logging.info(f'Processing {len(samples)} samples')
     for chunk in chunks(samples, batch_size):
-        click.echo(f'Completed processing {len(completed)} samples', err=True)
+        logging.info(f'Completed processing {len(completed)} samples')
         if timelimit and (time.time() - start_time) > (60 * 60 * timelimit):
-            click.echo(f'Timelimit reached. Stopping.', err=True)
+            logging.info(f'Timelimit reached. Stopping.')
             return completed
         completed += _process_one_sample_chunk(
             chunk, scheduler_url, workers,

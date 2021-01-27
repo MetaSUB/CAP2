@@ -17,6 +17,9 @@ from ....pangea.pangea_sample import PangeaGroup, PangeaTag
 from ....pipeline.preprocessing import BaseReads
 from ....pipeline.preprocessing.map_to_human import RemoveHumanReads
 from ....utils import chunks
+from ....setup_logging import *
+
+logger = logging.getLogger('cap2')
 
 
 @click.group('covid')
@@ -81,11 +84,11 @@ def _process_one_sample_chunk(chunk, scheduler_url, workers,
 def _process_samples_in_chunks(samples, scheduler_url, batch_size, timelimit, workers,
                                config, clean_reads, **kwargs):
     start_time, completed = time.time(), []
-    click.echo(f'Processing {len(samples)} samples', err=True)
+    logger.info(f'Processing {len(samples)} samples')
     for chunk in chunks(samples, batch_size):
-        click.echo(f'Completed processing {len(completed)} samples', err=True)
+        logger.info(f'Completed processing {len(completed)} samples')
         if timelimit and (time.time() - start_time) > (60 * 60 * timelimit):
-            click.echo(f'Timelimit reached. Stopping.', err=True)
+            logger.info(f'Timelimit reached. Stopping.')
             return completed
         completed += _process_one_sample_chunk(
             chunk, scheduler_url, workers,
@@ -150,10 +153,6 @@ def cli_run_samples(config, log_level, clean_reads, upload, download_only, sched
                     batch_size, workers, threads, timelimit,
                     endpoint, email, password, random_seed,
                     org_name, grp_name):
-    logging.basicConfig(
-        level=log_level,
-        format='%(levelname)s:%(message)s',
-    )
     set_config(endpoint, email, password, org_name, grp_name)
     group = PangeaGroup(grp_name, email, password, endpoint, org_name)
     samples = [

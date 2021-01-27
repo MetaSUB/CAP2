@@ -16,6 +16,11 @@ def pangea():
     pass
 
 
+@pangea.command('version')
+def pangea_version():
+    click.echo('v0.1.0')
+
+
 @pangea.group()
 def run():
     pass

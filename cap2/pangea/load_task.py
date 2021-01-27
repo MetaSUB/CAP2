@@ -224,7 +224,7 @@ class PangeaCapTask(PangeaBaseCapTask):
             return self.wrapped_instance.requires()
         raise PangeaLoadTaskError('Running tasks is not permitted AND results are not available')
 
-    def _run(self):
+    def run(self):
         """If the results are present download and return them.
 
         Otherwise run the wrapped module, upload the results, and then return.
@@ -234,12 +234,19 @@ class PangeaCapTask(PangeaBaseCapTask):
         else:
             if self.requires_reads:
                 self._download_reads()
-            self.wrapped_instance._run()
+            self.wrapped_instance.run()  # see above. we reassign the original CT._run to CT._wrapped_run
             if self.upload_allowed:
                 self._upload_results()
             else:
                 open(self.output()['upload_flag'].path, 'w').close()
 
+    def __str__(self):
+        try:
+            module_name = self.module_name()
+            short_hash = self.short_version_hash()
+            return f'<PangeaCapTask::{module_name}::{short_hash} {self.sample_name}/>'
+        except:
+            return repr(self)
 
 class PangeaGroupCapTask(PangeaBaseCapTask):
 

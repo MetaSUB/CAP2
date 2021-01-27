@@ -2,6 +2,8 @@ import luigi
 import random
 import subprocess
 import os
+import logging
+
 from requests.exceptions import HTTPError
 
 from pangea_api import (
@@ -17,6 +19,8 @@ from os.path import join, isfile
 
 from .sra_utils import sra_to_fastqs
 from ..sample import Sample
+
+logger = logging.getLogger('cap2')
 
 
 class PangeaSampleError(Exception):
@@ -76,7 +80,7 @@ class PangeaSample:
         return ar
 
     def download(self):
-        print('DOWNLOADING READS', self.name)
+        logger.info(f'downloading reads for sample: {self.name}')
         try:
             ar = self.sample.analysis_result('raw::raw_reads').get()
         except HTTPError:
@@ -88,6 +92,7 @@ class PangeaSample:
             self.download_sra(ar)
 
     def download_fastqs(self, ar):
+        logger.debug(f'downloading fastqs for sample: {self.name}')
         r1 = ar.field('read_1').get()
         r2 = ar.field('read_2').get()
         os.makedirs('downloaded_data', exist_ok=True)
@@ -97,6 +102,7 @@ class PangeaSample:
             r2.download_file(filename=self.r2)
 
     def download_sra(self, ar):
+        logger.debug(f'downloading sra_run for sample: {self.name}')
         sra = ar.field('sra_run').get()
         sra.download_file(filename=self.sra)
         sra_to_fastqs(self.name, self.sra, exc='fasterq-dump', dirpath='.')

@@ -1,6 +1,7 @@
 import luigi
 import subprocess
 import json
+import logging
 from pangea_api import (
     Knex,
     User,
@@ -21,6 +22,8 @@ from ..pipeline.utils.cap_task import (
 )
 from ..pipeline.config import PipelineConfig
 from ..pipeline.preprocessing import FastQC
+
+logger = logging.getLogger('cap2')
 
 PANGEA_URL = 'https://pangea.gimmebio.com'
 _GLOBAL_REGISTRY_OF_PANGEA_CAP_TASK_TYPES = {}
@@ -230,12 +233,16 @@ class PangeaCapTask(PangeaBaseCapTask):
         Otherwise run the wrapped module, upload the results, and then return.
         """
         if self.results_available():
+            logger.debug(f'results are available for {self}, downloading...')
             self._download_results()
         else:
             if self.requires_reads:
+                logger.debug(f'reads are required for {self}, downloading...')
                 self._download_reads()
+            logger.debug(f'running wrapped_instance for {self}, running...')
             self.wrapped_instance.run()  # see above. we reassign the original CT._run to CT._wrapped_run
             if self.upload_allowed:
+                logger.debug(f'uploading results for {self}, uploading...')
                 self._upload_results()
             else:
                 open(self.output()['upload_flag'].path, 'w').close()

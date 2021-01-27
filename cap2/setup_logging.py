@@ -15,7 +15,7 @@ def run_once(f):
 
 @run_once
 def setup_logging():
-    luigi.configuration.get_config().set('core', 'no_configure_logging', True)
+    luigi.configuration.get_config().set('core', 'no_configure_logging', 'True')
     
     luigi_logger = logging.getLogger('luigi-interface')
     luigi_logger.setLevel(LEVEL)

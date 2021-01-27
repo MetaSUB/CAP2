@@ -1,6 +1,8 @@
 import logging
+import luigi
 
 LEVEL = 10
+
 
 def run_once(f):
     def wrapper(*args, **kwargs):
@@ -10,8 +12,11 @@ def run_once(f):
     wrapper.has_run = False
     return wrapper
 
+
 @run_once
 def setup_logging():
+    luigi.configuration.get_config().set('core', 'no_configure_logging', 'no_configure_logging')
+    
     luigi_logger = logging.getLogger('luigi-interface')
     luigi_logger.setLevel(LEVEL)
 

@@ -15,11 +15,10 @@ from os.path import join, dirname, isfile, isdir, abspath
 from pangea_api.blob_constructors import sample_from_uuid
 from pangea_api import Knex, Organization, User
 
-
-PANGEA_ENDPOINT = 'https://pangea.gimmebio.com'
 RAW_READS_1 = join(dirname(__file__), 'data/zymo_pos_cntrl.r1.fq.gz')
 RAW_READS_2 = join(dirname(__file__), 'data/zymo_pos_cntrl.r2.fq.gz')
 
+PANGEA_ENDPOINT = 'https://pangea.gimmebio.com'
 PANGEA_USER = 'cap2tester@fake.com'
 PANGEA_PASS = environ['CAP2_PANGEA_TEST_PASSWORD']
 

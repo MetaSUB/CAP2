@@ -66,6 +66,8 @@ def recursively_wrap_task(sample, module,
             subtask = recursively_wrap_task(sample, type(value),
                                             config_path=config_path,
                                             no_wrap_tasks=no_wrap_tasks,
+                                            no_recurse_tasks=no_recurse_tasks,
+                                            module_substitute_tasks=module_substitute_tasks,
                                             **kwargs)
             setattr(task, attr, subtask)
     return task

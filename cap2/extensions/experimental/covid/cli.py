@@ -43,6 +43,7 @@ def get_task_list_for_sample(sample, config, **kwargs):
     base_reads = wrap_task(
         sample, BaseReads, config_path=config, requires_reads=True, **kwargs
     )
+    base_reads.upload_allowed = False
 
     wrapit = lambda x: wrap_task(sample, x, config_path=config, **kwargs)
 
@@ -67,7 +68,7 @@ def get_task_list_for_sample(sample, config, **kwargs):
     covid_variants.pileup = covid_pileup
 
     tasks = [
-        fast_detect, covid_pileup, covid_genome_coverage, align_to_covid,
+        fast_detect, covid_genome_coverage,
         covid_consensus, covid_variants
     ]
     return tasks

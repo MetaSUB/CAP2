@@ -13,7 +13,7 @@ from .call_covid_variants import CallCovidVariants
 
 from ....pangea.cli import set_config
 from ....pangea.api import wrap_task
-from ....pangea.pangea_sample import PangeaGroup
+from ....pangea.pangea_sample import PangeaGroup, PangeaTag
 from ....pipeline.preprocessing import BaseReads
 from ....pipeline.preprocessing.map_to_human import RemoveHumanReads
 from ....utils import chunks
@@ -65,12 +65,14 @@ def get_task_list_for_sample(sample, config, threads):
     return tasks
 
 
-def _process_one_sample_chunk(chunk,
-                              scheduler_url, stage, upload, download_only,
-                              config, threads, clean_reads, workers):
+def _process_one_sample_chunk(chunk, scheduler_url, workers,
+                              stage, config, clean_reads, **kwargs):
     tasks = []
     for sample in chunk:
-        tasks += get_task_list_for_sample(sample, config, threads)
+        tasks += get_task_list_for_sample(
+            sample, stage,
+            config_path=config, require_clean_reads=clean_reads, **kwargs
+        )
     if not scheduler_url:
         luigi.build(tasks, local_scheduler=True, workers=workers)
     else:
@@ -78,25 +80,18 @@ def _process_one_sample_chunk(chunk,
     return chunk
 
 
-def _process_samples_in_chunks(samples,
-                               scheduler_url, stage, upload, download_only,
-                               config, threads, clean_reads, workers,
-                               batch_size, timelimit):
+def _process_samples_in_chunks(samples, scheduler_url, batch_size, timelimit, workers,
+                               stage, config, clean_reads, **kwargs):
     start_time, completed = time.time(), []
     click.echo(f'Processing {len(samples)} samples', err=True)
-    for i, chunk in enumerate(chunks(samples, batch_size)):
-        logging.basicConfig(
-            level=log_level,
-            format=f'(batch {i + 1}) ' + '%(levelname)s:%(message)s',
-        )
+    for chunk in chunks(samples, batch_size):
         click.echo(f'Completed processing {len(completed)} samples', err=True)
         if timelimit and (time.time() - start_time) > (60 * 60 * timelimit):
             click.echo(f'Timelimit reached. Stopping.', err=True)
             return completed
         completed += _process_one_sample_chunk(
-            chunk,
-            scheduler_url, stage, upload, download_only,
-            config, threads, clean_reads, workers
+            chunk, scheduler_url, workers,
+            stage, config, clean_reads, **kwargs
         )
     return completed
 

@@ -18,7 +18,7 @@ from ....pangea.api import wrap_task
 from ....pangea.pangea_sample import PangeaGroup
 from ....pipeline.preprocessing import BaseReads
 from ....utils import chunks
-from .tasks import StrainPangeaLoadTask, StrainPangeaGroupLoadTask
+from .tasks import StrainCapTask, StrainPangeaLoadTask, StrainPangeaGroupLoadTask
 from .utils import clean_microbe_name
 from .strainotyping.cli import strainotype_cli
 
@@ -36,55 +36,94 @@ def run_cli():
     pass
 
 
-def strain_wrap_task(sample, module,
-              requires_reads=False, upload=True, download_only=False,
-              config_path='', cores=1, **kwargs):
-    task = StrainPangeaLoadTask(
-        pe1=sample.r1,
-        pe2=sample.r2,
-        sample_name=sample.name,
-        wraps=module.module_name(),
-        config_filename=config_path,
-        cores=cores,
-        **kwargs,
-    )
-    task.upload_allowed = upload
-    task.wrapped_module = module
-    task.requires_reads = requires_reads
-    task.download_only = download_only
-    return task
+# def strain_wrap_task(sample, module,
+#               requires_reads=False, upload=True, download_only=False,
+#               config_path='', cores=1, **kwargs):
+#     task = StrainPangeaLoadTask(
+#         pe1=sample.r1,
+#         pe2=sample.r2,
+#         sample_name=sample.name,
+#         wraps=module.module_name(),
+#         config_filename=config_path,
+#         cores=cores,
+#         **kwargs,
+#     )
+#     task.upload_allowed = upload
+#     task.wrapped_module = module
+#     task.requires_reads = requires_reads
+#     task.download_only = download_only
+#     return task
 
 
-def get_task_list_for_sample(sample, config, threads, genome_name, genome_path):
-    base_reads = wrap_task(
-        sample, BaseReads,
-        upload=False, config_path=config, cores=threads, requires_reads=True
+def get_task_list_for_sample(sample, stage, config_path='', require_clean_reads=False, **kwargs):
+    reads = wrap_task(
+        sample, BaseReads, config_path=config_path, requires_reads=True, **kwargs
     )
-    align_genome = strain_wrap_task(
-        sample, AlignReadsToGenome, config_path=config, cores=threads,
-        genome_name=genome_name, genome_path=genome_path
+    reads.upload_allowed = False
+    wrapit = lambda module: wrap_task(sample, module, config_path=config_path, **kwargs)
+
+    # qc stage
+    fastqc = wrapit(FastQC)
+    fastqc.reads = reads
+
+    # pre stage
+    nonhuman_reads = wrapit(RemoveHumanReads)
+    nonhuman_reads.mouse_removed_reads.adapter_removed_reads.reads = reads
+    clean_reads = wrapit(CleanReads)
+    clean_reads.ec_reads.nonhuman_reads = nonhuman_reads
+    if require_clean_reads:
+        clean_reads.download_only = True
+
+    # reads stage
+    processed, read_task_list = get_task_list_for_read_stage(sample, clean_reads, config_path=config_path, **kwargs)
+
+    # kmer stage
+    kmer_task_list = get_task_list_for_kmer_stage(sample, clean_reads, config_path=config_path, **kwargs)
+
+    # assembly stage
+    assembly = wrapit(MetaspadesAssembly)
+    assembly.reads = clean_reads
+
+    # all stage
+    full = FullPipeline.from_sample(sample, config_path)
+    full.qc = fastqc
+    full.short_reads = processed
+    full.assembly = assembly
+
+    if stage == 'data':
+        tasks = [reads]
+    if stage == 'qc':
+        tasks = [fastqc]
+    if stage == 'pre':
+        tasks = [clean_reads]
+    if stage == 'reads':
+        tasks = [clean_reads, processed] + read_task_list
+    if stage == 'kmer':
+        tasks = [clean_reads] + kmer_task_list
+    if stage == 'assembly':
+        tasks = [clean_reads, assembly]
+    if stage == 'all':
+        tasks = [full]
+    return tasks
+
+
+def get_task_list_for_sample(sample, config_path='', **kwargs):
+    reads = wrap_task(
+        sample, BaseReads, config_path=config_path, requires_reads=True, **kwargs
     )
-    align_genome.wrapped.reads.mouse_removed_reads.reads = base_reads
-    make_pileup = strain_wrap_task(
-        sample, MakePileup, config_path=config, cores=threads,
-        genome_name=genome_name, genome_path=genome_path
-    )
-    make_pileup.wrapped.bam = align_genome
-    make_snp_graph = strain_wrap_task(
-        sample, MakeSNPGraph, config_path=config, cores=threads,
-        genome_name=genome_name, genome_path=genome_path
-    )
-    make_snp_graph.wrapped.bam = align_genome
-    make_snp_table = strain_wrap_task(
-        sample, MakeSNPTable, config_path=config, cores=threads,
-        genome_name=genome_name, genome_path=genome_path
-    )
-    make_snp_table.wrapped.graph = make_snp_graph
-    make_snp_clusters = strain_wrap_task(
-        sample, MakeSNPClusters, config_path=config, cores=threads,
-        genome_name=genome_name, genome_path=genome_path
-    )
-    make_snp_clusters.wrapped.graph = make_snp_graph
+    reads.upload_allowed = False
+    wrapit = lambda module: wrap_task(sample, module, config_path=config_path, **kwargs)
+
+    align_genome = wrapit(AlignReadsToGenome)
+    align_genome.reads.mouse_removed_reads.reads = base_reads
+    make_pileup = wrapit(MakePileup)
+    make_pileup.bam = align_genome
+    make_snp_graph = wrapit(MakeSNPGraph)
+    make_snp_graph.bam = align_genome
+    make_snp_table = wrapit(MakeSNPTable)
+    make_snp_table.graph = make_snp_graph
+    make_snp_clusters = wrapit(MakeSNPClusters)
+    make_snp_clusters.graph = make_snp_graph
     tasks = [make_pileup, make_snp_graph, make_snp_table, make_snp_clusters]
     return tasks
 

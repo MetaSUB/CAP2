@@ -44,7 +44,9 @@ def get_task_list_for_sample(sample, config, **kwargs):
         sample, BaseReads, config_path=config, requires_reads=True, **kwargs
     )
 
-    fast_detect = wrap_task(sample, Kraken2FastDetectCovid, config_path=config, **kwargs)
+    wrapit = lambda x: wrap_task(sample, x, config_path=config, **kwargs)
+
+    fast_detect = wrapit(Kraken2FastDetectCovid)
     fast_detect.reads = base_reads
 
     nonhuman_reads = nonhuman_stage_task(sample, base_reads, config_path=config, **kwargs)

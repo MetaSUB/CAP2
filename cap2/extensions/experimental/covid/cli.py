@@ -159,6 +159,7 @@ def cli_run_samples(config, log_level, clean_reads, upload, download_only, sched
         format='%(levelname)s:%(message)s',
     )
     set_config(endpoint, email, password, org_name, grp_name)
+    group = PangeaGroup(grp_name, email, password, endpoint, org_name)
     samples = [
         samp for samp in group.pangea_samples(randomize=True, seed=random_seed)
         if not clean_reads or samp.has_clean_reads()

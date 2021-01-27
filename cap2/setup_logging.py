@@ -18,9 +18,10 @@ def setup_logging():
     stream_handler = logging.StreamHandler()
     stream_handler.setLevel(LEVEL)
 
-    formatter = logging.Formatter('[%(levelname)s] <luigi>: %(message)s')
+    formatter = logging.Formatter('[%(levelname)s] <luigi> (%(asctime)s): %(message)s')
     stream_handler.setFormatter(formatter)
 
+    luigi_logger.handlers = []  # get rid of anything in luigi
     luigi_logger.addHandler(stream_handler)
 
 
@@ -30,7 +31,7 @@ def setup_logging():
     stream_handler = logging.StreamHandler()
     stream_handler.setLevel(LEVEL)
 
-    formatter = logging.Formatter('[%(levelname)s] <cap2>: %(message)s')
+    formatter = logging.Formatter('[%(levelname)s] <cap2> (%(asctime)s): %(message)s')
     stream_handler.setFormatter(formatter)
 
     cap2_logger.addHandler(stream_handler)

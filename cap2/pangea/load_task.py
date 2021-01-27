@@ -163,7 +163,7 @@ class PangeaBaseCapTask(metaclass=PangeaBaseCapTaskMetaClass):
 
     def get_results(self):
         ar = self._get_analysis_result()
-        for field_name in self.wrapped.output().keys():
+        for field_name in self.wrapped_instance.output().keys():
             try:
                 ar.field(field_name).get()
             except HTTPError:

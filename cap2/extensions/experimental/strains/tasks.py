@@ -1,7 +1,7 @@
 
 import luigi
 
-from ....pangea.load_task import PangeaLoadTask, PangeaGroupLoadTask
+#from ....pangea.load_task import PangeaLoadTask, PangeaGroupLoadTask
 from ....pipeline.utils.cap_task import (
     BaseCapTask,
     CapTask,

@@ -31,7 +31,7 @@ def run_cli():
 
 def get_task_list_for_sample(sample, config, **kwargs):
     base_reads = wrap_task(
-        sample, BaseReads, config_path=config_path, requires_reads=True, **kwargs
+        sample, BaseReads, config_path=config, requires_reads=True, **kwargs
     )
 
     wrapit = lambda x: wrap_task(sample, x, config_path=config, **kwargs)

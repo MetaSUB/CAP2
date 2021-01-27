@@ -125,7 +125,7 @@ def cli_run_samples_from_tag(config, clean_reads, upload, download_only, schedul
     ]
     completed = _process_samples_in_chunks(
         samples, scheduler_url, batch_size, timelimit, workers,
-        config, clean_reads, cores=threads, max_ram=max_ram
+        config, clean_reads, cores=threads,
     )
 
 
@@ -164,5 +164,5 @@ def cli_run_samples(config, log_level, clean_reads, upload, download_only, sched
     ]
     completed = _process_samples_in_chunks(
         samples, scheduler_url, batch_size, timelimit, workers,
-        config, clean_reads, cores=threads, max_ram=max_ram
+        config, clean_reads, cores=threads,
     )

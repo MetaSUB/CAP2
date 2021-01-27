@@ -124,12 +124,6 @@ def cli_run_samples_from_tag(config, clean_reads, upload, download_only, schedul
         if not clean_reads or samp.has_clean_reads()
     ]
     completed = _process_samples_in_chunks(
-        samples,
-        scheduler_url, stage, upload, download_only,
-        config, threads, clean_reads, workers,
-        batch_size, timelimit
-    )
-    completed = _process_samples_in_chunks(
         samples, scheduler_url, batch_size, timelimit, workers,
         config, clean_reads, cores=threads, max_ram=max_ram
     )
@@ -168,12 +162,6 @@ def cli_run_samples(config, log_level, clean_reads, upload, download_only, sched
         samp for samp in group.pangea_samples(randomize=True, seed=random_seed)
         if not clean_reads or samp.has_clean_reads()
     ]
-    completed = _process_samples_in_chunks(
-        samples,
-        scheduler_url, stage, upload, download_only,
-        config, threads, clean_reads, workers,
-        batch_size, timelimit
-    )
     completed = _process_samples_in_chunks(
         samples, scheduler_url, batch_size, timelimit, workers,
         config, clean_reads, cores=threads, max_ram=max_ram

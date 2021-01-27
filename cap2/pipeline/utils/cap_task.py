@@ -4,12 +4,15 @@ import subprocess
 import datetime
 import json
 import os
+import logging
 
 from hashlib import sha256
 from sys import stderr
 from os.path import join
 
 from ..config import PipelineConfig
+
+logger = logging.getLogger('cap2')
 
 
 class BaseCapTask(luigi.Task):
@@ -122,11 +125,15 @@ class BaseCapTask(luigi.Task):
 
     def run(self):
         """Run an instance of this task."""
+        logger.debug(f'starting run for {self}')
         self.run_start_time = datetime.datetime.now().isoformat()
         for hook in self.pre_run_hooks:
+            logger.debug(f'running pre-run hook {hook} for {self}')
             hook()
+        logger.debug(f'running module for {self}')
         run = self._run()
         with open(self.get_run_metadata_filepath(), 'w') as metafile:
+            logger.debug(f'writing run metadata for {self}')
             metafile.write(json.dumps(self.get_run_metadata()))
         return run
 

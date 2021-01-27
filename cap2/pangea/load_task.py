@@ -27,33 +27,59 @@ _GLOBAL_REGISTRY_OF_PANGEA_CAP_TASK_TYPES = {}
 
 
 def get_pangea_config(key, default=None):
-    if default:
-        return luigi.configuration.get_config().get('pangea', key, default)
-    return luigi.configuration.get_config().get('pangea', key)
+    val = luigi.configuration.get_config().get('pangea', key)
+    if val is None and default is not None:
+        val = default
+    return val
 
 
 class PangeaLoadTaskError(Exception):
     pass
 
 
+class PangeaBaseCapTaskLuigiTask(luigi.Task):
+    pass
+
+
 class PangeaBaseCapTaskMetaClass(type):
+    """Metaclass for PangeaBaseCapTask that sends class attribute requests to the wrapped type."""
 
     def __getattr__(cls, key):
         return getattr(cls.wrapped_type, key)
 
+    def __instancecheck__(cls, instance):
+        return isinstance(instance, PangeaBaseCapTaskLuigiTask)
+
 
 class PangeaBaseCapTask(metaclass=PangeaBaseCapTaskMetaClass):
-    """
-    Concept: replace the unweildy PangeaLoadTask with a set of classes
-    that dynamically reference the CapTask that they wrap.
+    """Handle comunication and i/o with Pangea for a CapTask.
+
+    PangeaBaseCapTask is an abstract class twice over. First,
+    either PangeaGroupCapTask or PangeaCapTask should be used.
+    Second, types should be dynamically generated from CapTasks.
 
     download_only, if true do not run the module, just download results from pangea (if present)
     upload_allowed, if false do not attempt to uplod new results to panga
     """
     wrapped_type = None
 
+    @property
+    def __class__(self):
+        """Luigi uses hard instance checks to determine if something is
+        a task but we only have a duck typed class here. By overwriting
+        this method we can trick the luigi scheduler into allowing this
+        task to be run.
+
+        This is not free and can introduce a number of problems. The most
+        obvious problem is that isinstance(<an instance of PBCT>, PBCT)
+        will return False. We can get around this in part by modifying
+        PBCTMC as above.
+        """
+        return PangeaBaseCapTaskLuigiTask
+
     @classmethod
     def new_task_type(cls, cap_task_type):
+        """Return a new task type that wraps the specified `cap_task_type`."""
         name = f'{cls.__name__}__{cap_task_type.__name__}'
         try:
             return _GLOBAL_REGISTRY_OF_PANGEA_CAP_TASK_TYPES[name]
@@ -66,14 +92,17 @@ class PangeaBaseCapTask(metaclass=PangeaBaseCapTaskMetaClass):
         return _GLOBAL_REGISTRY_OF_PANGEA_CAP_TASK_TYPES[name]
 
     def __init__(self, *args, **kwargs):
+        self.wrapped_instance = None
         self.requires_reads = kwargs.pop('requires_reads', False)
 
         self.upload_allowed = get_pangea_config('upload_allowed', True)
         self.download_only = get_pangea_config('download_only', False)
         self.name_is_uuid = get_pangea_config('name_is_uuid')
-        self.endpoint = get_pangea_config('endpoint_url', PANGEA_URL)
+        self.endpoint = get_pangea_config('pangea_endpoint', PANGEA_URL)
         self.knex = Knex(self.endpoint)
-        User(self.knex, get_pangea_config('user'), get_pangea_config('password')).login()
+        user = get_pangea_config('user')
+        if user:
+            User(self.knex, user, get_pangea_config('password')).login()
         if self.name_is_uuid:
             self.org_name = None
             self.grp_name = None
@@ -87,10 +116,16 @@ class PangeaBaseCapTask(metaclass=PangeaBaseCapTaskMetaClass):
         self.wrapped_instance = self.wrapped_type(*args, **kwargs)
 
     def __getattr__(self, key):
-        return getattr(self.wrapped_instance, key)
+        if key == 'wrapped_instance':  # only occurs in the constructor
+            return None
+        if self.wrapped_instance:
+            return getattr(self.wrapped_instance, key)
 
     def __setattr__(self, key, val):
-        return setattr(self.wrapped_instance, key, val)
+        if self.wrapped_instance and hasattr(self.wrapped_instance, key):
+            setattr(self.wrapped_instance, key, val)
+        else:
+            self.__dict__[key] = val
 
     def output(self):
         wrapped_out = self.wrapped_instance.output()

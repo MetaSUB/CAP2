@@ -71,7 +71,7 @@ def get_task_list_for_read_stage(sample, clean_reads, config_path='', **kwargs):
     braken.report = kraken2
     braken.reads = clean_reads
 
-    processed = ProcessedReads.from_sample(sample, config_path, cores=cores, max_ram=max_ram)
+    processed = ProcessedReads.from_sample(sample, config_path)
     processed.hmp = hmp
     processed.humann2 = humann2
     processed.kraken2 = braken
@@ -82,8 +82,9 @@ def get_task_list_for_read_stage(sample, clean_reads, config_path='', **kwargs):
 
 def get_task_list_for_sample(sample, stage, config_path='', require_clean_reads=False, **kwargs):
     reads = wrap_task(
-        sample, BaseReads, upload=False, config_path=config_path, requires_reads=True, **kwargs
+        sample, BaseReads, config_path=config_path, requires_reads=True, **kwargs
     )
+    reads.upload_allowed = False
     wrapit = lambda module: wrap_task(sample, module, config_path=config_path, **kwargs)
 
     # qc stage
@@ -109,7 +110,7 @@ def get_task_list_for_sample(sample, stage, config_path='', require_clean_reads=
     assembly.reads = clean_reads
 
     # all stage
-    full = FullPipeline.from_sample(sample, config_path, cores=cores)
+    full = FullPipeline.from_sample(sample, config_path)
     full.qc = fastqc
     full.short_reads = processed
     full.assembly = assembly

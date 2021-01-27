@@ -6,7 +6,6 @@ import time
 from os import environ
 
 from .api import get_task_list_for_sample
-from .load_task import PangeaLoadTask, PangeaGroupLoadTask
 from .pangea_sample import PangeaSample, PangeaGroup, PangeaTag
 from ..pipeline.preprocessing import FastQC, MultiQC
 from ..utils import chunks
@@ -30,8 +29,8 @@ def set_config(endpoint, email, password, org_name, grp_name,
     luigi.configuration.get_config().set('pangea', 'org_name', org_name if org_name else '')
     luigi.configuration.get_config().set('pangea', 'grp_name', grp_name if grp_name else '')
     luigi.configuration.get_config().set('pangea', 'name_is_uuid', 'name_is_uuid' if name_is_uuid else '')
-    luigi.configuration.get_config().set('pangea', 'upload_allowed', upload_allowed)
-    luigi.configuration.get_config().set('pangea', 'download_only', download_only)
+    luigi.configuration.get_config().set('pangea', 'upload_allowed', 'upload_allowed' if upload_allowed else '')
+    luigi.configuration.get_config().set('pangea', 'download_only', 'download_only' if download_only else '')
 
 
 @run.command('group')

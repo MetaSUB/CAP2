@@ -113,6 +113,18 @@ def pre_stage_task(sample, base_reads, config_path='', **kwargs):
     return clean_reads
 
 
+def nonhuman_stage_task(sample, base_reads, config_path='', **kwargs):
+    clean_reads = recursively_wrap_task(
+        sample,
+        RemoveHumanReads,
+        config_path=config_path,
+        no_wrap_tasks=[RemoveMouseReads, AdapterRemoval],
+        module_substitute_tasks={BaseReads: base_reads},
+        **kwargs,
+    )
+    return clean_reads
+
+
 def get_task_list_for_sample(sample, stage, config_path='', require_clean_reads=False, **kwargs):
     base_reads = wrap_task(
         sample, BaseReads, config_path=config_path, requires_reads=True, **kwargs

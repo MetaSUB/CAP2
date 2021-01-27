@@ -29,34 +29,33 @@ def run_cli():
     pass
 
 
-def get_task_list_for_sample(sample, config, threads):
+def get_task_list_for_sample(sample, config, **kwargs):
     base_reads = wrap_task(
-        sample, BaseReads,
-        upload=False, config_path=config, cores=threads, requires_reads=True
+        sample, BaseReads, config_path=config_path, requires_reads=True, **kwargs
     )
 
-    wrapit = lambda x: wrap_task(sample, x, config_path=config, cores=threads)
+    wrapit = lambda x: wrap_task(sample, x, config_path=config, **kwargs)
 
     fast_detect = wrapit(Kraken2FastDetectCovid)
-    fast_detect.wrapped.reads = base_reads
+    fast_detect.reads = base_reads
 
     nonhuman_reads = wrapit(RemoveHumanReads)
-    nonhuman_reads.wrapped.mouse_removed_reads.reads = base_reads
+    nonhuman_reads.mouse_removed_reads.reads = base_reads
 
     align_to_covid = wrapit(AlignReadsToCovidGenome)
-    align_to_covid.wrapped.reads = nonhuman_reads
+    align_to_covid.reads = nonhuman_reads
 
     covid_genome_coverage = wrapit(CovidGenomeCoverage)
-    covid_genome_coverage.wrapped.bam = align_to_covid
+    covid_genome_coverage.bam = align_to_covid
 
     covid_pileup = wrapit(MakeCovidPileup)
-    covid_pileup.wrapped.bam = align_to_covid
+    covid_pileup.bam = align_to_covid
 
     covid_consensus = wrapit(MakeCovidConsensusSeq)
-    covid_consensus.wrapped.pileup = covid_pileup
+    covid_consensus.pileup = covid_pileup
 
     covid_variants = wrapit(CallCovidVariants)
-    covid_variants.wrapped.pileup = covid_pileup
+    covid_variants.pileup = covid_pileup
 
     tasks = [
         fast_detect, covid_pileup, covid_genome_coverage, align_to_covid,
@@ -70,8 +69,7 @@ def _process_one_sample_chunk(chunk, scheduler_url, workers,
     tasks = []
     for sample in chunk:
         tasks += get_task_list_for_sample(
-            sample,
-            config_path=config, require_clean_reads=clean_reads, **kwargs
+            sample, config, **kwargs
         )
     if not scheduler_url:
         luigi.build(tasks, local_scheduler=True, workers=workers)

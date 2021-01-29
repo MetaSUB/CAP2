@@ -101,7 +101,7 @@ def _process_samples_in_chunks(samples, scheduler_url, batch_size, timelimit, wo
             return completed
         completed += _process_one_sample_chunk(
             chunk, scheduler_url, workers,
-            config, clean_reads, **kwargs
+            stage, config, clean_reads, **kwargs
         )
     return completed
 

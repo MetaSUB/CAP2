@@ -39,7 +39,7 @@ def run_cli():
     pass
 
 
-def get_task_list_for_sample(sample, config, **kwargs):
+def get_task_list_for_sample(sample, stage, config, **kwargs):
     base_reads = wrap_task(
         sample, BaseReads, config_path=config, requires_reads=True, **kwargs
     )
@@ -49,6 +49,8 @@ def get_task_list_for_sample(sample, config, **kwargs):
 
     fast_detect = wrapit(Kraken2FastDetectCovid)
     fast_detect.reads = base_reads
+    if stage == 'fast':
+        return [fast_detect]
 
     nonhuman_reads = nonhuman_stage_task(sample, base_reads, config_path=config, **kwargs)
 
@@ -75,11 +77,11 @@ def get_task_list_for_sample(sample, config, **kwargs):
 
 
 def _process_one_sample_chunk(chunk, scheduler_url, workers,
-                              config, clean_reads, **kwargs):
+                              stage, config, clean_reads, **kwargs):
     tasks = []
     for sample in chunk:
         tasks += get_task_list_for_sample(
-            sample, config, **kwargs
+            sample, stage, config, **kwargs
         )
     if not scheduler_url:
         luigi.build(tasks, local_scheduler=True, workers=workers)
@@ -89,7 +91,7 @@ def _process_one_sample_chunk(chunk, scheduler_url, workers,
 
 
 def _process_samples_in_chunks(samples, scheduler_url, batch_size, timelimit, workers,
-                               config, clean_reads, **kwargs):
+                               stage, config, clean_reads, **kwargs):
     start_time, completed = time.time(), []
     logger.info(f'Processing {len(samples)} samples')
     for chunk in chunks(samples, batch_size):
@@ -118,12 +120,13 @@ def _process_samples_in_chunks(samples, scheduler_url, batch_size, timelimit, wo
 @click.option('--endpoint', default='https://pangea.gimmebio.com')
 @click.option('-e', '--email', envvar='PANGEA_USER')
 @click.option('-p', '--password', envvar='PANGEA_PASS')
+@click.option('-s', '--stage', default='all')
 @click.option('--random-seed', type=int, default=None)
 @click.option('--tag-name', default='MetaSUB COVID-19 CAP')
 def cli_run_samples_from_tag(config, clean_reads, upload, download_only, scheduler_url,
                              max_attempts,
                              batch_size, workers, threads, timelimit,
-                             endpoint, email, password, random_seed,
+                             endpoint, email, password, stage, random_seed,
                              tag_name):
     set_config(endpoint, email, password, None, None, name_is_uuid=True)
     tag = PangeaTag(tag_name, email, password, endpoint)
@@ -133,7 +136,7 @@ def cli_run_samples_from_tag(config, clean_reads, upload, download_only, schedul
     ]
     completed = _process_samples_in_chunks(
         samples, scheduler_url, batch_size, timelimit, workers,
-        config, clean_reads, cores=threads,
+        stage, config, clean_reads, cores=threads,
     )
 
 
@@ -152,13 +155,14 @@ def cli_run_samples_from_tag(config, clean_reads, upload, download_only, schedul
 @click.option('--endpoint', default='https://pangea.gimmebio.com')
 @click.option('-e', '--email', envvar='PANGEA_USER')
 @click.option('-p', '--password', envvar='PANGEA_PASS')
+@click.option('-s', '--stage', default='all')
 @click.option('--random-seed', type=int, default=None)
 @click.argument('org_name')
 @click.argument('grp_name')
 def cli_run_samples(config, log_level, clean_reads, upload, download_only, scheduler_url,
                     max_attempts,
                     batch_size, workers, threads, timelimit,
-                    endpoint, email, password, random_seed,
+                    endpoint, email, password, stage, random_seed,
                     org_name, grp_name):
     set_config(endpoint, email, password, org_name, grp_name)
     group = PangeaGroup(grp_name, email, password, endpoint, org_name)
@@ -168,5 +172,5 @@ def cli_run_samples(config, log_level, clean_reads, upload, download_only, sched
     ]
     completed = _process_samples_in_chunks(
         samples, scheduler_url, batch_size, timelimit, workers,
-        config, clean_reads, cores=threads,
+        stage, config, clean_reads, cores=threads,
     )

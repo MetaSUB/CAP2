@@ -157,6 +157,13 @@ class BaseCapTask(luigi.Task):
 class CapDbTask(BaseCapTask):
     """Currently a stub. May do something in future."""
 
+    @classmethod
+    def from_cap_task(cls, other):
+        return cls(
+            config_filename=other.config_filename,
+            cores=other.cores,
+        )
+
 
 class CapTask(BaseCapTask):
     """Base class for CAP2 tasks.
@@ -214,7 +221,6 @@ class CapTask(BaseCapTask):
             return f'<CapTask::{module_name}::{short_hash} {self.sample_name}/>'
         except:
             return repr(self)
-
 
 
 class CapGroupTask(BaseCapTask):

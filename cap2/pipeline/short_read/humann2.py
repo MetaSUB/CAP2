@@ -5,8 +5,8 @@ from os.path import join, dirname, basename
 
 from ..utils.cap_task import CapTask
 from ..config import PipelineConfig
-from ..utils.conda import CondaPackage
-from ..databases.uniref import Uniref90
+from ..utils.conda import CondaPackage, PyPiPackage
+from ..databases.uniref import Uniref90, HumannIdTable
 from ..preprocessing.clean_reads import CleanReads
 
 
@@ -52,7 +52,7 @@ class MicaUniref90(CapTask):
 
     @classmethod
     def dependencies(cls):
-        return ['diamond==0.9.32', Uniref90, CleanReads]
+        return ['humann==3.0.0a4', 'diamond==0.9.32', Uniref90, CleanReads]
 
     def output(self):
         return {
@@ -82,11 +82,20 @@ class Humann2(CapTask):
     Negatives: Functional profiling is somewhat less well benchmarked
     than taxonomic profiling and metabolic pathways are often based on
     model organisms.
+
+    Notes: This class is named Humann2 for historical reasons. It uses
+    humann3
     """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.config = PipelineConfig(self.config_filename)
+        self.humann = PyPiPackage(
+            package="humann==3.0.0a4",
+            executable="humann",
+            config_filename=self.config_filename,
+        )
+        self.db = HumannIdTable.from_cap_task(self)
         self.out_dir = self.config.out_dir
         self.alignment = MicaUniref90.from_cap_task(self)
 
@@ -94,19 +103,19 @@ class Humann2(CapTask):
         return self.run_cmd(f'{self.pkg.bin} --version').stderr.decode('utf-8')
 
     def requires(self):
-        return self.alignment
+        return self.humann, self.alignment, self.db
 
     @classmethod
     def _module_name(cls):
-        return 'humann2'
+        return 'humann'
 
     @classmethod
     def version(cls):
-        return 'v0.2.0'
+        return 'v0.3.0'
 
     @classmethod
     def dependencies(cls):
-        return ['humann2', MicaUniref90]
+        return ['humann==3.0.0a4', MicaUniref90, HumannIdTable]
 
     def output(self):
         return {
@@ -121,7 +130,8 @@ class Humann2(CapTask):
         abunds = odir + '/*pathabundance.tsv'
         covs = odir + '/*pathcoverage.tsv'
         cmd = (
-            f'humann2 '
+            f'{self.humann.bin} '
+            f'--id-mapping {self.db.humann_id_table} '
             f'--input {self.alignment.output()["m8"].path} '
             f'--output {self.sample_name}_humann2 ; '
             'mv ' + genes + ' ' + self.output()['genes'].path + '; '

@@ -20,6 +20,9 @@ RAW_READS_1 = join(dirname(__file__), 'data/zymo_pos_cntrl.r1.fq.gz')
 RAW_READS_2 = join(dirname(__file__), 'data/zymo_pos_cntrl.r2.fq.gz')
 TEST_CONFIG = join(dirname(__file__), 'data/test_config.yaml')
 
+def data_file(fname):
+    return join(dirname(__file__), 'data', fname)
+
 
 class DummyHumanRemovalDB(luigi.ExternalTask):
 
@@ -92,11 +95,20 @@ class DummyKraken2DB(luigi.ExternalTask):
         return {'kraken2_db_taxa': luigi.LocalTarget(self.kraken2_db)}
 
 
+class DummyFastKraken2(luigi.ExternalTask):
+
+    def output(self):
+        return {
+            'report': luigi.LocalTarget(data_file('kraken2_report.tsv')),
+            'read_assignments': luigi.LocalTarget(data_file('kraken2_read_assignments.tsv')),
+        }
+
+
 class TestPipelinePreprocessing(TestCase):
 
     def tearDownClass():
         pass
-        #rmtree('test_out')
+        rmtree('test_out')
 
     def test_invoke_count_raw_reads(self):
         instance = CountRawReads(
@@ -144,7 +156,8 @@ class TestPipelinePreprocessing(TestCase):
             config_filename=TEST_CONFIG,
             cores=1
         )
-        instance.taxa.db = DummyKraken2DB()
+        instance.taxa = DummyFastKraken2()
+        instance.READ_STATS_DROPOUT = 1 / 10
         luigi.build([instance], local_scheduler=True)
         self.assertTrue(isfile(instance.output()['report'].path))
 

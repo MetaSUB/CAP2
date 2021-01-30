@@ -8,6 +8,8 @@ from .remove_adapters import AdapterRemoval
 from .error_correct_reads import ErrorCorrectReads
 from .multiqc import MultiQC
 from .base_reads import BaseReads
+from .basic_sample_stats import BasicSampleStats
+from .fast_taxa import FastKraken2
 
 MODULES = [
     CleanReads,

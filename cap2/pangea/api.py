@@ -4,6 +4,7 @@ from ..pipeline.utils.cap_task import CapTask
 
 from ..pipeline.preprocessing import (
     BaseReads,
+    BasicSampleStats,
     FastQC,
     CleanReads,
     RemoveMouseReads,
@@ -20,6 +21,7 @@ from ..pipeline.assembly.metaspades import MetaspadesAssembly
 STAGES = [
     'data',
     'qc',
+    'fast',
     'pre',
     'reads',
     'assembly',
@@ -115,6 +117,17 @@ def pre_stage_task(sample, base_reads, config_path='', **kwargs):
     return clean_reads
 
 
+def fast_stage_task(sample, base_reads, config_path='', **kwargs):
+    sample_stats = recursively_wrap_task(
+        sample,
+        BasicSampleStats,
+        config_path=config_path,
+        module_substitute_tasks={BaseReads: base_reads},
+        **kwargs,
+    )
+    return sample_stats
+
+
 def nonhuman_stage_task(sample, base_reads, config_path='', **kwargs):
     clean_reads = recursively_wrap_task(
         sample,
@@ -136,6 +149,11 @@ def get_task_list_for_sample(sample, stage, config_path='', require_clean_reads=
         return [base_reads]
     if stage == 'qc':
         return [qc_stage_task(sample, base_reads, config_path=config_path, **kwargs)]
+    if stage == 'fast':
+        return [
+            qc_stage_task(sample, base_reads, config_path=config_path, **kwargs),
+            fast_stage_task(sample, base_reads, config_path=config_path, **kwargs),
+        ]
 
     clean_reads = pre_stage_task(sample, base_reads, config_path=config_path, **kwargs)
     if require_clean_reads:

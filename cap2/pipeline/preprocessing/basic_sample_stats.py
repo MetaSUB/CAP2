@@ -1,10 +1,12 @@
 
 import json
 import pandas as pd
-from scipy.spatial.distance import cdist
+from scipy.spatial.distance import pdist, squareform
+
+from ...capalyzer.table_builder.parsers import parse_taxa_report
 
 from ..utils.cap_task import CapTask
-from ..utils.utils import estimate_read_length
+from ..utils.utils import stats_one_fastq
 from ..config import PipelineConfig
 from .fast_taxa import FastKraken2
 from .base_reads import BaseReads
@@ -12,33 +14,17 @@ from .base_reads import BaseReads
 from .control_sample_abundances import CONTROL_SAMPLES_TAXONOMIC_PROFILES
 
 
-def parse_taxa_report(local_path):
-    """Return a Series of taxa_name to read_counts."""
-    out, abundance_sum = {}, 0
-    with open(local_path) as taxa_file:
-        for line_num, line in enumerate(taxa_file):
-            line = line.strip()
-            tkns = line.split('\t')
-            if not line or len(tkns) < 2:
-                continue
-            if len(tkns) == 2:
-                out[tkns[0]] = float(tkns[1])
-                abundance_sum += float(tkns[1])
-            else:
-                if line_num == 0:
-                    continue
-                out[tkns[1]] = float(tkns[3])
-                abundance_sum += float(tkns[3])
-    # out = {k: v for k, v in out.items() if 's__' in k and 't__' not in k}
-    out = pd.Series(out)
-    return out
-
-
 def control_distances(taxa, metric):
-    dists = cdist(taxa, CONTROL_SAMPLES_TAXONOMIC_PROFILES, metric=metric)
-    dists = pd.Series(dists)
-    dists.index = taxa.colummns
+    taxa = pd.DataFrame(taxa, index=['sample'])
+    taxa = pd.concat([taxa, CONTROL_SAMPLES_TAXONOMIC_PROFILES])
+    taxa = taxa.fillna(0)
+    if metric in ['jaccard']:
+        taxa = taxa > 0
+    dists = pdist(taxa, metric=metric)
+    dists = pd.DataFrame(squareform(dists), index=taxa.index, columns=taxa.index)
+    dists = dists['sample']
     dists = dists.to_dict()
+    del dists['sample']
     return dists
 
 
@@ -47,6 +33,7 @@ class BasicSampleStats(CapTask):
     Summarize some basic statistics about a sample
     based on the taxonomic profiles.
     """
+    READ_STATS_DROPOUT = 1 / 1000
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -54,6 +41,7 @@ class BasicSampleStats(CapTask):
         self.taxa = FastKraken2.from_cap_task(self)
         self.reads = BaseReads.from_cap_task(self)
         self._taxa_report = None
+        self._species_report = None
 
     @classmethod
     def _module_name(cls):
@@ -81,20 +69,31 @@ class BasicSampleStats(CapTask):
 
     @property
     def species_report(self):
-        return self.taxa_report
+        if not self._species_report:
+            sr, total_reads = {}, 0
+            for taxon, reads in self.taxa_report.items():
+                if 's__' in taxon and 't__' not in taxon:
+                    total_reads += reads
+                    sr[taxon.split('__')[1]] = reads
+            self._species_report = {t: r / total_reads for t, r in sr.items()}
+        return self._species_report
 
     def output(self):
         return {'report': self.get_target('report', 'json')}
 
+    @property
+    def report(self):
+        return self.output()['report'].path
+
     def _run(self):
         blob = {
-            'read_1_length': estimate_read_length(self.reads.read_1),
-            'read_2_length': estimate_read_length(self.reads.read_2),
             'control_distances_jaccard': control_distances(self.species_report, 'jaccard'),
-            'control_distances_manhattan': control_distances(self.species_report, 'manhattan'),
+            'control_distances_manhattan': control_distances(self.species_report, 'cityblock'),
             'control_distances_cosine': control_distances(self.species_report, 'cosine'),
             'human_fraction': self.species_report.get('Homo sapiens', 0),
             'mouse_fraction': self.species_report.get('Mus musculus', 0),
+            'read_1_stats': stats_one_fastq(self.reads.read_1, self.READ_STATS_DROPOUT),
+            'read_2_stats': stats_one_fastq(self.reads.read_2, self.READ_STATS_DROPOUT),
         }
         with open(self.report, 'w') as f:
             f.write(json.dumps(blob))

@@ -13,6 +13,8 @@ from cap2.pipeline.preprocessing.map_to_human import RemoveHumanReads
 from cap2.pipeline.preprocessing.map_to_mouse import RemoveMouseReads
 from cap2.pipeline.preprocessing.error_correct_reads import ErrorCorrectReads
 from cap2.pipeline.preprocessing.remove_adapters import AdapterRemoval
+from cap2.pipeline.preprocessing.fast_taxa import FastKraken2
+from cap2.pipeline.preprocessing.basic_sample_stats import BasicSampleStats
 
 RAW_READS_1 = join(dirname(__file__), 'data/zymo_pos_cntrl.r1.fq.gz')
 RAW_READS_2 = join(dirname(__file__), 'data/zymo_pos_cntrl.r2.fq.gz')
@@ -80,11 +82,21 @@ class DummyHumanRemovedReads(luigi.ExternalTask):
         }
 
 
+class DummyKraken2DB(luigi.ExternalTask):
+
+    @property
+    def kraken2_db(self):
+        return join(dirname(__file__), 'data/kraken2')
+
+    def output(self):
+        return {'kraken2_db_taxa': luigi.LocalTarget(self.kraken2_db)}
+
+
 class TestPipelinePreprocessing(TestCase):
 
     def tearDownClass():
         pass
-        rmtree('test_out')
+        #rmtree('test_out')
 
     def test_invoke_count_raw_reads(self):
         instance = CountRawReads(
@@ -109,6 +121,31 @@ class TestPipelinePreprocessing(TestCase):
         )
         luigi.build([instance], local_scheduler=True)
         self.assertTrue(isfile(instance.output()['zip_output'].path))
+        self.assertTrue(isfile(instance.output()['report'].path))
+
+    def test_fast_taxa(self):
+        instance = FastKraken2(
+            pe1=RAW_READS_1,
+            pe2=RAW_READS_2,
+            sample_name='test_sample',
+            config_filename=TEST_CONFIG,
+            cores=1
+        )
+        instance.db = DummyKraken2DB()
+        luigi.build([instance], local_scheduler=True)
+        self.assertTrue(isfile(instance.output()['read_assignments'].path))
+        self.assertTrue(isfile(instance.output()['report'].path))
+
+    def test_basic_sample_stats(self):
+        instance = BasicSampleStats(
+            pe1=RAW_READS_1,
+            pe2=RAW_READS_2,
+            sample_name='test_sample',
+            config_filename=TEST_CONFIG,
+            cores=1
+        )
+        instance.taxa.db = DummyKraken2DB()
+        luigi.build([instance], local_scheduler=True)
         self.assertTrue(isfile(instance.output()['report'].path))
 
     def test_adapter_remove_reads(self):

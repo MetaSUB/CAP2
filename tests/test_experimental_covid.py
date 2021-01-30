@@ -160,7 +160,7 @@ class TestCovidPipeline(TestCase):
             sample=PANGEA_SAMPLE,
         )
         set_config(PANGEA_ENDPOINT, PANGEA_USER, PANGEA_PASS, '', '', name_is_uuid=True)
-        tasks = get_task_list_for_sample(psample, '')
+        tasks = get_task_list_for_sample(psample, 'all', '')
         self.assertEqual(len(tasks), 4)
         fast_detect, covid_genome_coverage, _, _ = tasks
         self.assertTrue(isinstance(fast_detect.reads, PangeaCapTask))

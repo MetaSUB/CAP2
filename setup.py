@@ -13,6 +13,7 @@ setuptools.setup(
     install_requires=[
         'pandas',
         'numpy',
+        'scipy',
         'python-daemon',
         'luigi==3.0.0b2',
         'PyYaml==5.3.1',

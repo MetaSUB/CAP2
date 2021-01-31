@@ -23,6 +23,10 @@ PANGEA_USER = 'cap2tester@fake.com'
 PANGEA_PASS = environ['CAP2_PANGEA_TEST_PASSWORD']
 
 
+def data_file(fname):
+    return join(dirname(__file__), 'data', fname)
+
+
 def create_test_sample():
     timestamp = int(time())
     knex = Knex(PANGEA_ENDPOINT)
@@ -38,6 +42,16 @@ def create_test_sample():
     return sample
 
 PANGEA_SAMPLE = create_test_sample()
+
+
+class DummyKraken2DB(luigi.ExternalTask):
+
+    @property
+    def kraken2_db(self):
+        return join(dirname(__file__), 'data/kraken2')
+
+    def output(self):
+        return {'kraken2_db_taxa': luigi.LocalTarget(self.kraken2_db)}
 
 
 class TestPangea(TestCase):
@@ -131,5 +145,6 @@ class TestPangea(TestCase):
         )
         set_config(PANGEA_ENDPOINT, PANGEA_USER, PANGEA_PASS, '', '', name_is_uuid=True)
         tasks = get_task_list_for_sample(psample, 'fast')
+        tasks[0].taxa.db = DummyKraken2DB()
         luigi.build(tasks, local_scheduler=True)
         self.assertTrue(PANGEA_SAMPLE.analysis_result('cap2::basic_sample_stats').exists())

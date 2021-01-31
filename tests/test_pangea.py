@@ -145,6 +145,7 @@ class TestPangea(TestCase):
         )
         set_config(PANGEA_ENDPOINT, PANGEA_USER, PANGEA_PASS, '', '', name_is_uuid=True)
         tasks = get_task_list_for_sample(psample, 'fast')
+        tasks = [tasks[1]]  # just basic stats class
         tasks[0].taxa.db = DummyKraken2DB()
         luigi.build(tasks, local_scheduler=True)
         self.assertTrue(PANGEA_SAMPLE.analysis_result('cap2::basic_sample_stats').exists())

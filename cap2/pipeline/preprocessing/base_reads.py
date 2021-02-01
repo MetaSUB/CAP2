@@ -31,6 +31,14 @@ class BaseReads(CapTask):
     def requires(self):
         return []
 
+    @property
+    def read_1(self):
+        return self.output()["base_reads_1"].path
+
+    @property
+    def read_2(self):
+        return self.output()["base_reads_2"].path
+
     def output(self):
         out = {'base_reads_1': luigi.LocalTarget(self.pe1)}
         if self.paired:

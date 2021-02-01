@@ -57,7 +57,7 @@ class FastQC(CapTask):
         return basename(self.pe1).split('.f')[0] + '_fastqc.zip'
 
     def requires(self):
-        return self.pkg
+        return self.pkg, self.reads
 
     def output(self):
         return {

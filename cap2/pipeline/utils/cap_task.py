@@ -4,12 +4,15 @@ import subprocess
 import datetime
 import json
 import os
+import logging
 
 from hashlib import sha256
 from sys import stderr
 from os.path import join
 
 from ..config import PipelineConfig
+
+logger = logging.getLogger('cap2')
 
 
 class BaseCapTask(luigi.Task):
@@ -22,6 +25,7 @@ class BaseCapTask(luigi.Task):
         super().__init__(*args, **kwargs)
         self.version()  # force this method to be implemented
         self.task_build_time = datetime.datetime.now().isoformat()
+        self.run_start_time = ''
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
         self.pre_run_hooks = []
@@ -42,7 +46,7 @@ class BaseCapTask(luigi.Task):
     @classmethod
     def version_tree(cls, terminal=True):
         """Return a newick tree with versions."""
-        out = f'{cls._module_name()}=={cls.version()}'
+        out = f'{cls.module_name()}=={cls.version()}'
         if cls.dependencies:
             depends = [
                 el if isinstance(el, str) else el.version_tree(terminal=False)
@@ -122,11 +126,15 @@ class BaseCapTask(luigi.Task):
 
     def run(self):
         """Run an instance of this task."""
+        logger.debug(f'starting run for {self}')
         self.run_start_time = datetime.datetime.now().isoformat()
         for hook in self.pre_run_hooks:
+            logger.debug(f'running pre-run hook {hook} for {self}')
             hook()
+        logger.debug(f'running module for {self}')
         run = self._run()
         with open(self.get_run_metadata_filepath(), 'w') as metafile:
+            logger.debug(f'writing run metadata for {self}')
             metafile.write(json.dumps(self.get_run_metadata()))
         return run
 
@@ -149,6 +157,13 @@ class BaseCapTask(luigi.Task):
 
 class CapDbTask(BaseCapTask):
     """Currently a stub. May do something in future."""
+
+    @classmethod
+    def from_cap_task(cls, other):
+        return cls(
+            config_filename=other.config_filename,
+            cores=other.cores,
+        )
 
 
 class CapTask(BaseCapTask):
@@ -199,6 +214,14 @@ class CapTask(BaseCapTask):
             max_ram=other.max_ram,
             data_type=other.data_type,
         )
+
+    def __str__(self):
+        try:
+            module_name = self.module_name()
+            short_hash = self.short_version_hash()
+            return f'<CapTask::{module_name}::{short_hash} {self.sample_name}/>'
+        except:
+            return repr(self)
 
 
 class CapGroupTask(BaseCapTask):

@@ -6,7 +6,7 @@ import logging
 import yaml
 from ..config import PipelineConfig
 
-logger = logging.getLogger('luigi-interface')
+logger = logging.getLogger('cap2')
 
 
 class SpecificationError(Exception):
@@ -44,6 +44,10 @@ class CondaEnv(luigi.Task):
     @property
     def bin(self):
         return os.path.join(self.path, "bin")
+
+    @property
+    def pip(self):
+        return os.path.join(self.bin, "pip")
 
     def add_to_path(self):
         """Add the bin folder to PATH if not already present."""
@@ -101,7 +105,22 @@ class CondaEnv(luigi.Task):
             '-c', channel,
             package, '-y'
         ]
-        logger.info('installing: {} with {}'.format(package, ' '.join(cmd)))
+        logger.info('conda-installing: {} with {}'.format(package, ' '.join(cmd)))
+        try:
+            subprocess.check_call(' '.join(cmd), shell=True)
+        except:
+            print(f'Subprocess failed from {os.getcwd()}: {cmd}', file=sys.stderr)
+            raise
+        self.save_spec()
+        self.add_to_path()
+
+    def pypi_install(self, package):
+        cmd = [
+            self.pip,
+            'install',
+            package,
+        ]
+        logger.info('pypi-installing: {} with {}'.format(package, ' '.join(cmd)))
         try:
             subprocess.check_call(' '.join(cmd), shell=True)
         except:
@@ -173,6 +192,47 @@ class CondaPackage(luigi.Task):
     def run(self):
         if not self._env.contains(self.package):
             self._env.install(self.package, self.channel)
+
+        if not self.output().exists():
+            raise SpecificationError(
+                f'Tool {self.package} was not correctly installed'
+            )
+
+
+class PyPiPackage(luigi.Task):
+    package = luigi.Parameter()
+    config_filename = luigi.Parameter()
+    executable = luigi.Parameter()
+    env = luigi.Parameter(default="CAP_v2")
+    version = luigi.Parameter(default="None")
+    python = luigi.IntParameter(default=3)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._env = CondaEnv(
+            name=self.env, python=self.python, config_filename=self.config_filename
+        )
+        self.bin = os.path.join(
+            self._env.bin, self.executable
+        )
+
+    def requires(self):
+        return self._env
+
+    def output(self):
+        return luigi.LocalTarget(
+            self.bin
+        )
+
+    def complete(self):
+        return self.output().exists()
+
+    def related_tool(self, name):
+        return self._env.get_path(name)
+
+    def run(self):
+        if not self._env.contains(self.package):
+            self._env.pypi_install(self.package)
 
         if not self.output().exists():
             raise SpecificationError(

@@ -2,14 +2,18 @@
 import click
 import luigi
 import time
+import logging
+
 
 from os import environ
 
 from .api import get_task_list_for_sample
-from .load_task import PangeaLoadTask, PangeaGroupLoadTask
 from .pangea_sample import PangeaSample, PangeaGroup, PangeaTag
 from ..pipeline.preprocessing import FastQC, MultiQC
 from ..utils import chunks
+from ..setup_logging import *
+
+logger = logging.getLogger('cap2')
 
 
 @click.group()
@@ -17,18 +21,26 @@ def pangea():
     pass
 
 
+@pangea.command('version')
+def pangea_version():
+    click.echo('v0.1.0')
+
+
 @pangea.group()
 def run():
     pass
 
 
-def set_config(endpoint, email, password, org_name, grp_name, name_is_uuid=False):
+def set_config(endpoint, email, password, org_name, grp_name,
+               name_is_uuid=False, upload_allowed=True, download_only=False):
     luigi.configuration.get_config().set('pangea', 'pangea_endpoint', endpoint)
     luigi.configuration.get_config().set('pangea', 'user', email)
     luigi.configuration.get_config().set('pangea', 'password', password)
     luigi.configuration.get_config().set('pangea', 'org_name', org_name if org_name else '')
     luigi.configuration.get_config().set('pangea', 'grp_name', grp_name if grp_name else '')
     luigi.configuration.get_config().set('pangea', 'name_is_uuid', 'name_is_uuid' if name_is_uuid else '')
+    luigi.configuration.get_config().set('pangea', 'upload_allowed', 'upload_allowed' if upload_allowed else '')
+    luigi.configuration.get_config().set('pangea', 'download_only', 'download_only' if download_only else '')
 
 
 @run.command('group')
@@ -97,15 +109,13 @@ def cli_run_sample(config, upload, scheduler_url, workers, threads,
         )
 
 
-def _process_one_sample_chunk(chunk,
-                              scheduler_url, stage, upload, download_only,
-                              config, threads, max_ram, clean_reads, workers):
+def _process_one_sample_chunk(chunk, scheduler_url, workers,
+                              stage, config, clean_reads, **kwargs):
     tasks = []
     for sample in chunk:
         tasks += get_task_list_for_sample(
             sample, stage,
-            upload=upload, download_only=download_only,
-            config_path=config, cores=threads, max_ram=max_ram, require_clean_reads=clean_reads
+            config_path=config, require_clean_reads=clean_reads, **kwargs
         )
     if not scheduler_url:
         luigi.build(tasks, local_scheduler=True, workers=workers)
@@ -114,21 +124,18 @@ def _process_one_sample_chunk(chunk,
     return chunk
 
 
-def _process_samples_in_chunks(samples,
-                               scheduler_url, stage, upload, download_only,
-                               config, threads, max_ram, clean_reads, workers,
-                               batch_size, timelimit):
+def _process_samples_in_chunks(samples, scheduler_url, batch_size, timelimit, workers,
+                               stage, config, clean_reads, **kwargs):
     start_time, completed = time.time(), []
-    click.echo(f'Processing {len(samples)} samples', err=True)
+    logging.info(f'Processing {len(samples)} samples')
     for chunk in chunks(samples, batch_size):
-        click.echo(f'Completed processing {len(completed)} samples', err=True)
+        logging.info(f'Completed processing {len(completed)} samples')
         if timelimit and (time.time() - start_time) > (60 * 60 * timelimit):
-            click.echo(f'Timelimit reached. Stopping.', err=True)
+            logging.info(f'Timelimit reached. Stopping.')
             return completed
         completed += _process_one_sample_chunk(
-            chunk,
-            scheduler_url, stage, upload, download_only,
-            config, threads, max_ram, clean_reads, workers
+            chunk, scheduler_url, workers,
+            stage, config, clean_reads, **kwargs
         )
     return completed
 
@@ -157,17 +164,15 @@ def cli_run_samples(config, clean_reads, upload, download_only, scheduler_url,
                     batch_size, workers, threads, max_ram, timelimit,
                     endpoint, email, password, stage, random_seed,
                     org_name, grp_name):
-    set_config(endpoint, email, password, org_name, grp_name)
+    set_config(endpoint, email, password, org_name, grp_name, upload_allowed=upload, download_only=download_only)
     group = PangeaGroup(grp_name, email, password, endpoint, org_name)
     samples = [
         samp for samp in group.pangea_samples(randomize=True, seed=random_seed)
         if not clean_reads or samp.has_clean_reads()
     ]
     completed = _process_samples_in_chunks(
-        samples,
-        scheduler_url, stage, upload, download_only,
-        config, threads, max_ram, clean_reads, workers,
-        batch_size, timelimit
+        samples, scheduler_url, batch_size, timelimit, workers,
+        stage, config, clean_reads, cores=threads, max_ram=max_ram
     )
 
 
@@ -202,8 +207,6 @@ def cli_run_samples_from_tag(config, clean_reads, upload, download_only, schedul
         if not clean_reads or samp.has_clean_reads()
     ]
     completed = _process_samples_in_chunks(
-        samples,
-        scheduler_url, stage, upload, download_only,
-        config, threads, max_ram, clean_reads, workers,
-        batch_size, timelimit
+        samples, scheduler_url, batch_size, timelimit, workers,
+        stage, config, clean_reads, cores=threads, max_ram=max_ram
     )

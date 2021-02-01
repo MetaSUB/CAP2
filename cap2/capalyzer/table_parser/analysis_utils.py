@@ -12,6 +12,18 @@ from numpy.random import choice
 
 
 MIL = 1000 * 1000
+ZYMO_CONTROL_TAXA = [
+    's__Listeria monocytogenes',
+    's__Pseudomonas aeruginosa',
+    's__Bacillus subtilis',
+    's__Escherichia coli',
+    's__Salmonella enterica',
+    's__Lactobacillus fermentum',
+    's__Enterococcus faecalis',
+    's__Staphylococcus aureus',
+    's__Saccharomyces cerevisiae',
+    's__Cryptococcus neoformans',
+]
 
 # ALPHA Diversity`
 
@@ -157,6 +169,18 @@ def subsample(tbl, n=-1, niter=1):
 # Experimental
 
 
+def pca(mytbl, comps=[0, 1], **kwargs):
+    """Retrun a Pandas dataframe with UMAP, make a few basic default decisions."""
+    pca = PCA(n_components=max(comps) + 1)
+    tbl_pca = pca.fit_transform(mytbl)
+    tbl_pca = pd.DataFrame(tbl_pca)
+    tbl_pca.index = mytbl.index
+    tbl_pca = tbl_pca.rename(columns={i: f'PC{i + 1}' for i in range(max(comps) + 1)})
+    comps = [f'PC{i + 1}' for i in comps]
+    tbl_pca = tbl_pca[comps]
+    return tbl_pca
+
+
 def umap(mytbl, **kwargs):
     """Retrun a Pandas dataframe with UMAP, make a few basic default decisions."""
     metric = 'manhattan'
@@ -222,8 +246,7 @@ def train_validate_split(tbl, train_size):
     val_tbl = val_tbl.applymap(lambda el: 0 if el < 0 else el)
     return train_tbl, val_tbl
 
-
-def run_pca(tbl, n_comp, zero_thresh):
+def rotate_through_n_pcs(tbl, n_comp, zero_thresh):
     pca = PCA(n_components=n_comp)
     tbl_pca = pca.fit_transform(tbl)
     tbl_rev = pd.DataFrame(pca.inverse_transform(tbl_pca))
@@ -245,14 +268,25 @@ def pca_sample_cross_val(tbl,
     max_comp = min(max_comp, tbl.shape[0])
     train_tbl, val_tbl = train_validate_split(tbl, train_size)
     val_prop = transformer(proportions(val_tbl))
+
+    pca = PCA(n_components=max_comp + 1)
+    forward_pca = pca.fit_transform(tbl)
+
+    def reverse_pca(n, zero_thresh):
+        tbl_rev = pd.DataFrame(pca.inverse_transform(forward_pca[:, 0:n]))
+        tbl_rev.index = tbl.index
+        tbl_rev.columns = tbl.columns
+        tbl_rev = tbl_rev.applymap(lambda el: el if el > zero_thresh else 0)
+        return tbl_rev
+
     for i in range(min_comp, max_comp + 1, comp_step):
-        predict = transformer(proportions(run_pca(train_tbl, i, zero_thresh)))
+        predict = transformer(proportions(reverse_pca(i, zero_thresh)))
         loss = np.linalg.norm(val_prop.values - predict)
         loss = np.round(loss, decimals=decimals)
         losses.append((i, loss))
     losses.sort(key=lambda el: el[0])
     losses.sort(key=lambda el: el[1])
-    return run_pca(tbl, losses[0][0], zero_thresh)
+    return rotate_through_n_pcs(tbl, losses[0][0], zero_thresh)
 
 
 # Data utils

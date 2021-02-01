@@ -3,13 +3,14 @@ import luigi
 from shutil import rmtree
 from os.path import join, dirname, isfile, isdir
 from unittest import TestCase, skip
+from cap2.pipeline.config import PipelineConfig
 
 from cap2.pipeline.databases.human_removal_db import HumanRemovalDB
 from cap2.pipeline.databases.hmp_db import HmpDB
 from cap2.pipeline.databases.mouse_removal_db import MouseRemovalDB
 from cap2.pipeline.databases.taxonomic_db import TaxonomicDB
 from cap2.pipeline.databases.kraken2_db import Kraken2DB, BrakenKraken2DB
-from cap2.pipeline.databases.uniref import Uniref90
+from cap2.pipeline.databases.uniref import Uniref90, HumannIdTable
 from cap2.pipeline.databases.amr_db import GrootDB
 
 
@@ -57,6 +58,7 @@ class TestDatabases(TestCase):
         luigi.build([instance], local_scheduler=True)
         self.assertTrue(isfile(instance.output()['kraken2_db_taxa'].path +'/hash.k2d'))
 
+    @skip('fooo')
     def test_download_mouse_genome_fasta(self):
         instance = MouseRemovalDB(config_filename=TEST_CONFIG)
         local_path = instance.download_mouse_genome()
@@ -74,10 +76,23 @@ class TestDatabases(TestCase):
         self.assertTrue(isfile(instance.output()['hmp_sketch'].path))
         rmtree('test_db')
 
-    @skip(reason="uniref90 database is very slow")
     def test_build_uniref90_db(self):
         instance = Uniref90(config_filename=TEST_CONFIG)
+        self.assertEqual(instance.config.db_mode, PipelineConfig.DB_MODE_BUILD)
         instance.fasta = data_file('uniref90/uniref90.sample.fasta.gz')
         luigi.build([instance], local_scheduler=True)
         self.assertTrue(isfile(instance.output()['diamond_index'].path))
+        rmtree('test_db')
+
+    def test_build_hidt(self):
+        instance = Uniref90(config_filename=TEST_CONFIG)
+        self.assertEqual(instance.config.db_mode, PipelineConfig.DB_MODE_BUILD)
+        instance.fasta = data_file('uniref90/uniref90.sample.fasta.gz')
+        hidt = HumannIdTable(config_filename=TEST_CONFIG)
+        hidt.uniref90 = instance
+        luigi.build([hidt], local_scheduler=True)
+        self.assertTrue(isfile(hidt.humann_id_table))
+        contents = open(hidt.humann_id_table).read()
+        lines = [l for l in contents.split('\n') if l]
+        self.assertEqual(len(lines), 15)
         rmtree('test_db')

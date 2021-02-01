@@ -246,7 +246,6 @@ def train_validate_split(tbl, train_size):
     val_tbl = val_tbl.applymap(lambda el: 0 if el < 0 else el)
     return train_tbl, val_tbl
 
-
 def rotate_through_n_pcs(tbl, n_comp, zero_thresh):
     pca = PCA(n_components=n_comp)
     tbl_pca = pca.fit_transform(tbl)

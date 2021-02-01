@@ -44,14 +44,13 @@ def create_test_sample():
 PANGEA_SAMPLE = create_test_sample()
 
 
-class DummyKraken2DB(luigi.ExternalTask):
-
-    @property
-    def kraken2_db(self):
-        return join(dirname(__file__), 'data/kraken2')
+class DummyFastKraken2(luigi.ExternalTask):
 
     def output(self):
-        return {'kraken2_db_taxa': luigi.LocalTarget(self.kraken2_db)}
+        return {
+            'report': luigi.LocalTarget(data_file('kraken2_report.tsv')),
+            'read_assignments': luigi.LocalTarget(data_file('kraken2_read_assignments.tsv')),
+        }
 
 
 class TestPangea(TestCase):
@@ -146,6 +145,6 @@ class TestPangea(TestCase):
         set_config(PANGEA_ENDPOINT, PANGEA_USER, PANGEA_PASS, '', '', name_is_uuid=True)
         tasks = get_task_list_for_sample(psample, 'fast')
         tasks = [tasks[1]]  # just basic stats class
-        tasks[0].taxa.db = DummyKraken2DB()
+        tasks[0].taxa = DummyFastKraken2()
         luigi.build(tasks, local_scheduler=True)
         self.assertTrue(PANGEA_SAMPLE.analysis_result('cap2::basic_sample_stats').exists())

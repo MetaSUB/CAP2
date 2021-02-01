@@ -48,7 +48,7 @@ class BasicSampleStats(CapTask):
         return 'basic_sample_stats'
 
     def tool_version(self):
-        return self.version
+        return self.version()
 
     def requires(self):
         return self.taxa, self.reads
@@ -82,7 +82,7 @@ class BasicSampleStats(CapTask):
         return {'report': self.get_target('report', 'json')}
 
     @property
-    def report(self):
+    def stats_report(self):
         return self.output()['report'].path
 
     def _run(self):
@@ -95,5 +95,5 @@ class BasicSampleStats(CapTask):
             'read_1_stats': stats_one_fastq(self.reads.read_1, self.READ_STATS_DROPOUT),
             'read_2_stats': stats_one_fastq(self.reads.read_2, self.READ_STATS_DROPOUT),
         }
-        with open(self.report, 'w') as f:
+        with open(self.stats_report, 'w') as f:
             f.write(json.dumps(blob))

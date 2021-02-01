@@ -25,6 +25,7 @@ class BaseCapTask(luigi.Task):
         super().__init__(*args, **kwargs)
         self.version()  # force this method to be implemented
         self.task_build_time = datetime.datetime.now().isoformat()
+        self.run_start_time = ''
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
         self.pre_run_hooks = []

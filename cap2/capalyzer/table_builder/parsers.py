@@ -43,8 +43,20 @@ def _parse_taxa_report(local_path):
             if not line or len(tkns) < 2:
                 continue
             if len(tkns) == 2:
-                out[tkns[0]] = float(tkns[1])
-                abundance_sum += float(tkns[1])
+                taxon = tkns[0]
+                taxon = taxon.split('|')[-1]
+                abundance = float(tkns[1])
+                out[taxon] = abundance
+                abundance_sum += abundance
+            elif len(tkns) == 6:
+                taxon = tkns[5].strip()
+                taxon_rank = tkns[3].strip().lower()
+                if len(taxon_rank) > 1:
+                    continue
+                taxon = f'{taxon_rank}__{taxon}'
+                abundance = float(tkns[1])
+                out[taxon] = abundance
+                abundance_sum += abundance
             else:
                 if line_num == 0:
                     continue

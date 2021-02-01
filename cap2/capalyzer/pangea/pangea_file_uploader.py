@@ -4,6 +4,10 @@ from time import time
 from ..version import VERSION_URL_SAFE, VERSION
 from os.path import join
 from requests.exceptions import HTTPError
+import logging
+
+logger = logging.getLogger(__name__)  # Same name as calling module
+logger.addHandler(logging.NullHandler())  # No output unless configured by calling program
 
 TMP_DIR = environ.get('CAP2_TMP_DIR', '/tmp')
 CAPALYZER_DIR = join(TMP_DIR, 'capalyzer', 'v1')
@@ -51,6 +55,7 @@ class PangeaFileUploader:
         return f'cap2::capalyzer::{raw_name}'
 
     def upload_pandas(self, tbl, raw_module_name, field_name, replicate=None, n_samples=None):
+        logger.info(f'Uploading table of size {tbl.shape}')
         replicate = replicate if replicate else self.replicate(n_samples=n_samples)
         module_name = self.module_name(raw_module_name)
         tbl_path = self._local_path(module_name, replicate, field_name, 'csv')

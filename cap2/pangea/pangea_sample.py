@@ -127,7 +127,7 @@ class PangeaGroup:
             samples = self.grp.get_samples()
         for sample in samples:
             psample = PangeaSample(
-                sample.name,
+                sample.uuid,
                 None,
                 None,
                 None,

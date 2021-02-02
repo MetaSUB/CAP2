@@ -46,6 +46,22 @@ class CAPTableBuilder:
         """Return a list of sample names (strings)."""
         return self.file_source.sample_names()
 
+    def fast_taxa_read_counts(self):
+        """Return a table of read counts by taxa from fast taxa."""
+        taxa = {}
+        fs = self.file_source('cap2::fast_kraken2', 'report')
+        for i, (sample_name, report_path) in enumerate(fs):
+            try:
+                taxa[sample_name] = parse_taxa_report(
+                    report_path,
+                    normalize=True,
+                    minimum_abundance=0.001,
+                )
+                logger.debug(f'[FastTaxa] Parsed {sample_name} ({i + 1})')
+            except Exception as e:
+                logger.debug(f'[FastTaxa] failed to parse "{sample_name}". Exception: {e}')
+        taxa = pd.DataFrame.from_dict(taxa, orient='index')
+        return taxa, taxa.shape[0]
 
     def covid_fast_detect_read_counts(self):
         """Return a table of read counts by taxa from covid fast detect."""
@@ -59,7 +75,6 @@ class CAPTableBuilder:
                 logger.debug(f'[CovidFastReadCounts] failed to parse "{sample_name}". Exception: {e}')
         taxa = pd.DataFrame.from_dict(taxa, orient='index')
         return taxa, taxa.shape[0]
-
 
     def taxa_read_counts(self):
         """Return a table of read counts by taxa."""

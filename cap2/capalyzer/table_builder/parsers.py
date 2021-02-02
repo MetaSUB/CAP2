@@ -25,15 +25,15 @@ def parse_pileup(local_path, sparse=1):
     return tbl
 
 
-def parse_taxa_report(local_path):
+def parse_taxa_report(local_path, **kwargs):
     try:
-        return _parse_taxa_report(local_path)
+        return _parse_taxa_report(local_path, **kwargs)
     except Exception:
         logger.debug(f'[ParseTaxaReport] failed to parse {local_path}')
         raise
 
 
-def _parse_taxa_report(local_path):
+def _parse_taxa_report(local_path, **kwargs):
     """Return a dict of taxa_name to read_counts."""
     out, abundance_sum = {}, 0
     with open(local_path) as taxa_file:
@@ -46,8 +46,6 @@ def _parse_taxa_report(local_path):
                 taxon = tkns[0]
                 taxon = taxon.split('|')[-1]
                 abundance = float(tkns[1])
-                out[taxon] = abundance
-                abundance_sum += abundance
             elif len(tkns) == 6:
                 taxon = tkns[5].strip()
                 taxon_rank = tkns[3].strip().lower()
@@ -55,11 +53,16 @@ def _parse_taxa_report(local_path):
                     continue
                 taxon = f'{taxon_rank}__{taxon}'
                 abundance = float(tkns[1])
-                out[taxon] = abundance
-                abundance_sum += abundance
             else:
                 if line_num == 0:
                     continue
-                out[tkns[1]] = float(tkns[3])
-                abundance_sum += float(tkns[3])
+                taxon = tkns[1]
+                abundance = float(tkns[3])
+            if (not kwargs.get('species_only', False)) or ('s__' in taxon):
+                out[taxon] = abundance
+                abundance_sum += abundance
+    if kwargs.get('normalize', False):
+        out = {k: v / abundance_sum for k, v in out.items()}
+    if kwargs.get('minimum_abundance', 0):
+        out = {k: v for k, v in out.items() if v >= kwargs['minimum_abundance']}
     return out

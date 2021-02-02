@@ -13,7 +13,9 @@ from pangea_api import (
 )
 from ..table_builder.modules import (
     Kraken2TaxaTableModule,
-    Kraken2CovidFastDetectModule
+    Kraken2CovidFastDetectModule,
+    FastKraken2TableModule,
+    BasicStatsTableModule,
 )
 
 logger = logging.getLogger(__name__)  # Same name as calling module
@@ -42,5 +44,11 @@ def process_module(module, module_counts, file_source, file_uploader, strict=Fal
 def process_group(pangea_group, strict=False):
     module_counts = pangea_group.get_module_counts()
     file_source, file_uploader = PangeaFileSource(pangea_group), PangeaFileUploader(pangea_group)
-    for module in [Kraken2TaxaTableModule, Kraken2CovidFastDetectModule]:
+    modules = [
+        Kraken2TaxaTableModule,
+        Kraken2CovidFastDetectModule,
+        FastKraken2TableModule,
+        BasicStatsTableModule,
+    ]
+    for module in modules:
         process_module(module, module_counts, file_source, file_uploader, strict=strict)

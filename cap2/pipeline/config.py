@@ -23,3 +23,14 @@ class PipelineConfig:
         )
 
         self.exc_metaspades = self.blob.get('EXC_METASPADES', None)
+        self.module_versions = self.blob.get('module_version', {})
+
+    def allowed_versions(self, module):
+        """Return a list of the allowed versions for the specified module."""
+        module_name = module.module_name()
+        if module_name not in self.module_versions:
+            module_name = module._module_name()
+        if module_name not in self.module_versions:
+            return []
+        versions = self.module_versions[module_name]
+        return versions

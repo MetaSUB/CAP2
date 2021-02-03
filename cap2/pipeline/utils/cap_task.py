@@ -30,6 +30,18 @@ class BaseCapTask(luigi.Task):
         self.out_dir = self.config.out_dir
         self.pre_run_hooks = []
 
+        # Check if any of the allowed version already exist
+        # If they do we spoof that version in.
+        # NB. This will check for the current output fields
+        # using the old version. If version fields were added
+        # or changed this will not find an old version
+        # (Indeed that would introduce difficult dependency
+        # issues if downstreams relied on the new fields)
+        for version_str in self.config.allowed_versions(self):
+            if self.version_exists(version_str):
+                self.version = lambda: version_str
+                break
+
     @classmethod
     def version(cls):
         """Return a string giving a human readable version for this module only."""
@@ -165,6 +177,19 @@ class CapDbTask(BaseCapTask):
             cores=other.cores,
         )
 
+    @classmethod
+    def from_cap_db_task(cls, other):
+        return cls(
+            config_filename=other.config_filename,
+            cores=other.cores,
+        )
+
+    def version_exists(self, version):
+        """Return True iff this verion of this module already exists."""
+        clone = type(self).from_cap_db_task(self)
+        clone.version = lambda: version
+        return clone.complete()
+
 
 class CapTask(BaseCapTask):
     """Base class for CAP2 tasks.
@@ -223,6 +248,12 @@ class CapTask(BaseCapTask):
         except:
             return repr(self)
 
+    def version_exists(self, version):
+        """Return True iff this verion of this module already exists."""
+        clone = type(self).from_cap_task(self)
+        clone.version = lambda: version
+        return clone.complete()
+
 
 class CapGroupTask(BaseCapTask):
     group_name = luigi.Parameter()
@@ -265,3 +296,19 @@ class CapGroupTask(BaseCapTask):
             config_filename=config_path,
             cores=cores,
         )
+
+    @classmethod
+    def from_cap_group_task(cls, other):
+        return cls(
+            group_name=other.group_name,
+            config_filename=other.config_filename,
+            cores=other.cores,
+            max_ram=other.max_ram,
+            samples=other.samples,
+        )
+
+    def version_exists(self, version):
+        """Return True iff this verion of this module already exists."""
+        clone = type(self).from_cap_group_task(self)
+        clone.version = lambda: version
+        return clone.complete()

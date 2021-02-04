@@ -17,6 +17,13 @@ logger = logging.getLogger('cap2')
 
 
 class class_or_instancemethod(classmethod):
+    """Decorator that provides similar functionality to classmethod
+
+    For our use case this allows us to overwrite class level
+    values in instances. this is important for spoofing the
+    versions of old modules.
+    """
+
     def __get__(self, instance, type_):
         descr_get = self.__func__.__get__
         if instance is None:
@@ -41,7 +48,6 @@ class BaseCapTask(luigi.Task):
         self.out_dir = self.config.out_dir
         self.pre_run_hooks = []
         self.version_override = None
-
 
         # Check if any of the allowed version already exist
         # If they do we spoof that version in.

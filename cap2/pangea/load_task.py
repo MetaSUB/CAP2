@@ -225,7 +225,11 @@ class PangeaCapTask(PangeaBaseCapTask):
         ).download()
 
     def results_available_for_version(self, version_str, version_hash):
-        """Check for results of a specific version on Pangea."""
+        """Check for results of a specific version on Pangea.
+
+        Side effect: if the results are found we set the wrapped
+        instance to point at those results.
+        """
         original_wrapped_task = self.wrapped_instance
         clone = self.wrapped_type.from_cap_task(self.wrapped_instance, check_versions=False)
         clone.version_override = version_str, version_hash

@@ -19,6 +19,7 @@ class MouseRemovalDB(CapDbTask):
     """
     config_filename = luigi.Parameter()
     cores = luigi.IntParameter(default=1)
+    MODULE_VERSION = 'v1.0.0'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -61,10 +62,6 @@ class MouseRemovalDB(CapDbTask):
     @classmethod
     def _module_name(cls):
         return 'bowtie_mouse_removal_db'
-
-    @classmethod
-    def version(cls):
-        return 'v1.0.0'
 
     @classmethod
     def dependencies(cls):

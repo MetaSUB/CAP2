@@ -1,5 +1,6 @@
 
 import luigi
+import types
 import subprocess
 import datetime
 import json
@@ -15,11 +16,21 @@ from ..config import PipelineConfig
 logger = logging.getLogger('cap2')
 
 
+class class_or_instancemethod(classmethod):
+    def __get__(self, instance, type_):
+        descr_get = self.__func__.__get__
+        if instance is None:
+            descr_get = super().__get__
+        return descr_get(instance, type_)
+
+
 class BaseCapTask(luigi.Task):
     config_filename = luigi.Parameter(default='')
     cores = luigi.IntParameter(default=1)
     max_ram = luigi.IntParameter(default=0)  # maximum allowed ram in GB. 0 means no limit.
+    check_versions = luigi.BoolParameter(default=True)
     module_description = "No description for this module."
+    MODULE_VERSION = None
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -29,6 +40,7 @@ class BaseCapTask(luigi.Task):
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
         self.pre_run_hooks = []
+        self.version_override = None
 
         # Check if any of the allowed version already exist
         # If they do we spoof that version in.
@@ -37,14 +49,19 @@ class BaseCapTask(luigi.Task):
         # or changed this will not find an old version
         # (Indeed that would introduce difficult dependency
         # issues if downstreams relied on the new fields)
-        for version_str in self.config.allowed_versions(self):
-            if self.version_exists(version_str):
-                self.version = lambda: version_str
-                break
+        if self.check_versions:
+            for version_str in self.config.allowed_versions(self):
+                if self.version_exists(version_str):
+                    self.version_override = version_str
+                    break
 
-    @classmethod
+    @class_or_instancemethod
     def version(cls):
         """Return a string giving a human readable version for this module only."""
+        if hasattr(cls, 'version_override') and cls.version_override:
+            return cls.version_override
+        elif cls.MODULE_VERSION:
+            return cls.MODULE_VERSION
         raise NotImplementedError()
 
     @classmethod
@@ -55,7 +72,7 @@ class BaseCapTask(luigi.Task):
         """
         raise NotImplementedError()
 
-    @classmethod
+    @class_or_instancemethod
     def version_tree(cls, terminal=True):
         """Return a newick tree with versions."""
         out = f'{cls.module_name()}=={cls.version()}'
@@ -70,7 +87,7 @@ class BaseCapTask(luigi.Task):
             out += ';'
         return out
 
-    @classmethod
+    @class_or_instancemethod
     def version_hash(cls):
         """Return a hash string giving the version of this task and all upstream tasks."""
         try:
@@ -86,7 +103,7 @@ class BaseCapTask(luigi.Task):
             out += result.hexdigest()
         return out
 
-    @classmethod
+    @class_or_instancemethod
     def short_version_hash(cls):
         """Return a 12 character hash string giving the version of this task and all upstream tasks."""
         myhash = cls.version_hash()
@@ -178,15 +195,16 @@ class CapDbTask(BaseCapTask):
         )
 
     @classmethod
-    def from_cap_db_task(cls, other):
+    def from_cap_db_task(cls, other, **kwargs):
         return cls(
             config_filename=other.config_filename,
             cores=other.cores,
+            **kwargs,
         )
 
     def version_exists(self, version):
         """Return True iff this verion of this module already exists."""
-        clone = type(self).from_cap_db_task(self)
+        clone = type(self).from_cap_db_task(self, check_versions=False)
         clone.version = lambda: version
         return clone.complete()
 
@@ -229,8 +247,8 @@ class CapTask(BaseCapTask):
         )
 
     @classmethod
-    def from_cap_task(cls, other):
-        return cls(
+    def from_cap_task(cls, other, **kwargs):
+        out = cls(
             pe1=other.pe1,
             pe2=other.pe2,
             sample_name=other.sample_name,
@@ -238,7 +256,9 @@ class CapTask(BaseCapTask):
             cores=other.cores,
             max_ram=other.max_ram,
             data_type=other.data_type,
+            **kwargs,
         )
+        return out
 
     def __str__(self):
         try:
@@ -250,9 +270,10 @@ class CapTask(BaseCapTask):
 
     def version_exists(self, version):
         """Return True iff this verion of this module already exists."""
-        clone = type(self).from_cap_task(self)
-        clone.version = lambda: version
-        return clone.complete()
+        clone = type(self).from_cap_task(self, check_versions=False)
+        clone.version_override = version
+        is_complete = clone.complete()
+        return is_complete
 
 
 class CapGroupTask(BaseCapTask):
@@ -298,17 +319,18 @@ class CapGroupTask(BaseCapTask):
         )
 
     @classmethod
-    def from_cap_group_task(cls, other):
+    def from_cap_group_task(cls, other, **kwargs):
         return cls(
             group_name=other.group_name,
             config_filename=other.config_filename,
             cores=other.cores,
             max_ram=other.max_ram,
             samples=other.samples,
+            **kwargs,
         )
 
     def version_exists(self, version):
         """Return True iff this verion of this module already exists."""
-        clone = type(self).from_cap_group_task(self)
+        clone = type(self).from_cap_group_task(self, check_versions=False)
         clone.version = lambda: version
         return clone.complete()

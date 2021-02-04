@@ -22,6 +22,7 @@ class Mash(CapTask):
     Negatives: Small MASH sketch sizes can obscure differences between
     samples. As such this module produces two different sketch sizes.
     """
+    MODULE_VERSION = 'v0.2.0'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -44,10 +45,6 @@ class Mash(CapTask):
 
     def requires(self):
         return self.pkg, self.reads
-
-    @classmethod
-    def version(cls):
-        return 'v0.2.0'
 
     @classmethod
     def dependencies(cls):

@@ -18,6 +18,7 @@ DB_DATE = '2020-06-01'
 class Kraken2DBDataDown(CapDbTask):
     config_filename = luigi.Parameter()
     cores = luigi.IntParameter(default=1)
+    MODULE_VERSION = 'v0.1.0'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -44,10 +45,6 @@ class Kraken2DBDataDown(CapDbTask):
     @classmethod
     def _module_name(cls):
         return 'kraken2_taxa_db_down'
-
-    @classmethod
-    def version(cls):
-        return 'v0.1.0'
 
     @classmethod
     def dependencies(cls):
@@ -85,6 +82,7 @@ class Kraken2DBDataDown(CapDbTask):
 class Kraken2DB(CapDbTask):
     config_filename = luigi.Parameter()
     cores = luigi.IntParameter(default=1)
+    MODULE_VERSION = 'v0.1.0'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -108,10 +106,6 @@ class Kraken2DB(CapDbTask):
     @classmethod
     def _module_name(cls):
         return 'kraken2_taxa_db'
-
-    @classmethod
-    def version(cls):
-        return 'v0.1.0'
 
     @classmethod
     def dependencies(cls):
@@ -162,6 +156,7 @@ class Kraken2DB(CapDbTask):
 class BrakenKraken2DB(CapDbTask):
     config_filename = luigi.Parameter()
     cores = luigi.IntParameter(default=1)
+    MODULE_VERSION = 'v0.1.0'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

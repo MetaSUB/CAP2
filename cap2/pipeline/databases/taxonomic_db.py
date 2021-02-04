@@ -13,6 +13,7 @@ from ..utils.cap_task import CapDbTask
 class TaxonomicDB(CapDbTask):
     config_filename = luigi.Parameter()
     cores = luigi.IntParameter(default=1)
+    MODULE_VERSION = 'v1.0.0'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

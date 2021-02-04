@@ -17,6 +17,7 @@ class ProcessedReads(CapTask):
     module_description = """
     This module is a proxy for the end of the short read stage.
     """
+    MODULE_VERSION = 'v0.2.1'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -26,10 +27,6 @@ class ProcessedReads(CapTask):
         self.mash = Mash.from_cap_task(self)
         self.jellyfish = Jellyfish.from_cap_task(self)
         self.read_stats = ReadStats.from_cap_task(self)
-
-    @classmethod
-    def version(cls):
-        return 'v0.2.1'
 
     @classmethod
     def dependencies(cls):

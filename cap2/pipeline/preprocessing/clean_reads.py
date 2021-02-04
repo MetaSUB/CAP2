@@ -13,6 +13,7 @@ class CleanReads(CapTask):
     """This class represents the culmination of the
     preprocessing pipeline.
     """
+    MODULE_VERSION = 'v0.2.1'
     module_description = """
     This module contains cleaned paired end short reads.
 
@@ -26,10 +27,6 @@ class CleanReads(CapTask):
     @property
     def reads(self):
         return self.ec_reads
-
-    @classmethod
-    def version(cls):
-        return 'v0.2.1'
 
     @classmethod
     def dependencies(cls):

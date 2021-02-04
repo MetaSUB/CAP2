@@ -7,6 +7,7 @@ from ..utils.cap_task import CapTask
 class BaseReads(CapTask):
     """This class represents the start of the pipeline.
     """
+    MODULE_VERSION = 'v1.0.0'
     module_description = """
     This module contains paired end short reads.
 
@@ -15,10 +16,6 @@ class BaseReads(CapTask):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-    @classmethod
-    def version(cls):
-        return 'v1.0.0'
 
     @classmethod
     def dependencies(cls):

@@ -26,7 +26,7 @@ RAW_READS_2 = join(dirname(__file__), 'data/zymo_pos_cntrl.r2.fq.gz')
 TEST_CONFIG = join(dirname(__file__), 'data/test_config.yaml')
 
 PANGEA_ENDPOINT = 'https://pangea.gimmebio.com'
-PANGEA_USER = 'dcdanko@gmail.com'  #'cap2tester@fake.com'
+PANGEA_USER = 'cap2tester@fake.com'
 PANGEA_PASS = environ['CAP2_PANGEA_TEST_PASSWORD']
 
 

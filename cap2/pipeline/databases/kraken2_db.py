@@ -182,10 +182,6 @@ class BrakenKraken2DB(CapDbTask):
         return 'bracken_kraken2_taxa_db'
 
     @classmethod
-    def version(cls):
-        return 'v0.1.0'
-
-    @classmethod
     def dependencies(cls):
         return ['bracken', DB_DATE, Kraken2DB]
 

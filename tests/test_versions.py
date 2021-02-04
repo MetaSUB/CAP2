@@ -99,7 +99,8 @@ class TestVersion(TestCase):
             pe1=RAW_READS_1,
             pe2=RAW_READS_2,
             sample_name='test_sample',
-            config_filename=TEST_CONFIG
+            config_filename=TEST_CONFIG,
+            check_versions=False,
         )
         luigi.build([flag_b], local_scheduler=True)
         self.assertTrue(isfile(flag_b.flag_filepath))
@@ -110,7 +111,7 @@ class TestVersion(TestCase):
             config_filename=TEST_CONFIG
         )
         # By default relies on A but config is set to allow B
-        self.assertIn('B', instance.config.allowed_versions(flag_b))
+        self.assertIn('B', [x[0] for x in instance.config.allowed_versions(flag_b)])
         self.assertEqual(instance.flag.version(), 'B')
         luigi.build([instance], local_scheduler=True)
 

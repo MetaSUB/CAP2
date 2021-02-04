@@ -42,6 +42,7 @@ class BaseCapTask(luigi.Task):
         self.pre_run_hooks = []
         self.version_override = None
 
+
         # Check if any of the allowed version already exist
         # If they do we spoof that version in.
         # NB. This will check for the current output fields
@@ -50,16 +51,16 @@ class BaseCapTask(luigi.Task):
         # (Indeed that would introduce difficult dependency
         # issues if downstreams relied on the new fields)
         if self.check_versions:
-            for version_str in self.config.allowed_versions(self):
-                if self.version_exists(version_str):
-                    self.version_override = version_str
+            for version_str, version_hash in self.config.allowed_versions(self):
+                if self.version_exists(version_str, version_hash):
+                    self.version_override = version_str, version_hash
                     break
 
     @class_or_instancemethod
     def version(cls):
         """Return a string giving a human readable version for this module only."""
         if hasattr(cls, 'version_override') and cls.version_override:
-            return cls.version_override
+            return cls.version_override[0]
         elif cls.MODULE_VERSION:
             return cls.MODULE_VERSION
         raise NotImplementedError()
@@ -90,6 +91,8 @@ class BaseCapTask(luigi.Task):
     @class_or_instancemethod
     def version_hash(cls):
         """Return a hash string giving the version of this task and all upstream tasks."""
+        if hasattr(cls, 'version_override') and cls.version_override:
+            return cls.version_override[1]
         try:
             version = cls.version()
         except:
@@ -268,10 +271,10 @@ class CapTask(BaseCapTask):
         except:
             return repr(self)
 
-    def version_exists(self, version):
+    def version_exists(self, version_str, version_hash):
         """Return True iff this verion of this module already exists."""
         clone = type(self).from_cap_task(self, check_versions=False)
-        clone.version_override = version
+        clone.version_override = version_str, version_hash
         is_complete = clone.complete()
         return is_complete
 

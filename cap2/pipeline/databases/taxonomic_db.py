@@ -35,7 +35,7 @@ class TaxonomicDB(CapDbTask):
 
     @classmethod
     def _module_name(cls):
-        return 'krakenuniq_taxa_db'MODULE_VERSION =
+        return 'krakenuniq_taxa_db'
 
     @classmethod
     def dependencies(cls):

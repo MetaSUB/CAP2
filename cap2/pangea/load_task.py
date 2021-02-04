@@ -206,6 +206,12 @@ class PangeaCapTask(PangeaBaseCapTask):
             self.sample = self.grp.sample(self.sample_name).get()
         self.pangea_obj = self.sample
 
+        # call results available to find any allowed versions
+        # that might be present and set the wrapped_instance
+        # accordingly. Not importatn if the result is not
+        # available
+        self.results_available()
+
     def _download_reads(self):
         PangeaSample(
             self.sample_name,
@@ -218,11 +224,11 @@ class PangeaCapTask(PangeaBaseCapTask):
             sample=self.sample,
         ).download()
 
-    def results_available_for_version(self, version_str):
+    def results_available_for_version(self, version_str, version_hash):
         """Check for results of a specific version on Pangea."""
         original_wrapped_task = self.wrapped_instance
-        clone = self.wrapped_instance.from_cap_task(self.wrapped_instance)
-        clone.version = lambda: version
+        clone = self.wrapped_type.from_cap_task(self.wrapped_instance, check_versions=False)
+        clone.version_override = version_str, version_hash
         self.wrapped_instance = clone
         try:
             self.get_results()
@@ -238,8 +244,8 @@ class PangeaCapTask(PangeaBaseCapTask):
         current_version_available = super().results_available()
         if current_version_available:
             return True
-        for version_str in self.config.allowed_versions(self):
-            if self.results_available_for_version(version_str):
+        for version_str, version_hash in self.config.allowed_versions(self):
+            if self.results_available_for_version(version_str, version_hash):
                 return True
         return False
 

@@ -94,7 +94,29 @@ class TestVersion(TestCase):
         self.assertFalse(flag_a.check_versions)
         self.assertEqual(flag_a.version(), 'A')
 
-    def test_invoke_kraken2(self):
+    def test_version_tree_changed(self):
+        flag_b = FlagTaskVersionB(
+            pe1=RAW_READS_1,
+            pe2=RAW_READS_2,
+            sample_name='test_sample',
+            config_filename=TEST_CONFIG,
+            check_versions=False,
+        )
+        luigi.build([flag_b], local_scheduler=True)
+        instance = TaskThatReliesOnFlagTask(
+            pe1=RAW_READS_1,
+            pe2=RAW_READS_2,
+            sample_name='test_sample',
+            config_filename=TEST_CONFIG
+        )
+        self.assertNotEqual(instance.version_tree(), TaskThatReliesOnFlagTask.version_tree())
+        self.assertEqual(
+            instance.version_tree().replace('==B', '==A'),
+            TaskThatReliesOnFlagTask.version_tree()
+        )
+        self.assertNotEqual(instance.version_hash(), TaskThatReliesOnFlagTask.version_hash())
+
+    def test_sub_version(self):
         flag_b = FlagTaskVersionB(
             pe1=RAW_READS_1,
             pe2=RAW_READS_2,

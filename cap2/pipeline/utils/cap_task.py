@@ -79,14 +79,55 @@ class BaseCapTask(luigi.Task):
         """
         raise NotImplementedError()
 
+    def is_type_of_cap_task(self, cap_task_type):
+        """Return True iff self is of cap_task_type.
+
+        This method makes it easy for duck typed CAP Tasks
+        to spoof their type as another CAP Task. i.e. PangeaCapTasks
+        """
+        try:
+            return isinstance(self, cap_task_type)
+        except TypeError:
+            return False
+
+    def _reqs_as_list(self):
+        reqs = self.requires()
+        try:
+            len(reqs)
+        except TypeError:
+            reqs = [reqs]
+        return reqs
+
+    @class_or_instancemethod
+    def _instantiated_dependencies(cls):
+        """Return a list of dependencies for this class.
+
+        If this is called on an instance replace dependencies
+        that are CAPTasks with their instantied version from
+        requirements.
+        """
+        dependencies = cls.dependencies()
+        if not isinstance(cls, CapTask):
+            return dependencies
+        reqs = cls._reqs_as_list()
+        depends_out = []
+        for dependency in dependencies:
+            for req in reqs:
+                if hasattr(req, 'is_type_of_cap_task') and req.is_type_of_cap_task(dependency):
+                    depends_out.append(req)
+                else:
+                    depends_out.append(dependency)
+        return depends_out
+
     @class_or_instancemethod
     def version_tree(cls, terminal=True):
         """Return a newick tree with versions."""
         out = f'{cls.module_name()}=={cls.version()}'
-        if cls.dependencies:
+        dependencies = cls._instantiated_dependencies()
+        if dependencies:
             depends = [
-                el if isinstance(el, str) else el.version_tree(terminal=False)
-                for el in cls.dependencies()
+                el.version_tree(terminal=False) if hasattr(el, 'version_tree') else str(el)
+                for el in dependencies
             ]
             depends = ','.join(depends)
             out = f'({depends}){out}'
@@ -104,8 +145,9 @@ class BaseCapTask(luigi.Task):
         except:
             print(cls, file=stderr)
             raise
+        dependencies = cls._instantiated_dependencies()
         out = ''
-        for el in [version] + cls.dependencies():
+        for el in [version] + list(dependencies):
             if not isinstance(el, str):
                 el = el.version_hash()
             result = sha256(el.encode())

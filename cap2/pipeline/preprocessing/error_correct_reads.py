@@ -25,6 +25,7 @@ class ErrorCorrectReads(CapTask):
     secondary strains, as such error corrected reads should
     not be used to call SNPs.
     """
+    MODULE_VERSION = 'v0.2.2'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -40,10 +41,6 @@ class ErrorCorrectReads(CapTask):
 
     def requires(self):
         return self.pkg, self.nonhuman_reads
-
-    @classmethod
-    def version(cls):
-        return 'v0.2.2'
 
     def tool_version(self):
         return self.run_cmd(f'{self.pkg.bin} --version').stderr.decode('utf-8')

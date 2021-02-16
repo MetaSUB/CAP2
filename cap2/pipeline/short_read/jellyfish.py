@@ -23,6 +23,7 @@ class Jellyfish(CapTask):
     Negatives: K-mer counts can be large and are sensitive to read errors. The latter is
     mitigated somewhat by read error correction.
     """
+    MODULE_VERSION = 'v0.2.0'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -45,10 +46,6 @@ class Jellyfish(CapTask):
 
     def requires(self):
         return self.pkg, self.reads
-
-    @classmethod
-    def version(cls):
-        return 'v0.2.0'
 
     @classmethod
     def dependencies(cls):

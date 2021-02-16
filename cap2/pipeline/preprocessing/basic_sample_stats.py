@@ -34,6 +34,7 @@ class BasicSampleStats(CapTask):
     based on the taxonomic profiles.
     """
     READ_STATS_DROPOUT = 1 / 1000
+    MODULE_VERSION = 'v0.1.0'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -52,10 +53,6 @@ class BasicSampleStats(CapTask):
 
     def requires(self):
         return self.taxa, self.reads
-
-    @classmethod
-    def version(cls):
-        return 'v0.1.0'
 
     @classmethod
     def dependencies(cls):

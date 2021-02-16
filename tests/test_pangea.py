@@ -1,22 +1,31 @@
 
 import luigi
 
-from os import environ
+from shutil import rmtree
 
-from time import time
+from os import environ, remove
+
+from time import time, sleep
 from cap2.pangea.load_task import PangeaCapTask
 from cap2.pipeline.preprocessing import FastQC
-from unittest import TestCase
+from unittest import TestCase, skip
 from cap2.pangea.cli import set_config
-from cap2.pangea.api import get_task_list_for_sample
+from cap2.pangea.api import get_task_list_for_sample, wrap_task, recursively_wrap_task
 from cap2.pangea.pangea_sample import PangeaSample
 from os.path import join, dirname, isfile, isdir, abspath
 
 from pangea_api.blob_constructors import sample_from_uuid
 from pangea_api import Knex, Organization, User
 
+from .test_versions import (
+    FlagTaskVersionA,
+    FlagTaskVersionB,
+    TaskThatReliesOnFlagTask,
+)
+
 RAW_READS_1 = join(dirname(__file__), 'data/zymo_pos_cntrl.r1.fq.gz')
 RAW_READS_2 = join(dirname(__file__), 'data/zymo_pos_cntrl.r2.fq.gz')
+TEST_CONFIG = join(dirname(__file__), 'data/test_config.yaml')
 
 PANGEA_ENDPOINT = 'https://pangea.gimmebio.com'
 PANGEA_USER = 'cap2tester@fake.com'
@@ -55,6 +64,14 @@ class DummyFastKraken2(luigi.ExternalTask):
 
 class TestPangea(TestCase):
     """Test the CAP2 API, essentially integration tests."""
+
+    def setUpClass():
+        pass
+        rmtree('.pangea_api_cache')
+
+    def tearDownClass():
+        pass
+        rmtree('test_out')
 
     def test_get_pangea_cap_task_properties(self):
         c = PangeaCapTask.new_task_type(FastQC)
@@ -148,3 +165,62 @@ class TestPangea(TestCase):
         tasks[0].taxa = DummyFastKraken2()
         luigi.build(tasks, local_scheduler=True)
         self.assertTrue(PANGEA_SAMPLE.analysis_result('cap2::basic_sample_stats').exists())
+
+    def test_load_task_versions(self):
+        psample = PangeaSample(
+            PANGEA_SAMPLE.uuid,
+            None,
+            None,
+            None,
+            None,
+            None,
+            knex=PANGEA_SAMPLE.knex,
+            sample=PANGEA_SAMPLE,
+        )
+        set_config(PANGEA_ENDPOINT, PANGEA_USER, PANGEA_PASS, '', '', name_is_uuid=True)
+        wrapped_flag_b = wrap_task(psample, FlagTaskVersionB, config_path=TEST_CONFIG, check_versions=False)
+        luigi.build([wrapped_flag_b], local_scheduler=True)
+        remove(wrapped_flag_b.flag_filepath)
+        self.assertTrue(PANGEA_SAMPLE.analysis_result(
+            'cap2::test_flag',
+            replicate='B df7ebee60a5c',
+        ).exists())
+
+        instance = recursively_wrap_task(psample, TaskThatReliesOnFlagTask, config_path=TEST_CONFIG)
+        self.assertEqual(instance.flag.version(), 'B')
+        ivt = instance.version_tree()
+        cvt = TaskThatReliesOnFlagTask.version_tree()
+        self.assertNotEqual(ivt, cvt)
+        self.assertEqual(
+            instance.version_tree().replace('==B', '==A'),
+            TaskThatReliesOnFlagTask.version_tree()
+        )
+        self.assertNotEqual(instance.version_hash(), TaskThatReliesOnFlagTask.version_hash())
+
+    def test_pangea_versions(self):
+        psample = PangeaSample(
+            PANGEA_SAMPLE.uuid,
+            None,
+            None,
+            None,
+            None,
+            None,
+            knex=PANGEA_SAMPLE.knex,
+            sample=PANGEA_SAMPLE,
+        )
+        set_config(PANGEA_ENDPOINT, PANGEA_USER, PANGEA_PASS, '', '', name_is_uuid=True)
+        wrapped_flag_b = wrap_task(psample, FlagTaskVersionB, config_path=TEST_CONFIG, check_versions=False)
+        luigi.build([wrapped_flag_b], local_scheduler=True)
+        remove(wrapped_flag_b.flag_filepath)
+        self.assertTrue(PANGEA_SAMPLE.analysis_result(
+            'cap2::test_flag',
+            replicate='B df7ebee60a5c',
+        ).exists())
+
+        wrapped_downstream = recursively_wrap_task(psample, TaskThatReliesOnFlagTask, config_path=TEST_CONFIG)
+        self.assertIn('B', [x[0] for x in wrapped_downstream.config.allowed_versions(wrapped_flag_b)])
+        luigi.build([wrapped_downstream], local_scheduler=True)
+        self.assertEqual(wrapped_downstream.flag.version(), 'B')
+        self.assertTrue(PANGEA_SAMPLE.analysis_result(
+            'cap2::test_task_that_relies_on_flag',
+        ).exists())

@@ -15,6 +15,7 @@ MINIKRAKEN_V2_8GB_URL = 'ftp://ftp.ccb.jhu.edu/pub/data/kraken2_dbs/old/minikrak
 class FastKraken2DB(CapDbTask):
     config_filename = luigi.Parameter()
     cores = luigi.IntParameter(default=1)
+    MODULE_VERSION = 'v0.1.0'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -33,10 +34,6 @@ class FastKraken2DB(CapDbTask):
     @classmethod
     def _module_name(cls):
         return 'fast_kraken2_taxa_db'
-
-    @classmethod
-    def version(cls):
-        return 'v0.1.0'
 
     @classmethod
     def dependencies(cls):

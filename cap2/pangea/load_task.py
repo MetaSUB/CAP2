@@ -6,6 +6,7 @@ from pangea_api import (
     Knex,
     User,
     Organization,
+    Pipeline,
 )
 from pangea_api.blob_constructors import sample_from_uuid, sample_group_from_uuid
 
@@ -41,6 +42,10 @@ class PangeaLoadTaskError(Exception):
 
 
 class PangeaBaseCapTaskLuigiTask(luigi.Task):
+    pass
+
+
+class PangeaBaseCapTaskCapTask(PangeaBaseCapTaskLuigiTask, CapTask):
     pass
 
 
@@ -195,6 +200,50 @@ class PangeaBaseCapTask(metaclass=PangeaBaseCapTaskMetaClass):
             field.upload_file(local_target.path)
         open(self.output()['upload_flag'].path, 'w').close()
 
+    def register_module(self):
+        """Register this tasks module with Pangea."""
+        pipeline_name = '::'.join(self.module_name().split('::')[:-1])
+        pipeline_module_name = self.module_name().split('::')[-1]
+        try:
+            pipeline = Pipeline(self.knex, pipeline_name).idem()
+        except:
+            logger.error(f'Failed to make Pipeline with name: "{pipeline_name}"')
+            raise
+        try:
+            module = pipeline.module(pipeline_module_name, self._replicate())
+            if not module.exists():
+                module_description = self.module_description.strip()
+                module.description = module_description.split('\n')[0]
+                module.long_description = module_description
+                module.metadata = {
+                    'version': self.version(),
+                    'version_hash': self.version_hash(),
+                    'version_tree': self.version_tree(),
+                    'short_version_hash': self.short_version_hash(),
+                }
+                module = module.create()
+            else:
+                module = module.get()
+        except:
+            msg = (
+                f'Failed to make PipelineModule for pipeline {pipeline} with'
+                f'\nname: "{pipeline_module_name}"'
+                f'\ndescription: "{module_description}"'
+                f'\nversion: "{self._replicate()}"'
+                f'\nmetadata: "{json.dumps(module.metadata)}"'
+            )
+            logger.error(msg)
+            raise
+
+    def is_type_of_cap_task(self, cap_task_type):
+        """Return True iff self is of cap_task_type.
+
+        Check the wrapped type not this itself.
+        """
+        try:
+            return isinstance(self.wrapped_instance, cap_task_type)
+        except TypeError:
+            return False
 
 class PangeaCapTask(PangeaBaseCapTask):
 
@@ -205,6 +254,12 @@ class PangeaCapTask(PangeaBaseCapTask):
         else:
             self.sample = self.grp.sample(self.sample_name).get()
         self.pangea_obj = self.sample
+
+        # call results available to find any allowed versions
+        # that might be present and set the wrapped_instance
+        # accordingly. Not importatn if the result is not
+        # available
+        self.results_available()
 
     def _download_reads(self):
         PangeaSample(
@@ -217,6 +272,35 @@ class PangeaCapTask(PangeaBaseCapTask):
             knex=self.knex,
             sample=self.sample,
         ).download()
+
+    def results_available_for_version(self, version_str, version_hash):
+        """Check for results of a specific version on Pangea.
+
+        Side effect: if the results are found we set the wrapped
+        instance to point at those results.
+        """
+        original_wrapped_task = self.wrapped_instance
+        clone = self.wrapped_type.from_cap_task(self.wrapped_instance, check_versions=False)
+        clone.version_override = version_str, version_hash
+        self.wrapped_instance = clone
+        try:
+            self.get_results()
+        except PangeaLoadTaskError:
+            # reset the version if the given version is not found
+            self.wrapped_instance = original_wrapped_task
+            return False
+        # if results are available we do NOT reset the version
+        return True
+
+    def results_available(self):
+        """Check for results on Pangea."""
+        current_version_available = super().results_available()
+        if current_version_available:
+            return True
+        for version_str, version_hash in self.config.allowed_versions(self):
+            if self.results_available_for_version(version_str, version_hash):
+                return True
+        return False
 
     def requires(self):
         if self.results_available():  # the wrapped result is on pangea
@@ -240,6 +324,7 @@ class PangeaCapTask(PangeaBaseCapTask):
                 logger.debug(f'reads are required for {self}, downloading...')
                 self._download_reads()
             logger.debug(f'running wrapped_instance for {self}, running...')
+            self.register_module()  # only register this module if it seems like everything else is working
             self.wrapped_instance.run()  # see above. we reassign the original CT._run to CT._wrapped_run
             if self.upload_allowed:
                 logger.debug(f'uploading results for {self}, uploading...')
@@ -248,12 +333,15 @@ class PangeaCapTask(PangeaBaseCapTask):
                 open(self.output()['upload_flag'].path, 'w').close()
 
     def __str__(self):
-        try:
-            module_name = self.module_name()
-            short_hash = self.short_version_hash()
-            return f'<PangeaCapTask::{module_name}::{short_hash} {self.sample_name}/>'
-        except:
-            return repr(self)
+        module_name = self.module_name()
+        short_hash = self.short_version_hash()
+        return f'<PangeaCapTask::{module_name}::{short_hash} {self.sample_name}/>'
+
+    def __repr__(self):
+        module_name = self.module_name()
+        short_hash = self.short_version_hash()
+        return f'<PangeaCapTask::{module_name}::{short_hash} {self.sample_name}/>'
+
 
 class PangeaGroupCapTask(PangeaBaseCapTask):
 

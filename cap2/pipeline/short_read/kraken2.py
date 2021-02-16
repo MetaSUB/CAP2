@@ -22,6 +22,7 @@ class Kraken2(CapTask):
     Negatives: Kraken2 uses pseudo-alignment which is somewhat less sensitive
     and specific than true alignment.
     """
+    MODULE_VERSION = 'v0.3.0'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -55,10 +56,6 @@ class Kraken2(CapTask):
         return self.rsync_pkg, self.pkg, self.db, self.reads
 
     @classmethod
-    def version(cls):
-        return 'v0.3.0'
-
-    @classmethod
     def dependencies(cls):
         return ['kraken2', Kraken2DB, CleanReads]
 
@@ -84,6 +81,7 @@ class Kraken2(CapTask):
 
 
 class BrakenKraken2(CapTask):
+    MODULE_VERSION = 'v0.1.0'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -115,10 +113,6 @@ class BrakenKraken2(CapTask):
 
     def requires(self):
         return self.pkg, self.report, self.db, self.reads
-
-    @classmethod
-    def version(cls):
-        return 'v0.1.0'
 
     @classmethod
     def dependencies(cls):

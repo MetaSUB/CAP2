@@ -22,6 +22,7 @@ class AdapterRemoval(CapTask):
     identified.
     """
     ILLUMINA_SHARED_PREFIX = 'AGATCGGAAGAGC'
+    MODULE_VERSION = 'v0.2.1'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -39,10 +40,6 @@ class AdapterRemoval(CapTask):
 
     def requires(self):
         return self.pkg, self.reads
-
-    @classmethod
-    def version(cls):
-        return 'v0.2.1'
 
     def tool_version(self):
         return self.run_cmd(f'{self.pkg.bin} --version').stderr.decode('utf-8')

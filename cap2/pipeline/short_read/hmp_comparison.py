@@ -20,6 +20,7 @@ class HmpComparison(CapTask):
     Negatives: HMP samples are a useful reference but do not provide
     the full gamut of human microbiome diversity.
     """
+    MODULE_VERSION = 'v0.3.0'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -40,10 +41,6 @@ class HmpComparison(CapTask):
 
     def requires(self):
         return self.pkg, self.db, self.mash
-
-    @classmethod
-    def version(cls):
-        return 'v0.3.0'
 
     @classmethod
     def dependencies(cls):

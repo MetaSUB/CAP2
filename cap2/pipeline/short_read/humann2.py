@@ -22,6 +22,7 @@ class MicaUniref90(CapTask):
 
     Note: this module currently uses Diamond not MiCA
     """
+    MODULE_VERSION = 'v0.2.0'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -45,10 +46,6 @@ class MicaUniref90(CapTask):
     @classmethod
     def _module_name(cls):
         return 'diamond'
-
-    @classmethod
-    def version(cls):
-        return 'v0.2.0'
 
     @classmethod
     def dependencies(cls):
@@ -86,6 +83,7 @@ class Humann2(CapTask):
     Notes: This class is named Humann2 for historical reasons. It uses
     humann3
     """
+    MODULE_VERSION = 'v0.3.0'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -108,10 +106,6 @@ class Humann2(CapTask):
     @classmethod
     def _module_name(cls):
         return 'humann'
-
-    @classmethod
-    def version(cls):
-        return 'v0.3.0'
 
     @classmethod
     def dependencies(cls):

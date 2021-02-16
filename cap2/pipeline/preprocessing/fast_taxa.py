@@ -23,6 +23,7 @@ class FastKraken2(CapTask):
     and specific than true alignment. This module uses a small database on
     uncleaned reads. It is fast but not terribly accurate.
     """
+    MODULE_VERSION = 'v0.1.0'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -54,10 +55,6 @@ class FastKraken2(CapTask):
 
     def requires(self):
         return self.rsync_pkg, self.pkg, self.db, self.reads
-
-    @classmethod
-    def version(cls):
-        return 'v0.1.0'
 
     @classmethod
     def dependencies(cls):

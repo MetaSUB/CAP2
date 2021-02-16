@@ -17,6 +17,7 @@ class ReadStats(CapTask):
 
     Motivation: Read statistics can help uncover basic patterns.
     """
+    MODULE_VERSION = 'v1.0.1'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -31,10 +32,6 @@ class ReadStats(CapTask):
 
     def requires(self):
         return self.reads
-
-    @classmethod
-    def version(cls):
-        return 'v1.0.1'
 
     @classmethod
     def dependencies(cls):

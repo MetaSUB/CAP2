@@ -24,6 +24,7 @@ class RemoveMouseReads(CapTask):
 
     Removing mouse DNA may obscure human DNA in the sample.
     """
+    MODULE_VERSION = 'v0.1.0'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -46,10 +47,6 @@ class RemoveMouseReads(CapTask):
 
     def requires(self):
         return self.samtools, self.pkg, self.db, self.adapter_removed_reads
-
-    @classmethod
-    def version(cls):
-        return 'v0.1.0'
 
     def tool_version(self):
         version = '[BOWTIE2]\n'

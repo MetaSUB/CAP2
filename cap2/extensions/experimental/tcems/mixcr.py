@@ -164,7 +164,7 @@ class MixcrClones(CapTask):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.assemble = MixcrAssemble.from_cap_task(self)
-        self.pkg = self.align.pkg
+        self.pkg = self.assemble.pkg
 
     def requires(self):
         return self.pkg, self.assemble

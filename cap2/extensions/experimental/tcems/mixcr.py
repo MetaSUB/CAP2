@@ -63,7 +63,11 @@ class MixcrAlign(CapTask):
         return self.output()[f'alignments'].path
 
     def _run(self):
-        align_cmd = f'{self.pkg.bin} align -p rna-seq -s hsa -OallowPartialAlignments=true {self.reads.read_1} {self.reads.read_1} {self.alignments_path}'
+        align_cmd = f'{self.pkg.bin} align -p rna-seq -s hsa -OallowPartialAlignments=true {self.reads.read_1}'
+        if self.paired:
+            align_cmd += f' {self.reads.read_1} {self.alignments_path}'
+        else:
+            align_cmd += f' {self.alignments_path}'
         self.run_cmd(align_cmd)
 
 

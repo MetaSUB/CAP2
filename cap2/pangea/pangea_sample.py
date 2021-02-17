@@ -164,7 +164,7 @@ class PangeaGroup:
                 None,
                 knex=self.knex,
                 sample=sample,
-                kind='short_read',
+                kind=kind,
             )
             if psample.has_reads():
                 yield psample

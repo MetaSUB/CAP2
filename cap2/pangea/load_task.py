@@ -107,6 +107,7 @@ class PangeaBaseCapTask(metaclass=PangeaBaseCapTaskMetaClass):
         self.upload_allowed = get_pangea_config('upload_allowed', True)
         self.download_only = get_pangea_config('download_only', False)
         self.name_is_uuid = get_pangea_config('name_is_uuid')
+        self.data_kind = get_pangea_config('data_kind')
         self.endpoint = get_pangea_config('pangea_endpoint', PANGEA_URL)
         self.knex = Knex(self.endpoint)
         user = get_pangea_config('user')
@@ -202,8 +203,8 @@ class PangeaBaseCapTask(metaclass=PangeaBaseCapTaskMetaClass):
 
     def register_module(self):
         """Register this tasks module with Pangea."""
-        pipeline_name = '::'.join(self.module_name().split('::')[:-1])
-        pipeline_module_name = self.module_name().split('::')[-1]
+        pipeline_name = '::'.join(self.module_name().split('::')[:-1]).strip()
+        pipeline_module_name = self.module_name().split('::')[-1].strip()
         try:
             pipeline = Pipeline(self.knex, pipeline_name).idem()
         except:
@@ -213,7 +214,7 @@ class PangeaBaseCapTask(metaclass=PangeaBaseCapTaskMetaClass):
             module = pipeline.module(pipeline_module_name, self._replicate())
             if not module.exists():
                 module_description = self.module_description.strip()
-                module.description = module_description.split('\n')[0]
+                module.description = module_description.split('\n')[0].strip()
                 module.long_description = module_description
                 module.metadata = {
                     'version': self.version(),
@@ -269,6 +270,7 @@ class PangeaCapTask(PangeaBaseCapTask):
             None,
             None,
             None,
+            kind=self.data_kind,
             knex=self.knex,
             sample=self.sample,
         ).download()

@@ -15,4 +15,8 @@ STAGES_GROUP = {
     'qc': QC_GRP_MODULES,
 }
 
-DATA_TYPES = ['short_read',]
+DATA_TYPES = [
+    'short_read',  # CAP2 will try to figure out if reads are paired but may fail
+    'single_short_read',
+    'paired_short_read',
+]

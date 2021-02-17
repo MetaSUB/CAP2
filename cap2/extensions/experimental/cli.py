@@ -24,3 +24,9 @@ try:
     experimental_cli.add_command(strain_cli)
 except ImportError:
     click.echo('Failed to import extension module: "strains"', err=True)
+
+try:
+    from .tcems.cli import tcems_cli
+    experimental_cli.add_command(tcems_cli)
+except ImportError:
+    click.echo('Failed to import extension module: "tcems"', err=True)

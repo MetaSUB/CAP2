@@ -80,6 +80,16 @@ def chao1(row, rarefy=0):
     return R + (S ** 2) / (2 * D)
 
 
+def alpha_diversity_metrics(tbl):
+    min_read_count = tbl.T.sum().min()
+    out = pd.DataFrame.from_dict({
+        'entropy': tbl.apply(lambda r: shannon_entropy(r, rarefy=min_read_count), axis=1),
+        'richness': tbl.apply(lambda r: richness(r, rarefy=min_read_count), axis=1),
+        'chao1': tbl.apply(lambda r: chao1(r, rarefy=min_read_count), axis=1),
+    }, orient='columns')
+    return out
+
+
 # Beta Diversity
 
 

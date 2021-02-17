@@ -203,8 +203,8 @@ class PangeaBaseCapTask(metaclass=PangeaBaseCapTaskMetaClass):
 
     def register_module(self):
         """Register this tasks module with Pangea."""
-        pipeline_name = '::'.join(self.module_name().split('::')[:-1])
-        pipeline_module_name = self.module_name().split('::')[-1]
+        pipeline_name = '::'.join(self.module_name().split('::')[:-1]).strip()
+        pipeline_module_name = self.module_name().split('::')[-1].strip()
         try:
             pipeline = Pipeline(self.knex, pipeline_name).idem()
         except:
@@ -214,7 +214,7 @@ class PangeaBaseCapTask(metaclass=PangeaBaseCapTaskMetaClass):
             module = pipeline.module(pipeline_module_name, self._replicate())
             if not module.exists():
                 module_description = self.module_description.strip()
-                module.description = module_description.split('\n')[0]
+                module.description = module_description.split('\n')[0].strip()
                 module.long_description = module_description
                 module.metadata = {
                     'version': self.version(),

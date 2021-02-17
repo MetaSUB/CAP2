@@ -12,6 +12,7 @@ from .pangea_sample import PangeaSample, PangeaGroup, PangeaTag
 from ..pipeline.preprocessing import FastQC, MultiQC
 from ..utils import chunks
 from ..setup_logging import *
+from ..constants import DATA_TYPES
 
 logger = logging.getLogger('cap2')
 
@@ -32,10 +33,12 @@ def run():
 
 
 def set_config(endpoint, email, password, org_name, grp_name,
-               name_is_uuid=False, upload_allowed=True, download_only=False):
+               name_is_uuid=False, upload_allowed=True, download_only=False,
+               data_kind='short_read'):
     luigi.configuration.get_config().set('pangea', 'pangea_endpoint', endpoint)
     luigi.configuration.get_config().set('pangea', 'user', email)
     luigi.configuration.get_config().set('pangea', 'password', password)
+    luigi.configuration.get_config().set('pangea', 'data_kind', data_kind)
     luigi.configuration.get_config().set('pangea', 'org_name', org_name if org_name else '')
     luigi.configuration.get_config().set('pangea', 'grp_name', grp_name if grp_name else '')
     luigi.configuration.get_config().set('pangea', 'name_is_uuid', 'name_is_uuid' if name_is_uuid else '')
@@ -79,27 +82,33 @@ def cli_run_group(upload,
 
 @run.command('sample')
 @click.option('-c', '--config', type=click.Path(), default='', envvar='CAP2_CONFIG')
+@click.option('--clean-reads/--all-reads', default=False)
 @click.option('--upload/--no-upload', default=True)
+@click.option('--download-only/--run', default=False)
 @click.option('--scheduler-url', default=None, envvar='CAP2_LUIGI_SCHEDULER_URL')
+@click.option('-k', '--data-kind', default='short_read', type=click.Choice(DATA_TYPES))
 @click.option('-w', '--workers', default=1)
 @click.option('-t', '--threads', default=1)
 @click.option('--endpoint', default='https://pangea.gimmebio.com')
-@click.option('--s3-endpoint', default='https://s3.wasabisys.com')
-@click.option('--s3-profile', default='default', envvar='CAP2_PANGEA_S3_PROFILE')
 @click.option('-e', '--email', envvar='PANGEA_USER')
 @click.option('-p', '--password', envvar='PANGEA_PASS')
 @click.option('-s', '--stage', default='reads')
 @click.argument('org_name')
 @click.argument('grp_name')
 @click.argument('sample_name')
-def cli_run_sample(config, upload, scheduler_url, workers, threads,
-                   endpoint, s3_endpoint, s3_profile, email, password,
+def cli_run_sample(config, clean_reads, upload, download_only, scheduler_url,
+                   data_kind, workers, threads,
+                   endpoint, email, password,
                    stage,
                    org_name, grp_name, sample_name):
-    sample = PangeaSample(sample_name, email, password, endpoint, org_name, grp_name)
-    set_config(endpoint, email, password, org_name, grp_name)
+    sample = PangeaSample(sample_name, email, password, endpoint, org_name, grp_name,
+                          kind=data_kind)
+    set_config(endpoint, email, password, org_name, grp_name,
+               upload_allowed=upload, download_only=download_only,
+               name_is_uuid=False, data_kind=data_kind)
     tasks = get_task_list_for_sample(
-        sample, stage, upload=upload, config_path=config, cores=threads
+        sample, stage,
+        config_path=config, require_clean_reads=clean_reads,
     )
     if not scheduler_url:
         luigi.build(tasks, local_scheduler=True, workers=workers)

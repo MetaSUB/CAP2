@@ -107,6 +107,7 @@ class PangeaBaseCapTask(metaclass=PangeaBaseCapTaskMetaClass):
         self.upload_allowed = get_pangea_config('upload_allowed', True)
         self.download_only = get_pangea_config('download_only', False)
         self.name_is_uuid = get_pangea_config('name_is_uuid')
+        self.data_kind = get_pangea_config('data_kind')
         self.endpoint = get_pangea_config('pangea_endpoint', PANGEA_URL)
         self.knex = Knex(self.endpoint)
         user = get_pangea_config('user')
@@ -269,6 +270,7 @@ class PangeaCapTask(PangeaBaseCapTask):
             None,
             None,
             None,
+            kind=self.data_kind,
             knex=self.knex,
             sample=self.sample,
         ).download()

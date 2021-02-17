@@ -41,7 +41,7 @@ def get_task_list_for_sample(sample, stage, config, **kwargs):
     tcem_rep = recursively_wrap_task(
         sample,
         TcemRepertoire,
-        config_path=config_path,
+        config_path=config,
         module_substitute_tasks={BaseReads: base_reads},
         **kwargs,
     )

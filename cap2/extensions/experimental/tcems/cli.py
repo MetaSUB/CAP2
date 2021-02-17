@@ -87,6 +87,7 @@ def _process_samples_in_chunks(samples, scheduler_url, batch_size, timelimit, wo
 @click.option('--download-only/--run', default=False)
 @click.option('--scheduler-url', default=None, envvar='CAP2_LUIGI_SCHEDULER_URL')
 @click.option('--max-attempts', default=2)
+@click.option('-k', '--data-kind', default='short_read', type=click.Choice(DATA_TYPES))
 @click.option('-b', '--batch-size', default=10, help='Number of samples to process in parallel')
 @click.option('-w', '--workers', default=1)
 @click.option('-t', '--threads', default=1)
@@ -99,14 +100,15 @@ def _process_samples_in_chunks(samples, scheduler_url, batch_size, timelimit, wo
 @click.argument('org_name')
 @click.argument('grp_name')
 def cli_run_samples(config, log_level, clean_reads, upload, download_only, scheduler_url,
-                    max_attempts,
+                    max_attempts, data_kind,
                     batch_size, workers, threads, timelimit,
                     endpoint, email, password, stage, random_seed,
                     org_name, grp_name):
-    set_config(endpoint, email, password, org_name, grp_name, upload_allowed=upload, download_only=download_only, name_is_uuid=True)
+    set_config(endpoint, email, password, org_name, grp_name,
+              upload_allowed=upload, download_only=download_only, name_is_uuid=True, kind=data_kind)
     group = PangeaGroup(grp_name, email, password, endpoint, org_name)
     samples = [
-        samp for samp in group.pangea_samples(randomize=True, seed=random_seed)
+        samp for samp in group.pangea_samples(randomize=True, seed=random_seed, kind=data_kind)
         if not clean_reads or samp.has_clean_reads()
     ]
     completed = _process_samples_in_chunks(

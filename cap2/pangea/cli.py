@@ -102,7 +102,7 @@ def cli_run_sample(config, clean_reads, upload, download_only, scheduler_url,
                    stage,
                    org_name, grp_name, sample_name):
     sample = PangeaSample(sample_name, email, password, endpoint, org_name, grp_name,
-                          kind=data_kind)
+                          data_kind=data_kind)
     set_config(endpoint, email, password, org_name, grp_name,
                upload_allowed=upload, download_only=download_only,
                name_is_uuid=False, data_kind=data_kind)

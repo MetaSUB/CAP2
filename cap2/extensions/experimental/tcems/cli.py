@@ -16,7 +16,7 @@ from ....pangea.pangea_sample import PangeaGroup, PangeaTag
 from ....pipeline.preprocessing import (
     BaseReads,
 )
-
+from ....constants import DATA_TYPES
 from ....utils import chunks
 from ....setup_logging import *
 

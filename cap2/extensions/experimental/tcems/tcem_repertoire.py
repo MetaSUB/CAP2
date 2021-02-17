@@ -63,11 +63,7 @@ def parse_mixcr_table(filepath):
 
 class TcemRepertoire(CapTask):
     module_description = """
-    This module 
-
-    Motivation: 
-
-    Negatives: 
+    This module identifies repertoires of TCEMs in VDJ clonal sequences.
     """
 
     def __init__(self, *args, **kwargs):

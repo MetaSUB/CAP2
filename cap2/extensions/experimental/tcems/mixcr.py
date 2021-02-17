@@ -15,11 +15,7 @@ logger = logging.getLogger('tcems')
 
 class MixcrAlign(CapTask):
     module_description = """
-    This module 
-
-    Motivation: 
-
-    Negatives: 
+    This module aligns reads to VDJ genome regions
     """
 
     def __init__(self, *args, **kwargs):
@@ -73,11 +69,7 @@ class MixcrAlign(CapTask):
 
 class MixcrAssemble(CapTask):
     module_description = """
-    This module 
-
-    Motivation: 
-
-    Negatives: 
+    This module builds assemblies of T/B Cell immune receptors.
     """
 
     def __init__(self, *args, **kwargs):
@@ -154,11 +146,7 @@ class MixcrAssemble(CapTask):
 
 class MixcrClones(CapTask):
     module_description = """
-    This module 
-
-    Motivation: 
-
-    Negatives: 
+    This module identifies clonal sequences in VDJ sequences.
     """
 
     def __init__(self, *args, **kwargs):

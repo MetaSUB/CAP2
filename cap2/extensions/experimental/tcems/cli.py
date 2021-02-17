@@ -105,7 +105,7 @@ def cli_run_samples(config, log_level, clean_reads, upload, download_only, sched
                     endpoint, email, password, stage, random_seed,
                     org_name, grp_name):
     set_config(endpoint, email, password, org_name, grp_name,
-              upload_allowed=upload, download_only=download_only, name_is_uuid=True, kind=data_kind)
+              upload_allowed=upload, download_only=download_only, name_is_uuid=True, data_kind=data_kind)
     group = PangeaGroup(grp_name, email, password, endpoint, org_name)
     samples = [
         samp for samp in group.pangea_samples(randomize=True, seed=random_seed, kind=data_kind)

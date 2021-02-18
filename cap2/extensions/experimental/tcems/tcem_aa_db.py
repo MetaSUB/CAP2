@@ -56,7 +56,7 @@ class TcemNrAaDb(CapDbTask):
         self.config = PipelineConfig(self.config_filename)
         self.db_dir = self.config.db_dir
         self.fasta = join(self.db_dir, 'ncbi_nr_fasta', 'nr.gz')
-        self.flush_count = 1000 * 1000
+        self.flush_count = 1000 * 1000 * 1000
 
     def tool_version(self):
         return self.version()

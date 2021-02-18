@@ -84,6 +84,7 @@ class TcemNrAaDb(CapDbTask):
         }
 
     def run(self):
+        logger.info(f'Running in database mode: {self.config.db_mode}')
         if self.config.db_mode == PipelineConfig.DB_MODE_BUILD:
             self.build_db()
 

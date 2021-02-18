@@ -4,9 +4,11 @@ import logging
 import subprocess
 import logging
 import pandas as pd
+import sqlite3
 from os.path import join, dirname, basename
 
 from .mixcr import MixcrClones
+from .tcem_aa_db import TcemNrAaDb
 
 from ....pipeline.utils.cap_task import CapTask
 from ....pipeline.config import PipelineConfig
@@ -105,3 +107,57 @@ class TcemRepertoire(CapTask):
         motif_counts = parse_mixcr_table(self.mixcr.igh_path)
         out = pd.DataFrame.from_dict(motif_counts, orient='index')
         out.to_csv(self.tcem_counts_path)
+
+
+class AnnotatedTcemRepertoire(CapTask):
+    module_description = """
+    This module identifies repertoires of TCEMs in VDJ clonal sequences.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.repetoire = TcemRepertoire.from_cap_task(self)
+        self.db = TcemNrAaDb.from_cap_task(self)
+        self.config = PipelineConfig(self.config_filename)
+
+    def requires(self):
+        return self.repetoire
+
+    @classmethod
+    def version(cls):
+        return 'v0.1.0'
+
+    def tool_version(self):
+        return self.version()
+
+    @classmethod
+    def dependencies(cls):
+        return [TcemRepertoire]
+
+    @classmethod
+    def _module_name(cls):
+        return 'tcems::annotated_tcem_repertoire'
+
+    def output(self):
+        out = {
+            'tcem_annotations': self.get_target(f'annotated_tcem_repertoire', 'csv'),
+        }
+        return out
+
+    @property
+    def tcem_annotation_path(self):
+        return self.output()[f'tcem_annotations'].path
+
+    def _run(self):
+        with sqlite3.connect(self.db.tcem_index) as conn:
+            c = conn.cursor()
+            rep = pd.read_csv(self.repetoire.tcem_counts_path)
+            kmers = rep.iloc[:, 1].unique()
+            tbl = {}
+            for kmer in kmers:
+                tbl[kmer] = {}
+                cmd = f'SELECT taxon FROM taxa_kmers WHERE kmer = "{kmer}"'
+                for taxon in c.execute(cmd):
+                    tbl[kmer][taxon] = 1
+        tbl = pd.DataFrame.from_dict(tbl, orient='index')
+        tbl.to_csv(self.tcem_annotation_path)

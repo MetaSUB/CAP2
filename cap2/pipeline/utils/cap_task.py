@@ -112,11 +112,14 @@ class BaseCapTask(luigi.Task):
         reqs = cls._reqs_as_list()
         depends_out = []
         for dependency in dependencies:
+            added = False
             for req in reqs:
                 if hasattr(req, 'is_type_of_cap_task') and req.is_type_of_cap_task(dependency):
                     depends_out.append(req)
-                else:
-                    depends_out.append(dependency)
+                    added = True
+                    break
+            if not added:
+                depends_out.append(dependency)
         return depends_out
 
     @class_or_instancemethod

@@ -99,7 +99,7 @@ class TcemRepertoire(CapTask):
 
     @property
     def tcem_counts_path(self):
-        return self.output()[f'alignments'].path
+        return self.output()[f'tcem_counts'].path
 
     def _run(self):
         motif_counts = parse_mixcr_table(self.mixcr.igh_path)

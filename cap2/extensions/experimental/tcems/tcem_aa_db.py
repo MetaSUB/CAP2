@@ -8,7 +8,7 @@ from multiprocessing import Pool
 
 from ....pipeline.utils.cap_task import CapDbTask
 from ....pipeline.config import PipelineConfig
-from ..setup_logging import *
+from ....setup_logging import *
 import logging
 
 logger = logging.getLogger('cap2')

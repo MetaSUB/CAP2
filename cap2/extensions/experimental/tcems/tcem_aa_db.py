@@ -87,6 +87,7 @@ class TcemNrAaDb(CapDbTask):
             self.build_db()
 
     def build_db(self):
+        logger.info(f'Building TCEM database from {self.fasta}')
         conn = sqlite3.connect(self.tcem_index)
         c = conn.cursor()
         c.execute('''CREATE TABLE taxa_kmers (taxon text, kmer text, UNIQUE(taxon,kmer))''')

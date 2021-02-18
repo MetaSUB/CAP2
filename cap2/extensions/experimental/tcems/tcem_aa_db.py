@@ -105,6 +105,7 @@ class TcemNrAaDb(CapDbTask):
                     logger.info(f'Writing {len(full_set)} taxon kmer pairs to sqlite db')
                     c.executemany('INSERT OR IGNORE INTO taxa_kmers VALUES (?,?)', full_set)
                     full_set = set()
+                    logger.info(f'Finished writing {len(full_set)} taxon kmer pairs to sqlite db')
         logger.info(f'Processed {seq_counter} sequences')
         logger.info(f'Writing {len(full_set)} taxon kmer pairs to sqlite db')
         c.executemany('INSERT OR IGNORE INTO taxa_kmers VALUES (?,?)', full_set)

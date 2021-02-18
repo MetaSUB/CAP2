@@ -39,7 +39,8 @@ def get_binding_motifs(seq):
 
 
 def parse_mixcr_table(filepath):
-    """Return counts of TCEMs for a set of CDR3 sequences.""" 
+    """Return counts of TCEMs for a set of CDR3 sequences."""
+    tbl = pd.read_csv(filepath, sep='\t')
     out = {}
     for _, row in tbl.iterrows():
         motifs = get_binding_motifs(row['aaSeqImputedCDR3'])
@@ -76,7 +77,7 @@ class TcemRepertoire(CapTask):
 
     @classmethod
     def version(cls):
-        return 'v0.1.0'
+        return 'v0.1.1'
 
     def tool_version(self):
         return self.version()

@@ -110,6 +110,7 @@ class PangeaBaseCapTask(metaclass=PangeaBaseCapTaskMetaClass):
         self.data_kind = get_pangea_config('data_kind')
         self.endpoint = get_pangea_config('pangea_endpoint', PANGEA_URL)
         self.knex = Knex(self.endpoint)
+        self.pipeline_module = None
         user = get_pangea_config('user')
         if user:
             User(self.knex, user, get_pangea_config('password')).login()
@@ -195,6 +196,8 @@ class PangeaBaseCapTask(metaclass=PangeaBaseCapTaskMetaClass):
             self.module_name(), replicate=self._replicate()
         ).idem()
         ar.metadata = metadata
+        if self.pipeline_module:
+            ar.pipeline_module = self.pipeline_module.uuid
         ar.save()
         for field_name, local_target in self.wrapped_instance.output().items():
             field = ar.field(field_name).idem()
@@ -225,6 +228,7 @@ class PangeaBaseCapTask(metaclass=PangeaBaseCapTaskMetaClass):
                 module = module.create()
             else:
                 module = module.get()
+            self.pipeline_module = module
         except:
             msg = (
                 f'Failed to make PipelineModule for pipeline {pipeline} with'
@@ -245,6 +249,7 @@ class PangeaBaseCapTask(metaclass=PangeaBaseCapTaskMetaClass):
             return isinstance(self.wrapped_instance, cap_task_type)
         except TypeError:
             return False
+
 
 class PangeaCapTask(PangeaBaseCapTask):
 

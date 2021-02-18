@@ -20,9 +20,9 @@ from ....pipeline.preprocessing import (
 from ....constants import DATA_TYPES
 from ....utils import chunks
 from ....setup_logging import *
+import logging
 
-logger = logging.getLogger('tcems')
-logger.addHandler(logging.StreamHandler())
+logger = logging.getLogger('cap2')
 
 
 @click.group('tcems')
@@ -88,7 +88,7 @@ def _process_samples_in_chunks(samples, scheduler_url, batch_size, timelimit, wo
 @click.option('-w', '--workers', default=1)
 @click.option('-t', '--threads', default=1)
 def cli_run_db(config, log_level, scheduler_url, workers, threads):
-    logger.setLevel(log_level)
+    logger.info('Building TCEM databases')
     instance = TcemNrAaDb(cores=threads, config_filename=config)
     tasks = [instance]
     if not scheduler_url:

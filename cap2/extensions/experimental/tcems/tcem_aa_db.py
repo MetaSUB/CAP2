@@ -95,17 +95,21 @@ class TcemNrAaDb(CapDbTask):
         c.execute('''CREATE TABLE taxa_kmers (taxon text, kmer text, UNIQUE(taxon,kmer))''')
         full_set, seq_counter = set(), 0
         with Pool(self.cores) as pool, gzip.open(self.fasta, 'rt') as f:
-            seqs = SeqIO.parse(f, 'fasta')
-            for taxa_kmer_set in pool.imap_unordered(process_one_seq, seqs):
-                full_set |= taxa_kmer_set
-                seq_counter += 1
-                if seq_counter % (10 * 1000) == 0:
-                    logger.info(f'Processed {seq_counter} sequences')
-                if len(full_set) >= self.flush_count:
-                    logger.info(f'Writing {len(full_set)} taxon kmer pairs to sqlite db')
-                    c.executemany('INSERT OR IGNORE INTO taxa_kmers VALUES (?,?)', full_set)
-                    full_set = set()
-                    logger.info(f'Finished writing {len(full_set)} taxon kmer pairs to sqlite db')
+            try:
+                seqs = SeqIO.parse(f, 'fasta')
+                for taxa_kmer_set in pool.imap_unordered(process_one_seq, seqs, chunksize=1000):
+                    full_set |= taxa_kmer_set
+                    seq_counter += 1
+                    if seq_counter % (10 * 1000) == 0:
+                        logger.info(f'Processed {seq_counter} sequences')
+                    if len(full_set) >= self.flush_count:
+                        logger.info(f'Writing {len(full_set)} taxon kmer pairs to sqlite db')
+                        c.executemany('INSERT OR IGNORE INTO taxa_kmers VALUES (?,?)', full_set)
+                        full_set = set()
+                        logger.info(f'Finished writing {len(full_set)} taxon kmer pairs to sqlite db')
+            except KeyboardInterrupt:
+                pool.terminate()
+                raise
         logger.info(f'Processed {seq_counter} sequences')
         logger.info(f'Writing {len(full_set)} taxon kmer pairs to sqlite db')
         c.executemany('INSERT OR IGNORE INTO taxa_kmers VALUES (?,?)', full_set)

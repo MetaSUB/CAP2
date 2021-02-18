@@ -204,6 +204,14 @@ class PangeaBaseCapTask(metaclass=PangeaBaseCapTaskMetaClass):
             field.upload_file(local_target.path)
         open(self.output()['upload_flag'].path, 'w').close()
 
+    def recursively_register_module(self):
+        self.register_module()
+        for attr, value in self.wrapped_instance.__dict__.items():
+            if isinstance(value, PangeaBaseCapTaskLuigiTask):
+                value.recursively_register_module()
+                self.pipeline_module.add_dependency(value.pipeline_module)
+        self.pipeline_module.save()
+
     def register_module(self):
         """Register this tasks module with Pangea."""
         pipeline_name = '::'.join(self.module_name().split('::')[:-1]).strip()
@@ -331,7 +339,7 @@ class PangeaCapTask(PangeaBaseCapTask):
                 logger.debug(f'reads are required for {self}, downloading...')
                 self._download_reads()
             logger.debug(f'running wrapped_instance for {self}, running...')
-            self.register_module()  # only register this module if it seems like everything else is working
+            self.recursively_register_module()  # only register this module if it seems like everything else is working
             self.wrapped_instance.run()  # see above. we reassign the original CT._run to CT._wrapped_run
             if self.upload_allowed:
                 logger.debug(f'uploading results for {self}, uploading...')

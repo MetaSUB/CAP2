@@ -3,6 +3,7 @@ import luigi
 import logging
 import subprocess
 import logging
+import pandas as pd
 from os.path import join, dirname, basename
 
 from .mixcr import MixcrClones

@@ -103,8 +103,13 @@ class TcemNrAaDb(CapDbTask):
                     if seq_counter % (10 * 1000) == 0:
                         logger.info(f'Processed {seq_counter} sequences')
                     if len(full_set) >= self.flush_count:
-                        logger.info(f'Writing {len(full_set)} taxon kmer pairs to sqlite db')
-                        c.executemany('INSERT OR IGNORE INTO taxa_kmers VALUES (?,?)', full_set)
+                        full_set = list(full_set)
+                        chunksize = 100 * 1000
+                        for start_i in range(0, len(full_set), chunksize):
+                            end_i = min(start_i + chunksize, len(full_set))
+                            chunk = full_set[start_i:end_i]
+                            logger.info(f'Writing {len(chunk)} taxon kmer pairs to sqlite db')
+                            c.executemany('INSERT OR IGNORE INTO taxa_kmers VALUES (?,?)', chunk)
                         full_set = set()
                         logger.info(f'Finished writing {len(full_set)} taxon kmer pairs to sqlite db')
             except KeyboardInterrupt:

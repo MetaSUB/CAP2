@@ -1,4 +1,5 @@
 import luigi
+import sqlite3
 
 from shutil import rmtree
 from os.path import join, dirname, isfile, isdir
@@ -48,8 +49,14 @@ class TestTcems(TestCase):
         self.assertEqual(instance.config.db_mode, PipelineConfig.DB_MODE_BUILD)
         instance.fasta = data_file('nr/swissprot_sample.fasta.gz')
         instance.flush_count = 10
+        instance.total_chunks = 2
         luigi.build([instance], local_scheduler=True)
         self.assertTrue(isfile(instance.output()['tcem_index'].path))
+        with sqlite3.connect(instance.tcem_index) as conn:
+            c = conn.cursor()
+            val = c.execute('SELECT COUNT(*) FROM taxa_kmers')
+            val = list(val)[0][0]
+            self.assertGreater(val, 1)
         rmtree('test_db')
 
     def test_annotate_tcem_rep(self):

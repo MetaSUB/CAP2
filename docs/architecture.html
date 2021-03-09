@@ -1,0 +1,138 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Architecture &#8212; MetaSUB CAP 0.1.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Modules" href="modules.html" />
+    <link rel="prev" title="The MetaSUB Core Analysis Pipeline" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="architecture">
+<h1>Architecture<a class="headerlink" href="#architecture" title="Permalink to this headline">¶</a></h1>
+<p>Like most pipelines the CAP is a collection of subprograms strung together. These subprograms are organized into modules and modules are organized into subpipelines.</p>
+<div class="section" id="luigi">
+<h2>Luigi<a class="headerlink" href="#luigi" title="Permalink to this headline">¶</a></h2>
+<p>The MetaSUB CAP is written using <a class="reference external" href="https://github.com/spotify/luigi">Luigi</a>. Luigi is a generic pipelining system that handles scheduling tasks, running jobs, and associated tasks. Unlike some other pipelineing systems Luigi does not use a domain specific language and instead accepts pipelines written in pure python. The MetaSUB CAP uses the base version of Luigi without modifications.</p>
+<p>Luigi provides a centralized scheduler server that can be used to coordinate jobs across multiple worker machines. This scheduler ensures jobs will not be run multiple times and provides a GUI view of pipeline progress. The CAP can use this scheduler but it is not required.</p>
+</div>
+<div class="section" id="modules">
+<h2>Modules<a class="headerlink" href="#modules" title="Permalink to this headline">¶</a></h2>
+<p>Modules typically encapsulate a single subprogram. Conceptually modules are the basic building block of the pipelines that provide a single coherent scientific analysis. Modules can depend on other modules as well as tasks like software installation.</p>
+<p>Programatically modules are written as a python class, typically with one module class per file. Modules classes are subclasses of a <cite>BaseCapTask</cite> class which is itself a subclass of <cite>luigi.Task</cite>. Each module class provides a set of methods that provide important information about the module. An ‘instance’ of a module is a specific case where a module is instantiated on some real data while we use the term ‘module’ to refer to a generic step in the pipeline that could be instantiated.</p>
+<p>An API reference for Modules can be found <a class="reference internal" href="api.html#captaskcode"><span class="std std-ref">here</span></a></p>
+</div>
+<div class="section" id="sub-pipelines">
+<h2>Sub-Pipelines<a class="headerlink" href="#sub-pipelines" title="Permalink to this headline">¶</a></h2>
+<p>Sub-pipelines are an organizational tool to group subsections of the pipeline. There are five subpipelines in the CAP currently.</p>
+<ul class="simple">
+<li><a class="reference internal" href="modules.html#id1"><span class="std std-ref">Quality Control</span></a></li>
+<li><a class="reference internal" href="modules.html#id2"><span class="std std-ref">Preprocessing</span></a></li>
+<li><a class="reference internal" href="modules.html#id4"><span class="std std-ref">Short Read</span></a></li>
+<li><a class="reference internal" href="modules.html#id5"><span class="std std-ref">Assembly</span></a></li>
+<li><a class="reference internal" href="modules.html#id6"><span class="std std-ref">Databases</span></a></li>
+</ul>
+<p>There are also several experimental subpipelines. These are tools that are being actively developed and might become part of the CAP eventually. These pipelines provide additional functionality and a place to test new ideas.</p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">MetaSUB CAP</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Architecture</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#luigi">Luigi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#modules">Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sub-pipelines">Sub-Pipelines</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citation.html">Citing the CAP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License for MetaSUB CAP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html#other-licenses">Other Licenses</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">The MetaSUB Core Analysis Pipeline</a></li>
+      <li>Next: <a href="modules.html" title="next chapter">Modules</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, David C. Danko.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+      |
+      <a href="_sources/architecture.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

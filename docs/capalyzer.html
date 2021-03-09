@@ -1,0 +1,193 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>CAPalyzer &#8212; MetaSUB CAP 0.1.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API" href="api.html" />
+    <link rel="prev" title="Modules" href="modules.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="capalyzer">
+<h1>CAPalyzer<a class="headerlink" href="#capalyzer" title="Permalink to this headline">¶</a></h1>
+<p>The CAPalyzer is a package to parse and process the results produced by the main CAP pipeline. It performs two key tasks:</p>
+<ul class="simple">
+<li>builds data tables that summarize the results of modules for multiple samples</li>
+<li>parses those data tables and provides processing tools</li>
+</ul>
+<div class="section" id="api">
+<h2>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="table-builder">
+<h3>Table Builder<a class="headerlink" href="#table-builder" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="cap2.capalyzer.table_builder.cap_table_builder.CAPFileSource">
+<em class="property">class </em><code class="descclassname">cap2.capalyzer.table_builder.cap_table_builder.</code><code class="descname">CAPFileSource</code><a class="reference internal" href="_modules/cap2/capalyzer/table_builder/cap_table_builder.html#CAPFileSource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.capalyzer.table_builder.cap_table_builder.CAPFileSource" title="Permalink to this definition">¶</a></dt>
+<dd><p>This abstract class provides an interface to get
+filepaths and other raw data.</p>
+<dl class="method">
+<dt id="cap2.capalyzer.table_builder.cap_table_builder.CAPFileSource.metadata">
+<code class="descname">metadata</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/capalyzer/table_builder/cap_table_builder.html#CAPFileSource.metadata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.capalyzer.table_builder.cap_table_builder.CAPFileSource.metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a DataFrame containing metadata for the samples.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cap2.capalyzer.table_builder.cap_table_builder.CAPFileSource.module_files">
+<code class="descname">module_files</code><span class="sig-paren">(</span><em>module_name</em>, <em>field_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/capalyzer/table_builder/cap_table_builder.html#CAPFileSource.module_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.capalyzer.table_builder.cap_table_builder.CAPFileSource.module_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an iterable 2-ples of (sample_name, local_path) for modules of specified type.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cap2.capalyzer.table_builder.cap_table_builder.CAPFileSource.sample_names">
+<code class="descname">sample_names</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/capalyzer/table_builder/cap_table_builder.html#CAPFileSource.sample_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.capalyzer.table_builder.cap_table_builder.CAPFileSource.sample_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of sample names (strings).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cap2.capalyzer.table_builder.CAPTableBuilder">
+<em class="property">class </em><code class="descclassname">cap2.capalyzer.table_builder.</code><code class="descname">CAPTableBuilder</code><span class="sig-paren">(</span><em>name</em>, <em>file_source</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/capalyzer/table_builder/cap_table_builder.html#CAPTableBuilder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.capalyzer.table_builder.CAPTableBuilder" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class builds summary tables for a set of samples.</p>
+<dl class="method">
+<dt id="cap2.capalyzer.table_builder.CAPTableBuilder.metadata">
+<code class="descname">metadata</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/capalyzer/table_builder/cap_table_builder.html#CAPTableBuilder.metadata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.capalyzer.table_builder.CAPTableBuilder.metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a metadata table for these samples.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cap2.capalyzer.table_builder.CAPTableBuilder.sample_names">
+<code class="descname">sample_names</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/capalyzer/table_builder/cap_table_builder.html#CAPTableBuilder.sample_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.capalyzer.table_builder.CAPTableBuilder.sample_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of sample names (strings).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cap2.capalyzer.table_builder.CAPTableBuilder.strain_pileup">
+<code class="descname">strain_pileup</code><span class="sig-paren">(</span><em>organism</em>, <em>sparse=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/capalyzer/table_builder/cap_table_builder.html#CAPTableBuilder.strain_pileup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.capalyzer.table_builder.CAPTableBuilder.strain_pileup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a table of pileups for a strain.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cap2.capalyzer.table_builder.CAPTableBuilder.taxa_read_counts">
+<code class="descname">taxa_read_counts</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/capalyzer/table_builder/cap_table_builder.html#CAPTableBuilder.taxa_read_counts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.capalyzer.table_builder.CAPTableBuilder.taxa_read_counts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a table of read counts by taxa.</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-cap2.capalyzer.table_builder.parsers"></span><dl class="function">
+<dt id="cap2.capalyzer.table_builder.parsers.parse_pileup">
+<code class="descclassname">cap2.capalyzer.table_builder.parsers.</code><code class="descname">parse_pileup</code><span class="sig-paren">(</span><em>local_path</em>, <em>sparse=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/capalyzer/table_builder/parsers.html#parse_pileup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.capalyzer.table_builder.parsers.parse_pileup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a pandas dataframe with info from a pileup file.</p>
+<p><cite>sparse</cite> is an int &gt;= 1 if <cite>sparse</cite> is &gt; 1 values will be averaged
+making the table more smaller.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cap2.capalyzer.table_builder.parsers.parse_taxa_report">
+<code class="descclassname">cap2.capalyzer.table_builder.parsers.</code><code class="descname">parse_taxa_report</code><span class="sig-paren">(</span><em>local_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/capalyzer/table_builder/parsers.html#parse_taxa_report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.capalyzer.table_builder.parsers.parse_taxa_report" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a dict of taxa_name to read_counts.</p>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">MetaSUB CAP</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Modules</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">CAPalyzer</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#api">API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citation.html">Citing the CAP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License for MetaSUB CAP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html#other-licenses">Other Licenses</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="modules.html" title="previous chapter">Modules</a></li>
+      <li>Next: <a href="api.html" title="next chapter">API</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, David C. Danko.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+      |
+      <a href="_sources/capalyzer.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -56,7 +56,7 @@ class PangeaBaseCapTaskMetaClass(type):
         return getattr(cls.wrapped_type, key)
 
     def __instancecheck__(cls, instance):
-        """Sppof isinstance. See __class__ in PBCT below for why."""
+        """Spoof isinstance. See __class__ in PBCT below for why."""
         return isinstance(instance, PangeaBaseCapTaskLuigiTask)
 
 

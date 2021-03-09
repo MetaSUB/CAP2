@@ -21,7 +21,7 @@ setuptools.setup(
         'click==6.7',
         'Jinja2==3.0.0a1',  # for multiqc
         'multiqc==1.8',  # hackish, tbd if I'm okay with this
-        'pangea_api>=0.9.0',
+        'pangea_api>=0.9.3',
         'pysam',
         'python-louvain',
         'gimmebio.seqs',

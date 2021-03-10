@@ -20,6 +20,7 @@ class HmpComparison(CapTask):
     Negatives: HMP samples are a useful reference but do not provide
     the full gamut of human microbiome diversity.
     """
+    MODULE_VERSION = 'v0.3.0'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -32,12 +33,7 @@ class HmpComparison(CapTask):
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
         self.db = HmpDB(config_filename=self.config_filename)
-        self.mash = Mash(
-            sample_name=self.sample_name,
-            pe1=self.pe1,
-            pe2=self.pe2,
-            config_filename=self.config_filename
-        )
+        self.mash = Mash.from_cap_task(self)
 
     @classmethod
     def _module_name(cls):
@@ -45,10 +41,6 @@ class HmpComparison(CapTask):
 
     def requires(self):
         return self.pkg, self.db, self.mash
-
-    @classmethod
-    def version(cls):
-        return 'v0.2.0'
 
     @classmethod
     def dependencies(cls):
@@ -59,7 +51,7 @@ class HmpComparison(CapTask):
 
     def _run(self):
         cmd = (
-            f'{self.pkg.bin} '
+            f'{self.pkg.bin} dist '
             f'{self.db.mash_sketch} '
             f'{self.mash.output()["10M_mash_sketch"].path} '
             f'> {self.output()["mash"].path}'

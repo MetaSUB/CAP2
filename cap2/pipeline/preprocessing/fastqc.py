@@ -20,6 +20,7 @@ class FastQC(CapTask):
     Negatives: FastQC only runs on a subset of reads though
     this is usually sufficient.
     """
+    MODULE_VERSION = 'v0.2.1'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -29,13 +30,7 @@ class FastQC(CapTask):
             channel="bioconda",
             config_filename=self.config_filename,
         )
-        self.reads = BaseReads(
-            pe1=self.pe1,
-            pe2=self.pe2,
-            sample_name=self.sample_name,
-            config_filename=self.config_filename,
-            cores=self.cores,
-        )
+        self.reads = BaseReads.from_cap_task(self)
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
 
@@ -45,10 +40,6 @@ class FastQC(CapTask):
 
     def tool_version(self):
         return self.run_cmd(f'{self.pkg.bin} --version').stderr.decode('utf-8')
-
-    @classmethod
-    def version(cls):
-        return 'v0.2.1'
 
     @classmethod
     def dependencies(cls):
@@ -63,7 +54,7 @@ class FastQC(CapTask):
         return basename(self.pe1).split('.f')[0] + '_fastqc.zip'
 
     def requires(self):
-        return self.pkg
+        return self.pkg, self.reads
 
     def output(self):
         return {

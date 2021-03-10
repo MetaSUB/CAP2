@@ -22,6 +22,7 @@ class Kraken2(CapTask):
     Negatives: Kraken2 uses pseudo-alignment which is somewhat less sensitive
     and specific than true alignment.
     """
+    MODULE_VERSION = 'v0.3.0'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -42,12 +43,7 @@ class Kraken2(CapTask):
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
         self.db = Kraken2DB(config_filename=self.config_filename)
-        self.reads = CleanReads(
-            sample_name=self.sample_name,
-            pe1=self.pe1,
-            pe2=self.pe2,
-            config_filename=self.config_filename
-        )
+        self.reads = CleanReads.from_cap_task(self)
 
     @classmethod
     def _module_name(cls):
@@ -58,10 +54,6 @@ class Kraken2(CapTask):
 
     def requires(self):
         return self.rsync_pkg, self.pkg, self.db, self.reads
-
-    @classmethod
-    def version(cls):
-        return 'v0.2.0'
 
     @classmethod
     def dependencies(cls):
@@ -79,7 +71,6 @@ class Kraken2(CapTask):
             f'--db {self.db.kraken2_db} '
             f'--paired '
             f'--threads {self.cores} '
-            '--use-mpa-style '
             '--gzip-compressed '
             f'--report {self.output()["report"].path} '
             f'{self.reads.output()["clean_reads_1"].path} '
@@ -90,6 +81,7 @@ class Kraken2(CapTask):
 
 
 class BrakenKraken2(CapTask):
+    MODULE_VERSION = 'v0.1.0'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -121,10 +113,6 @@ class BrakenKraken2(CapTask):
 
     def requires(self):
         return self.pkg, self.report, self.db, self.reads
-
-    @classmethod
-    def version(cls):
-        return 'v0.1.0'
 
     @classmethod
     def dependencies(cls):

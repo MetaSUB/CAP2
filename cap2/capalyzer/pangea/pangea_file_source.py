@@ -24,6 +24,14 @@ class PangeaFileSource(CAPFileSource):
         tbl = pd.DataFrame.from_dict(tbl, orient='index')
         return tbl
 
+    def group_module_files(self, module_name, field_name):
+        ar = self.grp.analysis_result(module_name).get()
+        arf = ar.field(field_name).get()
+        local_path = join(TMP_DIR, basename(arf.get_referenced_filename()))
+        if not isfile(local_path):
+            local_path = arf.download_file(filename=local_path)
+        return local_path
+
     def module_files(self, module_name, field_name):
         """Return an iterable 2-ples of (sample_name, local_path) for modules of specified type."""
         for sample in self.grp.get_samples():

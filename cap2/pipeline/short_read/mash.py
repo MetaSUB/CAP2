@@ -22,6 +22,7 @@ class Mash(CapTask):
     Negatives: Small MASH sketch sizes can obscure differences between
     samples. As such this module produces two different sketch sizes.
     """
+    MODULE_VERSION = 'v0.2.0'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -33,12 +34,7 @@ class Mash(CapTask):
         )
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
-        self.reads = CleanReads(
-            sample_name=self.sample_name,
-            pe1=self.pe1,
-            pe2=self.pe2,
-            config_filename=self.config_filename
-        )
+        self.reads = CleanReads.from_cap_task(self)
 
     def tool_version(self):
         return self.run_cmd(f'{self.pkg.bin} --version').stderr.decode('utf-8')
@@ -49,10 +45,6 @@ class Mash(CapTask):
 
     def requires(self):
         return self.pkg, self.reads
-
-    @classmethod
-    def version(cls):
-        return 'v0.2.0'
 
     @classmethod
     def dependencies(cls):

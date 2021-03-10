@@ -11,6 +11,7 @@ class CountRawReads(CapTask):
     module_description = """
     This module counts the number of reads in the sample.
     """
+    MODULE_VERSION = 'v1.0.0'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -21,10 +22,6 @@ class CountRawReads(CapTask):
     @classmethod
     def _module_name(cls):
         return 'count_raw_reads'
-
-    @classmethod
-    def version(cls):
-        return 'v1.0.0'
 
     @classmethod
     def dependencies(cls):

@@ -20,6 +20,10 @@ RAW_READS_2 = join(dirname(__file__), 'data/zymo_pos_cntrl.r2.fq.gz')
 TEST_CONFIG = join(dirname(__file__), 'data/test_config.yaml')
 
 
+def data_file(fname):
+    return join(dirname(__file__), 'data', fname)
+
+
 class DummyTaxonomicDB(luigi.ExternalTask):
 
     @property
@@ -181,7 +185,7 @@ class TestShortRead(TestCase):
         luigi.build([instance], local_scheduler=True)
         self.assertTrue(isfile(instance.output()['mash'].path))
 
-    @skip(reason="humann2 not available for python>3.3")
+    #@skip(reason="humann2 not available for python>3.3")
     def test_invoke_humann2(self):
         instance = Humann2(
             pe1=RAW_READS_1,
@@ -190,6 +194,7 @@ class TestShortRead(TestCase):
             config_filename=TEST_CONFIG
         )
         instance.alignment = DummyAlignUniref90()
+        instance.db.uniref90.fasta = data_file('uniref90/uniref90.sample.fasta.gz')
         luigi.build([instance], local_scheduler=True)
         self.assertTrue(isfile(instance.output()['genes'].path))
         self.assertTrue(isfile(instance.output()['path_abunds'].path))
@@ -213,6 +218,7 @@ class TestShortRead(TestCase):
             sample_name='test_sample',
             config_filename=TEST_CONFIG
         )
+        instance.RAM = '10M'
         instance.reads = DummyCleanReads()
         luigi.build([instance], local_scheduler=True)
         self.assertTrue(isfile(instance.output()['k31'].path))

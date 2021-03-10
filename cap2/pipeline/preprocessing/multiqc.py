@@ -16,6 +16,7 @@ class MultiQC(CapGroupTask):
     module_description = """
     MultiQC condenses the results of FastQC.
     """
+    MODULE_VERSION = 'v0.2.0'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -26,10 +27,6 @@ class MultiQC(CapGroupTask):
 
     def requires(self):
         return self.fastqcs
-
-    @classmethod
-    def version(cls):
-        return 'v0.2.0'
 
     @classmethod
     def dependencies(cls):

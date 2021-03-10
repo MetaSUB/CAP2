@@ -1,2 +1,5 @@
 out_dir: test_out
 db_dir: test_db
+db_mode: build
+module_version:
+  test_flag: [[B, df7e70e5021544f4834bbee64a9e3789febc4be81470df629cad6ddb03320a5c]]

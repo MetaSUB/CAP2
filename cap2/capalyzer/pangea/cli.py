@@ -1,11 +1,16 @@
 
 import click
 import logging
-from .pangea_file_source import PangeaFileSource
-from .pangea_file_uploader import PangeaFileUploader
-from ..table_builder import CAPTableBuilder
 from .utils import get_pangea_group
 
+from pangea_api.contrib.tagging import Tag
+from pangea_api import (
+    Knex,
+    User,
+)
+from .api import process_group
+
+logger = logging.getLogger(__name__)  # Same name as calling module
 
 
 @click.group('pangea')
@@ -14,7 +19,7 @@ def capalyzer_pangea_cli():
 
 
 @capalyzer_pangea_cli.command('make-tables')
-@click.option('-l', '--log-level', default=30)
+@click.option('-l', '--log-level', default=20)
 @click.option('--endpoint', default='https://pangea.gimmebio.com')
 @click.option('-e', '--email', envvar='PANGEA_USER')
 @click.option('-p', '--password', envvar='PANGEA_PASS')
@@ -23,10 +28,28 @@ def capalyzer_pangea_cli():
 def cli_make_tables(log_level, endpoint, email, password, org_name, grp_name):
     logging.basicConfig(
         level=log_level,
-        format='%(levelname)s:%(message)s',
+        format='%(levelname)s: %(message)s',
     )
     pangea_group = get_pangea_group(org_name, grp_name, email=email, password=password, endpoint=endpoint)
-    file_source, file_uploader = PangeaFileSource(pangea_group), PangeaFileUploader(pangea_group)
-    table_builder = CAPTableBuilder(f'{org_name}::{grp_name}', file_source)
-    read_counts = table_builder.taxa_read_counts()
-    file_uploader.upload_pandas(read_counts, 'kraken2_taxa', 'read_counts')
+    process_group(pangea_group)
+
+
+@capalyzer_pangea_cli.command('tag')
+@click.option('-l', '--log-level', default=20)
+@click.option('--endpoint', default='https://pangea.gimmebio.com')
+@click.option('-e', '--email', envvar='PANGEA_USER')
+@click.option('-p', '--password', envvar='PANGEA_PASS')
+@click.option('-t', '--tag-name', default='CAPalyzer')
+@click.option('--strict/--permissive', default=False)
+def cli_process_tag(log_level, endpoint, email, password, tag_name, strict):
+    logging.basicConfig(
+        level=log_level,
+        format='%(levelname)s: %(message)s',
+    )
+    knex = Knex(endpoint)
+    if email and password:
+        User(knex, email, password).login()
+    tag = Tag(knex, tag_name).get()
+    for pangea_group in tag.get_sample_groups():
+        logger.info(pangea_group)
+        process_group(pangea_group, strict=strict)

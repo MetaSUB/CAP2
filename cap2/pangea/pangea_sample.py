@@ -2,6 +2,8 @@ import luigi
 import random
 import subprocess
 import os
+import logging
+
 from requests.exceptions import HTTPError
 
 from pangea_api import (
@@ -9,11 +11,18 @@ from pangea_api import (
     User,
     Organization,
 )
+from pangea_api.contrib.tagging import Tag
+from pangea_api.blob_constructors import sample_from_uuid
 
 from sys import stderr
-from os.path import join, isfile
+from os.path import join, isfile, dirname
+from os import makedirs
 
+from .sra_utils import sra_to_fastqs
 from ..sample import Sample
+from ..exceptions import CAPSampleError
+
+logger = logging.getLogger('cap2')
 
 
 class PangeaSampleError(Exception):
@@ -22,20 +31,32 @@ class PangeaSampleError(Exception):
 
 class PangeaSample:
 
-    def __init__(self, sample_name, email, password, endpoint, org_name, grp_name, knex=None, sample=None):
+    def __init__(self, sample_name, email, password, endpoint, org_name, grp_name,
+                 kind='short_read', knex=None, sample=None, name_is_uuid=False):
         if not knex:
             knex = Knex(endpoint)
             User(knex, email, password).login()
         self.sample = sample
         if self.sample is None:
-            org = Organization(knex, org_name).get()
-            grp = org.sample_group(grp_name).get()
-            self.sample = grp.sample(sample_name).get()
+            if name_is_uuid:
+                self.sample = sample_from_uuid(knex, sample_name)
+            else:
+                org = Organization(knex, org_name).get()
+                grp = org.sample_group(grp_name).get()
+                self.sample = grp.sample(sample_name).get()
+        self.kind = kind
         self.name = sample_name
+        self.sra = f'downloaded_data/{self.name}.sra'
         self.r1 = f'downloaded_data/{self.name}.R1.fq.gz'
-        self.r2 = f'downloaded_data/{self.name}.R2.fq.gz'
-        self.kind = 'short_read'  # TODO
-        self.cap_sample = Sample(self.name, self.r1, self.r2)
+        if self.kind == 'short_read':
+            self.kind = 'single_short_read'
+            if self.is_paired():
+                self.kind = 'paired_short_read'
+        self.r2 = None
+        if self.kind == 'paired_short_read':
+            self.r2 = f'downloaded_data/{self.name}.R2.fq.gz'
+
+        self.cap_sample = Sample(self.name, self.r1, self.r2, kind=self.kind)
 
     def has_reads(self):
         for name in ['raw::raw_reads', 'raw_reads']:
@@ -69,18 +90,51 @@ class PangeaSample:
         return ar
 
     def download(self):
-        print('DOWNLOADING READS')
+        logger.info(f'downloading reads for sample: {self.name}')
         try:
             ar = self.sample.analysis_result('raw::raw_reads').get()
         except HTTPError:
             ar = self.sample.analysis_result('raw_reads').get()
+        try:
+            ar.field('read_1').get()
+            self.download_fastqs(ar)
+        except HTTPError:
+            self.download_sra(ar)
+
+    def is_paired(self):
+        """Return True iff this sample contains paired end data."""
+        logger.info(f'checking if sample reads are paired: {self.name}')
+        try:
+            ar = self.sample.analysis_result('raw::raw_reads').get()
+        except HTTPError:
+            ar = self.sample.analysis_result('raw_reads').get()
+        try:
+            ar.field('read_1').get()
+            return ar.field('read_2').exists()
+        except HTTPError:
+            raise CAPSampleError(f'Cannot determine if sample is paired: {self.name}')
+
+    def download_fastqs(self, ar):
+        logger.debug(f'downloading fastqs for sample: {self.name}')
         r1 = ar.field('read_1').get()
-        r2 = ar.field('read_2').get()
-        os.makedirs('downloaded_data', exist_ok=True)
+        makedirs(dirname(self.r1), exist_ok=True)
         if not isfile(self.r1):
             r1.download_file(filename=self.r1)
+        r2 = ar.field('read_2').get()
         if not isfile(self.r2):
             r2.download_file(filename=self.r2)
+
+    def download_sra(self, ar):
+        logger.debug(f'downloading sra_run for sample: {self.name}')
+        sra = ar.field('sra_run').get()
+        makedirs(dirname(self.sra), exist_ok=True)
+        if not isfile(self.sra):
+            sra.download_file(filename=self.sra)
+        logger.debug(f'converting sra to fastqs for sample: {self.name}')
+        gzipped_files = sra_to_fastqs(self.name, self.sra, dirpath=dirname(self.sra))
+        if len(gzipped_files) == 1:
+            self.r2 = None
+            self.cap_sample.r2 = None
 
 
 class PangeaGroup:
@@ -92,7 +146,7 @@ class PangeaGroup:
         self.grp = org.sample_group(grp_name).get()
         self.name = grp_name
 
-    def pangea_samples(self, randomize=False, seed=None):
+    def pangea_samples(self, randomize=False, seed=None, kind='short_read'):
         if randomize:
             if seed:
                 random.seed(seed)
@@ -102,7 +156,40 @@ class PangeaGroup:
             samples = self.grp.get_samples()
         for sample in samples:
             psample = PangeaSample(
-                sample.name,
+                sample.uuid,
+                None,
+                None,
+                None,
+                None,
+                None,
+                knex=self.knex,
+                sample=sample,
+                kind=kind,
+            )
+            if psample.has_reads():
+                yield psample
+
+    def cap_samples(self):
+        for sample in self.pangea_samples():
+            yield sample.cap_sample
+
+
+class PangeaTag:
+
+    def __init__(self, tag_name, email, password, endpoint):
+        self.knex = Knex(endpoint)
+        User(self.knex, email, password).login()
+        self.tag = Tag(self.knex, tag_name).get()
+        self.name = tag_name
+
+    def pangea_samples(self, randomize=False, seed=None, n=100):
+        if randomize:
+            samples = list(self.tag.get_random_samples(n=n))
+        else:
+            samples = self.tag.get_samples()
+        for sample in samples:
+            psample = PangeaSample(
+                sample.uuid,
                 None,
                 None,
                 None,

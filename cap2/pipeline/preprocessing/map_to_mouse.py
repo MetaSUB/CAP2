@@ -24,6 +24,7 @@ class RemoveMouseReads(CapTask):
 
     Removing mouse DNA may obscure human DNA in the sample.
     """
+    MODULE_VERSION = 'v0.1.0'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -42,21 +43,10 @@ class RemoveMouseReads(CapTask):
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
         self.db = MouseRemovalDB(config_filename=self.config_filename)
-        self.adapter_removed_reads = AdapterRemoval(
-            pe1=self.pe1,
-            pe2=self.pe2,
-            sample_name=self.sample_name,
-            config_filename=self.config_filename,
-            cores=self.cores,
-            data_type=self.data_type,
-        )
+        self.adapter_removed_reads = AdapterRemoval.from_cap_task(self)
 
     def requires(self):
         return self.samtools, self.pkg, self.db, self.adapter_removed_reads
-
-    @classmethod
-    def version(cls):
-        return 'v0.1.0'
 
     def tool_version(self):
         version = '[BOWTIE2]\n'
@@ -71,7 +61,7 @@ class RemoveMouseReads(CapTask):
 
     @classmethod
     def _module_name(cls):
-        return 'remove_human'
+        return 'remove_mouse'
 
     def output(self):
         out = {

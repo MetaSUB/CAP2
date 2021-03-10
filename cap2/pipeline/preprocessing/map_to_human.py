@@ -23,6 +23,7 @@ class RemoveHumanReads(CapTask):
     human DNA may actually be microbial though in most cases
     part of the microbial genome will not resemble human.
     """
+    MODULE_VERSION = 'v0.2.1'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -41,21 +42,10 @@ class RemoveHumanReads(CapTask):
         self.config = PipelineConfig(self.config_filename)
         self.out_dir = self.config.out_dir
         self.db = HumanRemovalDB(config_filename=self.config_filename)
-        self.mouse_removed_reads = RemoveMouseReads(
-            pe1=self.pe1,
-            pe2=self.pe2,
-            sample_name=self.sample_name,
-            config_filename=self.config_filename,
-            cores=self.cores,
-            data_type=self.data_type,
-        )
+        self.mouse_removed_reads = RemoveMouseReads.from_cap_task(self)
 
     def requires(self):
         return self.samtools, self.pkg, self.db, self.mouse_removed_reads
-
-    @classmethod
-    def version(cls):
-        return 'v0.2.1'
 
     def tool_version(self):
         version = '[BOWTIE2]\n'

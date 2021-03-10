@@ -2,10 +2,11 @@ import luigi
 import logging
 import os
 
+from time import time
 from shutil import rmtree
 from os.path import join, dirname, isfile, isdir, abspath
 from unittest import TestCase
-
+from cap2.pangea.load_task import PangeaCapTask
 from cap2.extensions.experimental.covid import (
     CovidGenomeDb,
     AlignReadsToCovidGenome,
@@ -14,8 +15,10 @@ from cap2.extensions.experimental.covid import (
     CallCovidVariants,
     MakeCovidConsensusSeq,
 )
-
-logging.basicConfig(level=logging.INFO)
+from cap2.extensions.experimental.covid.cli import get_task_list_for_sample
+from cap2.pangea.cli import set_config
+from cap2.pangea.pangea_sample import PangeaSample
+from pangea_api import Knex, Organization, User
 
 BAM_FILEPATH = join(dirname(__file__), 'data/covid/covid_alignment_test_bam.bam')
 BAM_INDEX_FILEPATH = join(dirname(__file__), 'data/covid/covid_alignment_test_bam.bai')
@@ -24,10 +27,30 @@ COVID_FASTA_FILEPATH = join(dirname(__file__), 'data/covid/GCF_009858895.2_ASM98
 PILEUP_FILEPATH = join(dirname(__file__), 'data/covid/covid_test_pileup.pileup.gz')
 GENOMECOV_FILEPATH = join(dirname(__file__), 'data/covid/covid_test_genome_coverage.genomecov')
 
-
 RAW_READS_1 = join(dirname(__file__), 'data/zymo_pos_cntrl.r1.fq.gz')
 RAW_READS_2 = join(dirname(__file__), 'data/zymo_pos_cntrl.r2.fq.gz')
 TEST_CONFIG = join(dirname(__file__), 'data/test_config.yaml')
+
+PANGEA_ENDPOINT = 'https://pangea.gimmebio.com'
+PANGEA_USER = 'cap2tester@fake.com'
+PANGEA_PASS = os.environ['CAP2_PANGEA_TEST_PASSWORD']
+
+
+def create_test_sample():
+    timestamp = int(time())
+    knex = Knex(PANGEA_ENDPOINT)
+    User(knex, PANGEA_USER, PANGEA_PASS).login()
+    org = Organization(knex, 'MetaSUB Consortium').get()
+    lib = org.sample_group('CAP2 Test Sandbox').get()
+    sample = lib.sample(f'CAP2 Test Sample {timestamp}').create()
+    reads_ar = sample.analysis_result('raw::raw_reads').create()
+    r1 = reads_ar.field('read_1').create()
+    r1.upload_file(RAW_READS_1)
+    r2 = reads_ar.field('read_2').create()
+    r2.upload_file(RAW_READS_2)
+    return sample
+
+PANGEA_SAMPLE = create_test_sample()
 
 
 class DummyHumanRemovedReads(luigi.ExternalTask):
@@ -124,6 +147,29 @@ class TestCovidPipeline(TestCase):
         )
         luigi.build([instance], local_scheduler=True)
         self.assertTrue(isfile(instance.output()['bt2_index_1'].path))
+
+    def test_pre_task_list_pangea(self):
+        psample = PangeaSample(
+            PANGEA_SAMPLE.uuid,
+            None,
+            None,
+            None,
+            None,
+            None,
+            knex=PANGEA_SAMPLE.knex,
+            sample=PANGEA_SAMPLE,
+        )
+        set_config(PANGEA_ENDPOINT, PANGEA_USER, PANGEA_PASS, '', '', name_is_uuid=True)
+        tasks = get_task_list_for_sample(psample, 'all', '')
+        self.assertEqual(len(tasks), 4)
+        fast_detect, covid_genome_coverage, _, _ = tasks
+        self.assertTrue(isinstance(fast_detect.reads, PangeaCapTask))
+        self.assertTrue(isinstance(covid_genome_coverage.bam.reads, PangeaCapTask)) 
+        nonhuman_reads = covid_genome_coverage.bam.reads
+        self.assertFalse(isinstance(nonhuman_reads.mouse_removed_reads, PangeaCapTask))
+        self.assertFalse(isinstance(nonhuman_reads.mouse_removed_reads.adapter_removed_reads, PangeaCapTask))
+        self.assertTrue( isinstance(nonhuman_reads.mouse_removed_reads.adapter_removed_reads.reads, PangeaCapTask))
+        self.assertIs(fast_detect.reads, nonhuman_reads.mouse_removed_reads.adapter_removed_reads.reads)
 
     def test_align_to_covid_genome(self):
         instance = AlignReadsToCovidGenome(

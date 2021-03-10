@@ -13,6 +13,7 @@ class CleanReads(CapTask):
     """This class represents the culmination of the
     preprocessing pipeline.
     """
+    MODULE_VERSION = 'v0.2.1'
     module_description = """
     This module contains cleaned paired end short reads.
 
@@ -21,22 +22,11 @@ class CleanReads(CapTask):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.ec_reads = ErrorCorrectReads(
-            pe1=self.pe1,
-            pe2=self.pe2,
-            sample_name=self.sample_name,
-            config_filename=self.config_filename,
-            cores=self.cores,
-            data_type=self.data_type,
-        )
+        self.ec_reads = ErrorCorrectReads.from_cap_task(self)
 
     @property
     def reads(self):
         return self.ec_reads
-
-    @classmethod
-    def version(cls):
-        return 'v0.2.1'
 
     @classmethod
     def dependencies(cls):

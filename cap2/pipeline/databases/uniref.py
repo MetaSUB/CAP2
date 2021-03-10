@@ -2,6 +2,8 @@
 import luigi
 from os.path import join, dirname
 import subprocess
+import gzip
+from Bio import SeqIO
 
 from ..config import PipelineConfig
 from ..utils.conda import CondaPackage
@@ -11,6 +13,7 @@ from ..utils.cap_task import CapDbTask
 class Uniref90(CapDbTask):
     config_filename = luigi.Parameter()
     cores = luigi.IntParameter(default=1)
+    MODULE_VERSION = 'v1.0.0'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -39,10 +42,6 @@ class Uniref90(CapDbTask):
     @classmethod
     def _module_name(cls):
         return 'diamond_uniref_db'
-
-    @classmethod
-    def version(cls):
-        return 'v1.0.0'
 
     @classmethod
     def dependencies(cls):
@@ -80,3 +79,65 @@ class Uniref90(CapDbTask):
 
             )
             self.run_cmd(cmd)
+
+
+def grab_taxon(rec):
+    try:
+        taxon = rec.description
+        taxon = taxon.split('Tax=')[1].split('TaxID=')[0]
+        taxon = taxon.strip()
+        return taxon
+    except IndexError:
+        return ''
+
+
+class HumannIdTable(CapDbTask):
+    config_filename = luigi.Parameter()
+    cores = luigi.IntParameter(default=1)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.uniref90 = Uniref90(
+            config_filename=self.config_filename,
+            cores=self.cores,
+        )
+        self.config = PipelineConfig(self.config_filename)
+        self.db_dir = self.config.db_dir
+
+    def tool_version(self):
+        return self.version()
+
+    def requires(self):
+        return [self.uniref90]
+
+    @classmethod
+    def _module_name(cls):
+        return 'humann_uniref_db'
+
+    @classmethod
+    def version(cls):
+        return 'v1.0.0'
+
+    @classmethod
+    def dependencies(cls):
+        return [Uniref90]
+
+    @property
+    def humann_id_table(self):
+        return join(self.db_dir, 'uniref90', 'humann_id_table.tsv')
+
+    def output(self):
+        humann_id_table = luigi.LocalTarget(self.humann_id_table)
+        humann_id_table.makedirs()
+        return {
+            'humann_id_table': humann_id_table,
+        }
+
+    def run(self):
+        with gzip.open(self.uniref90.fasta, 'rt') as uref, open(self.humann_id_table, 'w') as hidt:
+            for rec in SeqIO.parse(uref, 'fasta'):
+                nucleotide_len = 3 * len(rec.seq)
+                line_out = f'{rec.id}\t{rec.id}\t{nucleotide_len}'
+                taxon = grab_taxon(rec)
+                line_out += '\t' + taxon if taxon else ''
+                print(line_out, file=hidt)

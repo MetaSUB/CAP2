@@ -1,129 +1,169 @@
 
-from .load_task import PangeaLoadTask
-from ..pipeline.preprocessing import FastQC
-from ..pipeline.preprocessing import CleanReads
-from ..pipeline.preprocessing import RemoveMouseReads
-from ..pipeline.preprocessing import RemoveHumanReads
-from ..pipeline.preprocessing import AdapterRemoval
+from .load_task import PangeaCapTask
+from ..pipeline.utils.cap_task import CapTask
+
+from ..pipeline.preprocessing import (
+    BaseReads,
+    BasicSampleStats,
+    FastQC,
+    CleanReads,
+    RemoveMouseReads,
+    RemoveHumanReads,
+    AdapterRemoval,
+    ErrorCorrectReads,
+)
 from ..pipeline.short_read import (
-    MicaUniref90,
-    Mash,
-    MicrobeCensus,
-    ReadStats,
-    Kraken2,
-    BrakenKraken2,
-    Humann2,
-    HmpComparison,
     ProcessedReads,
     Jellyfish,
 )
-from ..pipeline.preprocessing import BaseReads
 from ..pipeline.assembly.metaspades import MetaspadesAssembly
-from ..pipeline.full_pipeline import FullPipeline
 
 STAGES = [
     'data',
     'qc',
+    'fast',
     'pre',
     'reads',
     'assembly',
-    'all',
+    'kmer',
 ]
 
 
-def wrap_task(sample, module,
-              requires_reads=False, upload=True, download_only=False,
-              config_path='', cores=1, **kwargs):
-    task = PangeaLoadTask(
+def wrap_task(sample, module, config_path='', no_wrap=False, **kwargs):
+    task_type = module
+    if not no_wrap:
+        task_type = PangeaCapTask.new_task_type(module)
+    task = task_type(
         pe1=sample.r1,
         pe2=sample.r2,
         sample_name=sample.name,
-        wraps=module.module_name(),
         config_filename=config_path,
-        cores=cores,
         **kwargs,
     )
-    task.upload_allowed = upload
-    task.wrapped_module = module
-    task.requires_reads = requires_reads
-    task.download_only = download_only
     return task
 
 
-def get_task_list_for_read_stage(sample, clean_reads, upload=True, download_only=False, config_path='', cores=1):
-    wrapit = lambda module: wrap_task(sample, module, config_path=config_path, cores=cores, upload=upload, download_only=download_only)
-    dmnd_uniref90 = wrapit(MicaUniref90)
-    dmnd_uniref90.wrapped.reads = clean_reads
-    humann2 = wrapit(Humann2)
-    humann2.wrapped.alignment = dmnd_uniref90
-    mash = wrapit(Mash)
-    mash.wrapped.reads = clean_reads
-    jellyfish = wrapit(Jellyfish)
-    jellyfish.wrapped.reads = clean_reads
-    hmp = wrapit(HmpComparison)
-    hmp.wrapped.mash = mash
-    read_stats = wrapit(ReadStats)
-    read_stats.wrapped.reads = clean_reads
-    kraken2 = wrapit(Kraken2)
-    kraken2.wrapped.reads = clean_reads
-    braken = wrapit(BrakenKraken2)
-    braken.wrapped.report = kraken2
-    braken.wrapped.reads = clean_reads
+def recursively_wrap_task(sample, module,
+                          config_path='',
+                          no_wrap_tasks=[],
+                          no_recurse_tasks=[],
+                          module_substitute_tasks={},
+                          **kwargs):
+    if module in module_substitute_tasks:
+        task = module_substitute_tasks[module]
+    else:
+        task = wrap_task(sample, module,
+                         config_path=config_path,
+                         no_wrap=(module in no_wrap_tasks),
+                         **kwargs)
+    if module in no_recurse_tasks:
+        return task
 
-    processed = ProcessedReads.from_sample(sample, config_path, cores=cores)
-    processed.hmp = hmp
-    processed.humann2 = humann2
-    processed.kraken2 = braken
-    processed.mash = mash
-    processed.read_stats = read_stats
-    return processed, [dmnd_uniref90, humann2, mash, hmp, read_stats, kraken2, braken]
+    attr_dict = task.__dict__
+    if hasattr(task, 'wrapped_instance'):
+        attr_dict = task.wrapped_instance.__dict__
+
+    for attr, value in attr_dict.items():
+        if isinstance(value, CapTask):
+            subtask = recursively_wrap_task(sample, type(value),
+                                            config_path=config_path,
+                                            no_wrap_tasks=no_wrap_tasks,
+                                            no_recurse_tasks=no_recurse_tasks,
+                                            module_substitute_tasks=module_substitute_tasks,
+                                            **kwargs)
+            setattr(task, attr, subtask)
+    return task
 
 
-def get_task_list_for_sample(sample, stage, upload=True, download_only=False, config_path='', cores=1, require_clean_reads=False):
-    reads = wrap_task(
-        sample, BaseReads,
-        upload=False, config_path=config_path, cores=cores, requires_reads=True
+def kmer_stage_task(sample, clean_reads, config_path='', **kwargs):
+    jellyfish = wrap_task(sample, Jellyfish, config_path=config_path, **kwargs)
+    jellyfish.reads = clean_reads
+    return jellyfish
+
+
+def read_stage_task(sample, clean_reads, config_path='', **kwargs):
+    processed = recursively_wrap_task(
+        sample,
+        ProcessedReads,
+        config_path=config_path,
+        no_recurse_tasks=[CleanReads],
+        module_substitute_tasks={CleanReads: clean_reads},
+        **kwargs,
     )
-    # qc stage
-    fastqc = wrap_task(
-        sample, FastQC, upload=upload, config_path=config_path, cores=cores
+    return processed
+
+
+def assembly_stage_task(sample, clean_reads, config_path='', **kwargs):
+    metaspades = wrap_task(sample, MetaspadesAssembly, config_path=config_path, **kwargs)
+    metaspades.reads = clean_reads
+    return metaspades
+
+
+def qc_stage_task(sample, base_reads, config_path='', **kwargs):
+    fastqc = wrap_task(sample, FastQC, config_path=config_path, **kwargs)
+    fastqc.reads = base_reads
+    return fastqc
+
+
+def pre_stage_task(sample, base_reads, config_path='', **kwargs):
+    clean_reads = recursively_wrap_task(
+        sample,
+        CleanReads,
+        config_path=config_path,
+        no_wrap_tasks=[RemoveMouseReads, AdapterRemoval, ErrorCorrectReads],
+        module_substitute_tasks={BaseReads: base_reads},
+        **kwargs,
     )
-    fastqc.wrapped.reads = reads
-    # pre stage
-    nonhuman_reads = wrap_task(
-        sample, RemoveHumanReads, upload=upload, download_only=download_only, config_path=config_path, cores=cores
+    return clean_reads
+
+
+def fast_stage_task(sample, base_reads, config_path='', **kwargs):
+    sample_stats = recursively_wrap_task(
+        sample,
+        BasicSampleStats,
+        config_path=config_path,
+        module_substitute_tasks={BaseReads: base_reads},
+        **kwargs,
     )
-    nonhuman_reads.wrapped.mouse_removed_reads.adapter_removed_reads.reads = reads
-    clean_reads = wrap_task(
-        sample, CleanReads, upload=upload, download_only=download_only, config_path=config_path, cores=cores
+    return sample_stats
+
+
+def nonhuman_stage_task(sample, base_reads, config_path='', **kwargs):
+    clean_reads = recursively_wrap_task(
+        sample,
+        RemoveHumanReads,
+        config_path=config_path,
+        no_wrap_tasks=[RemoveMouseReads, AdapterRemoval],
+        module_substitute_tasks={BaseReads: base_reads},
+        **kwargs,
     )
-    clean_reads.wrapped.ec_reads.nonhuman_reads = nonhuman_reads
+    return clean_reads
+
+
+def get_task_list_for_sample(sample, stage, config_path='', require_clean_reads=False, **kwargs):
+    base_reads = wrap_task(
+        sample, BaseReads, config_path=config_path, requires_reads=True, **kwargs
+    )
+    base_reads.upload_allowed = False
+    if stage == 'data':
+        return [base_reads]
+    if stage == 'qc':
+        return [qc_stage_task(sample, base_reads, config_path=config_path, **kwargs)]
+    if stage == 'fast':
+        return [
+            qc_stage_task(sample, base_reads, config_path=config_path, **kwargs),
+            fast_stage_task(sample, base_reads, config_path=config_path, **kwargs),
+        ]
+
+    clean_reads = pre_stage_task(sample, base_reads, config_path=config_path, **kwargs)
     if require_clean_reads:
         clean_reads.download_only = True
-    # reads stage
-    processed, read_task_list = get_task_list_for_read_stage(
-        sample, clean_reads, upload=upload, download_only=download_only, config_path=config_path, cores=cores
-    )
-    # assembly stage
-    assembly = wrap_task(
-        sample, MetaspadesAssembly, upload=upload, config_path=config_path, cores=cores
-    )
-    assembly.wrapped.reads = clean_reads
-    # all stage
-    full = FullPipeline.from_sample(sample, config_path, cores=cores)
-    full.qc = fastqc
-    full.short_reads = processed
-    full.assembly = assembly
-    if stage == 'data':
-        tasks = [reads]
-    if stage == 'qc':
-        tasks = [fastqc]
+
     if stage == 'pre':
-        tasks = [clean_reads]
+        return [clean_reads]
     if stage == 'reads':
-        tasks = [clean_reads, processed] + read_task_list
+        return [read_stage_task(sample, clean_reads, config_path=config_path, **kwargs)]
+    if stage == 'kmer':
+        return [kmer_stage_task(sample, clean_reads, config_path=config_path, **kwargs)]
     if stage == 'assembly':
-        tasks = [clean_reads, assembly]
-    if stage == 'all':
-        tasks = [full]
-    return tasks
+        return [assembly_stage_task(sample, clean_reads, config_path=config_path, **kwargs)]

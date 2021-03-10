@@ -1,0 +1,158 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Databases &#8212; MetaSUB CAP 0.1.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="CAPalyzer" href="capalyzer.html" />
+    <link rel="prev" title="Assembly" href="modules_assembly.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="databases">
+<h1>Databases<a class="headerlink" href="#databases" title="Permalink to this headline">¶</a></h1>
+<div class="figure" id="id1">
+<a class="reference internal image-reference" href="_images/dbs.jpeg"><img alt="_images/dbs.jpeg" src="_images/dbs.jpeg" style="width: 600px;" /></a>
+</div>
+<div class="section" id="modules">
+<h2>Modules<a class="headerlink" href="#modules" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="mouse-removal-database">
+<h3>Mouse Removal Database<a class="headerlink" href="#mouse-removal-database" title="Permalink to this headline">¶</a></h3>
+<p>The CAP uses <a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/635/GCA_000001635.9_GRCm39/GCA_000001635.9_GRCm39_genomic.fna.gz">mm39</a> for mouse removal. The raw (fasta) genome is indexed using Bowtie2.</p>
+<dl class="class">
+<dt id="cap2.pipeline.databases.MouseRemovalDB">
+<em class="property">class </em><code class="descclassname">cap2.pipeline.databases.</code><code class="descname">MouseRemovalDB</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/databases/mouse_removal_db.html#MouseRemovalDB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.databases.MouseRemovalDB" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class is responsible for building and/or retriveing
+validating the database which will be used to remove mouse
+reads from the sample.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="human-removal-database">
+<h3>Human Removal Database<a class="headerlink" href="#human-removal-database" title="Permalink to this headline">¶</a></h3>
+<p>The CAP uses <a class="reference external" href="https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/">Hg38 with alternate contigs</a>. for human removal. The raw (fasta) genome is indexed using Bowtie2. Th rationale for picking this genome is based on <a class="reference external" href="https://lh3.github.io/2017/11/13/which-human-reference-genome-to-use">this</a>.</p>
+<dl class="class">
+<dt id="cap2.pipeline.databases.HumanRemovalDB">
+<em class="property">class </em><code class="descclassname">cap2.pipeline.databases.</code><code class="descname">HumanRemovalDB</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/databases/human_removal_db.html#HumanRemovalDB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.databases.HumanRemovalDB" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class is responsible for building and/or retriveing
+validating the database which will be used to remove human
+reads from the sample.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="kraken2-taxonomic-databases">
+<h3>Kraken2 Taxonomic Databases<a class="headerlink" href="#kraken2-taxonomic-databases" title="Permalink to this headline">¶</a></h3>
+<p>The CAP uses built in tools from Kraken2 to build a databse. The CAP2 taxonomic databases includes archaea, bacteria, plasmids, viruses, fungi, protozoa, and human.</p>
+<dl class="class">
+<dt id="cap2.pipeline.databases.Kraken2DB">
+<em class="property">class </em><code class="descclassname">cap2.pipeline.databases.</code><code class="descname">Kraken2DB</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/databases/kraken2_db.html#Kraken2DB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.databases.Kraken2DB" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">MetaSUB CAP</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Documentation:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture and Design</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Pipeline modules</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="modules_qc.html">Quality Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules_preprocessing.html">Preprocessing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules_short_read.html">Short Read</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules_assembly.html">Assembly</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Databases</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="capalyzer.html">Creating and Parsing Data Tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citation.html">Citing the CAP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">Modules</a><ul>
+      <li>Previous: <a href="modules_assembly.html" title="previous chapter">Assembly</a></li>
+      <li>Next: <a href="capalyzer.html" title="next chapter">CAPalyzer</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, David C. Danko.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+      |
+      <a href="_sources/modules_databases.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

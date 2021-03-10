@@ -35,10 +35,12 @@
   <h1>Source code for cap2.pipeline.utils.cap_task</h1><div class="highlight"><pre>
 <span></span>
 <span class="kn">import</span> <span class="nn">luigi</span>
+<span class="kn">import</span> <span class="nn">types</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">datetime</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">logging</span>
 
 <span class="kn">from</span> <span class="nn">hashlib</span> <span class="k">import</span> <span class="n">sha256</span>
 <span class="kn">from</span> <span class="nn">sys</span> <span class="k">import</span> <span class="n">stderr</span>
@@ -46,23 +48,62 @@
 
 <span class="kn">from</span> <span class="nn">..config</span> <span class="k">import</span> <span class="n">PipelineConfig</span>
 
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;cap2&#39;</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">class_or_instancemethod</span><span class="p">(</span><span class="nb">classmethod</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Decorator that provides similar functionality to classmethod</span>
+
+<span class="sd">    For our use case this allows us to overwrite class level</span>
+<span class="sd">    values in instances. this is important for spoofing the</span>
+<span class="sd">    versions of old modules.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">type_</span><span class="p">):</span>
+        <span class="n">descr_get</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__func__</span><span class="o">.</span><span class="fm">__get__</span>
+        <span class="k">if</span> <span class="n">instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">descr_get</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__get__</span>
+        <span class="k">return</span> <span class="n">descr_get</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">type_</span><span class="p">)</span>
+
 
 <div class="viewcode-block" id="BaseCapTask"><a class="viewcode-back" href="../../../../api.html#cap2.pipeline.utils.cap_task.BaseCapTask">[docs]</a><span class="k">class</span> <span class="nc">BaseCapTask</span><span class="p">(</span><span class="n">luigi</span><span class="o">.</span><span class="n">Task</span><span class="p">):</span>
     <span class="n">config_filename</span> <span class="o">=</span> <span class="n">luigi</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
     <span class="n">cores</span> <span class="o">=</span> <span class="n">luigi</span><span class="o">.</span><span class="n">IntParameter</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">max_ram</span> <span class="o">=</span> <span class="n">luigi</span><span class="o">.</span><span class="n">IntParameter</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># maximum allowed ram in GB. 0 means no limit.</span>
+    <span class="n">check_versions</span> <span class="o">=</span> <span class="n">luigi</span><span class="o">.</span><span class="n">BoolParameter</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">module_description</span> <span class="o">=</span> <span class="s2">&quot;No description for this module.&quot;</span>
+    <span class="n">MODULE_VERSION</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="p">()</span>  <span class="c1"># force this method to be implemented</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">task_build_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run_start_time</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">PipelineConfig</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_filename</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">out_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">out_dir</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pre_run_hooks</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">version_override</span> <span class="o">=</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="BaseCapTask.version"><a class="viewcode-back" href="../../../../api.html#cap2.pipeline.utils.cap_task.BaseCapTask.version">[docs]</a>    <span class="nd">@classmethod</span>
+        <span class="c1"># Check if any of the allowed version already exist</span>
+        <span class="c1"># If they do we spoof that version in.</span>
+        <span class="c1"># NB. This will check for the current output fields</span>
+        <span class="c1"># using the old version. If version fields were added</span>
+        <span class="c1"># or changed this will not find an old version</span>
+        <span class="c1"># (Indeed that would introduce difficult dependency</span>
+        <span class="c1"># issues if downstreams relied on the new fields)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_versions</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">version_str</span><span class="p">,</span> <span class="n">version_hash</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">allowed_versions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">version_exists</span><span class="p">(</span><span class="n">version_str</span><span class="p">,</span> <span class="n">version_hash</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">version_override</span> <span class="o">=</span> <span class="n">version_str</span><span class="p">,</span> <span class="n">version_hash</span>
+                    <span class="k">break</span>
+
+<div class="viewcode-block" id="BaseCapTask.version"><a class="viewcode-back" href="../../../../api.html#cap2.pipeline.utils.cap_task.BaseCapTask.version">[docs]</a>    <span class="nd">@class_or_instancemethod</span>
     <span class="k">def</span> <span class="nf">version</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return a string giving a human readable version for this module only.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s1">&#39;version_override&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">cls</span><span class="o">.</span><span class="n">version_override</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">version_override</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="bp">cls</span><span class="o">.</span><span class="n">MODULE_VERSION</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">MODULE_VERSION</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="BaseCapTask.dependencies"><a class="viewcode-back" href="../../../../api.html#cap2.pipeline.utils.cap_task.BaseCapTask.dependencies">[docs]</a>    <span class="nd">@classmethod</span>
@@ -73,14 +114,58 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="BaseCapTask.version_tree"><a class="viewcode-back" href="../../../../api.html#cap2.pipeline.utils.cap_task.BaseCapTask.version_tree">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="BaseCapTask.is_type_of_cap_task"><a class="viewcode-back" href="../../../../api.html#cap2.pipeline.utils.cap_task.BaseCapTask.is_type_of_cap_task">[docs]</a>    <span class="k">def</span> <span class="nf">is_type_of_cap_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cap_task_type</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return True iff self is of cap_task_type.</span>
+
+<span class="sd">        This method makes it easy for duck typed CAP Tasks</span>
+<span class="sd">        to spoof their type as another CAP Task. i.e. PangeaCapTasks</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cap_task_type</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+    <span class="k">def</span> <span class="nf">_reqs_as_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">reqs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">requires</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">reqs</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="n">reqs</span> <span class="o">=</span> <span class="p">[</span><span class="n">reqs</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">reqs</span>
+
+    <span class="nd">@class_or_instancemethod</span>
+    <span class="k">def</span> <span class="nf">_instantiated_dependencies</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a list of dependencies for this class.</span>
+
+<span class="sd">        If this is called on an instance replace dependencies</span>
+<span class="sd">        that are CAPTasks with their instantied version from</span>
+<span class="sd">        requirements.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dependencies</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">dependencies</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">CapTask</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">dependencies</span>
+        <span class="n">reqs</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_reqs_as_list</span><span class="p">()</span>
+        <span class="n">depends_out</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">dependency</span> <span class="ow">in</span> <span class="n">dependencies</span><span class="p">:</span>
+            <span class="n">added</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">req</span> <span class="ow">in</span> <span class="n">reqs</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">req</span><span class="p">,</span> <span class="s1">&#39;is_type_of_cap_task&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">req</span><span class="o">.</span><span class="n">is_type_of_cap_task</span><span class="p">(</span><span class="n">dependency</span><span class="p">):</span>
+                    <span class="n">depends_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+                    <span class="n">added</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">break</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">added</span><span class="p">:</span>
+                <span class="n">depends_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dependency</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">depends_out</span>
+
+<div class="viewcode-block" id="BaseCapTask.version_tree"><a class="viewcode-back" href="../../../../api.html#cap2.pipeline.utils.cap_task.BaseCapTask.version_tree">[docs]</a>    <span class="nd">@class_or_instancemethod</span>
     <span class="k">def</span> <span class="nf">version_tree</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">terminal</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return a newick tree with versions.&quot;&quot;&quot;</span>
-        <span class="n">out</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cls._module_name()}=={cls.version()}&#39;</span>
-        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">dependencies</span><span class="p">:</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cls.module_name()}=={cls.version()}&#39;</span>
+        <span class="n">dependencies</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instantiated_dependencies</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">dependencies</span><span class="p">:</span>
             <span class="n">depends</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="n">el</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">el</span><span class="o">.</span><span class="n">version_tree</span><span class="p">(</span><span class="n">terminal</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">dependencies</span><span class="p">()</span>
+                <span class="n">el</span><span class="o">.</span><span class="n">version_tree</span><span class="p">(</span><span class="n">terminal</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="s1">&#39;version_tree&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">el</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">dependencies</span>
             <span class="p">]</span>
             <span class="n">depends</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">depends</span><span class="p">)</span>
             <span class="n">out</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;(</span><span class="si">{depends}</span><span class="s1">)</span><span class="si">{out}</span><span class="s1">&#39;</span>
@@ -88,23 +173,26 @@
             <span class="n">out</span> <span class="o">+=</span> <span class="s1">&#39;;&#39;</span>
         <span class="k">return</span> <span class="n">out</span></div>
 
-<div class="viewcode-block" id="BaseCapTask.version_hash"><a class="viewcode-back" href="../../../../api.html#cap2.pipeline.utils.cap_task.BaseCapTask.version_hash">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="BaseCapTask.version_hash"><a class="viewcode-back" href="../../../../api.html#cap2.pipeline.utils.cap_task.BaseCapTask.version_hash">[docs]</a>    <span class="nd">@class_or_instancemethod</span>
     <span class="k">def</span> <span class="nf">version_hash</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return a hash string giving the version of this task and all upstream tasks.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s1">&#39;version_override&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">cls</span><span class="o">.</span><span class="n">version_override</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">version_override</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">version</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">version</span><span class="p">()</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">stderr</span><span class="p">)</span>
             <span class="k">raise</span>
+        <span class="n">dependencies</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instantiated_dependencies</span><span class="p">()</span>
         <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
-        <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="p">[</span><span class="n">version</span><span class="p">]</span> <span class="o">+</span> <span class="bp">cls</span><span class="o">.</span><span class="n">dependencies</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="p">[</span><span class="n">version</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">dependencies</span><span class="p">):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                 <span class="n">el</span> <span class="o">=</span> <span class="n">el</span><span class="o">.</span><span class="n">version_hash</span><span class="p">()</span>
             <span class="n">result</span> <span class="o">=</span> <span class="n">sha256</span><span class="p">(</span><span class="n">el</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
             <span class="n">out</span> <span class="o">+=</span> <span class="n">result</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">out</span></div>
 
-<div class="viewcode-block" id="BaseCapTask.short_version_hash"><a class="viewcode-back" href="../../../../api.html#cap2.pipeline.utils.cap_task.BaseCapTask.short_version_hash">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="BaseCapTask.short_version_hash"><a class="viewcode-back" href="../../../../api.html#cap2.pipeline.utils.cap_task.BaseCapTask.short_version_hash">[docs]</a>    <span class="nd">@class_or_instancemethod</span>
     <span class="k">def</span> <span class="nf">short_version_hash</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return a 12 character hash string giving the version of this task and all upstream tasks.&quot;&quot;&quot;</span>
         <span class="n">myhash</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">version_hash</span><span class="p">()</span>
@@ -112,7 +200,7 @@
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_module_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">module_name</span><span class="p">())</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
 
 <div class="viewcode-block" id="BaseCapTask.module_name"><a class="viewcode-back" href="../../../../api.html#cap2.pipeline.utils.cap_task.BaseCapTask.module_name">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">module_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
@@ -136,8 +224,11 @@
             <span class="s1">&#39;cores&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cores</span><span class="p">,</span>
             <span class="s1">&#39;current_time&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span>
             <span class="s1">&#39;tool_version&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">tool_version</span><span class="p">(),</span>
+            <span class="s1">&#39;short_version_hash&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">short_version_hash</span><span class="p">(),</span>
             <span class="s1">&#39;version_hash&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">version_hash</span><span class="p">(),</span>
+            <span class="s1">&#39;version_tree&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">version_tree</span><span class="p">(),</span>
             <span class="s1">&#39;module_version&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="p">(),</span>
+            <span class="s1">&#39;module_description&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">module_description</span><span class="p">,</span>
             <span class="s1">&#39;host_info&#39;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="s1">&#39;system_name&#39;</span><span class="p">:</span> <span class="n">uname</span><span class="o">.</span><span class="n">sysname</span><span class="p">,</span>
                 <span class="s1">&#39;node_name&#39;</span><span class="p">:</span> <span class="n">uname</span><span class="o">.</span><span class="n">nodename</span><span class="p">,</span>
@@ -153,17 +244,23 @@
 
 <div class="viewcode-block" id="BaseCapTask.run"><a class="viewcode-back" href="../../../../api.html#cap2.pipeline.utils.cap_task.BaseCapTask.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Run an instance of this task.&quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;starting run for </span><span class="si">{self}</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">run_start_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">hook</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pre_run_hooks</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;running pre-run hook </span><span class="si">{hook}</span><span class="s1"> for </span><span class="si">{self}</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="n">hook</span><span class="p">()</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;running module for </span><span class="si">{self}</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="n">run</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">()</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_run_metadata_filepath</span><span class="p">(),</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">metafile</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;writing run metadata for </span><span class="si">{self}</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="n">metafile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_run_metadata</span><span class="p">()))</span>
         <span class="k">return</span> <span class="n">run</span></div>
 
 <div class="viewcode-block" id="BaseCapTask.run_cmd"><a class="viewcode-back" href="../../../../api.html#cap2.pipeline.utils.cap_task.BaseCapTask.run_cmd">[docs]</a>    <span class="k">def</span> <span class="nf">run_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Run a shell command with some defaults and error logging.&quot;&quot;&quot;</span>
-        <span class="n">job</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+        <span class="n">job</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+            <span class="n">cmd</span><span class="p">,</span>
+            <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">executable</span><span class="o">=</span><span class="s1">&#39;/bin/bash&#39;</span>
+        <span class="p">)</span>
         <span class="k">if</span> <span class="n">job</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;&#39;&#39;</span>
 <span class="s1">            cmd_failed: &quot;</span><span class="si">{cmd}</span><span class="s1">&quot;</span>
@@ -178,6 +275,27 @@
 
 <span class="k">class</span> <span class="nc">CapDbTask</span><span class="p">(</span><span class="n">BaseCapTask</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Currently a stub. May do something in future.&quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_cap_task</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">config_filename</span><span class="o">=</span><span class="n">other</span><span class="o">.</span><span class="n">config_filename</span><span class="p">,</span>
+            <span class="n">cores</span><span class="o">=</span><span class="n">other</span><span class="o">.</span><span class="n">cores</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_cap_db_task</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">config_filename</span><span class="o">=</span><span class="n">other</span><span class="o">.</span><span class="n">config_filename</span><span class="p">,</span>
+            <span class="n">cores</span><span class="o">=</span><span class="n">other</span><span class="o">.</span><span class="n">cores</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">version_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">version</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return True iff this verion of this module already exists.&quot;&quot;&quot;</span>
+        <span class="n">clone</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">from_cap_db_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">check_versions</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">clone</span><span class="o">.</span><span class="n">version</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">version</span>
+        <span class="k">return</span> <span class="n">clone</span><span class="o">.</span><span class="n">complete</span><span class="p">()</span>
 
 
 <div class="viewcode-block" id="CapTask"><a class="viewcode-back" href="../../../../api.html#cap2.pipeline.utils.cap_task.CapTask">[docs]</a><span class="k">class</span> <span class="nc">CapTask</span><span class="p">(</span><span class="n">BaseCapTask</span><span class="p">):</span>
@@ -215,7 +333,36 @@
             <span class="n">config_filename</span><span class="o">=</span><span class="n">config_path</span><span class="p">,</span>
             <span class="n">cores</span><span class="o">=</span><span class="n">cores</span><span class="p">,</span>
             <span class="n">data_type</span><span class="o">=</span><span class="n">sample</span><span class="o">.</span><span class="n">kind</span>
-        <span class="p">)</span></div></div>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="CapTask.from_cap_task"><a class="viewcode-back" href="../../../../api.html#cap2.pipeline.utils.cap_task.CapTask.from_cap_task">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_cap_task</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">pe1</span><span class="o">=</span><span class="n">other</span><span class="o">.</span><span class="n">pe1</span><span class="p">,</span>
+            <span class="n">pe2</span><span class="o">=</span><span class="n">other</span><span class="o">.</span><span class="n">pe2</span><span class="p">,</span>
+            <span class="n">sample_name</span><span class="o">=</span><span class="n">other</span><span class="o">.</span><span class="n">sample_name</span><span class="p">,</span>
+            <span class="n">config_filename</span><span class="o">=</span><span class="n">other</span><span class="o">.</span><span class="n">config_filename</span><span class="p">,</span>
+            <span class="n">cores</span><span class="o">=</span><span class="n">other</span><span class="o">.</span><span class="n">cores</span><span class="p">,</span>
+            <span class="n">max_ram</span><span class="o">=</span><span class="n">other</span><span class="o">.</span><span class="n">max_ram</span><span class="p">,</span>
+            <span class="n">data_type</span><span class="o">=</span><span class="n">other</span><span class="o">.</span><span class="n">data_type</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span></div>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">module_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">module_name</span><span class="p">()</span>
+            <span class="n">short_hash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">short_version_hash</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">f</span><span class="s1">&#39;&lt;CapTask::</span><span class="si">{module_name}</span><span class="s1">::</span><span class="si">{short_hash}</span><span class="s1"> </span><span class="si">{self.sample_name}</span><span class="s1">/&gt;&#39;</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CapTask.version_exists"><a class="viewcode-back" href="../../../../api.html#cap2.pipeline.utils.cap_task.CapTask.version_exists">[docs]</a>    <span class="k">def</span> <span class="nf">version_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">version_str</span><span class="p">,</span> <span class="n">version_hash</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return True iff this verion of this module already exists.&quot;&quot;&quot;</span>
+        <span class="n">clone</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">from_cap_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">check_versions</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">clone</span><span class="o">.</span><span class="n">version_override</span> <span class="o">=</span> <span class="n">version_str</span><span class="p">,</span> <span class="n">version_hash</span>
+        <span class="n">is_complete</span> <span class="o">=</span> <span class="n">clone</span><span class="o">.</span><span class="n">complete</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">is_complete</span></div></div>
 
 
 <span class="k">class</span> <span class="nc">CapGroupTask</span><span class="p">(</span><span class="n">BaseCapTask</span><span class="p">):</span>
@@ -259,6 +406,23 @@
             <span class="n">config_filename</span><span class="o">=</span><span class="n">config_path</span><span class="p">,</span>
             <span class="n">cores</span><span class="o">=</span><span class="n">cores</span><span class="p">,</span>
         <span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_cap_group_task</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">group_name</span><span class="o">=</span><span class="n">other</span><span class="o">.</span><span class="n">group_name</span><span class="p">,</span>
+            <span class="n">config_filename</span><span class="o">=</span><span class="n">other</span><span class="o">.</span><span class="n">config_filename</span><span class="p">,</span>
+            <span class="n">cores</span><span class="o">=</span><span class="n">other</span><span class="o">.</span><span class="n">cores</span><span class="p">,</span>
+            <span class="n">max_ram</span><span class="o">=</span><span class="n">other</span><span class="o">.</span><span class="n">max_ram</span><span class="p">,</span>
+            <span class="n">samples</span><span class="o">=</span><span class="n">other</span><span class="o">.</span><span class="n">samples</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">version_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">version</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return True iff this verion of this module already exists.&quot;&quot;&quot;</span>
+        <span class="n">clone</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">from_cap_group_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">check_versions</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">clone</span><span class="o">.</span><span class="n">version</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">version</span>
+        <span class="k">return</span> <span class="n">clone</span><span class="o">.</span><span class="n">complete</span><span class="p">()</span>
 </pre></div>
 
           </div>

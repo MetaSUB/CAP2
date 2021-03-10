@@ -87,6 +87,16 @@
 <dt id="cap2.pipeline.utils.cap_task.BaseCapTask">
 <em class="property">class </em><code class="descclassname">cap2.pipeline.utils.cap_task.</code><code class="descname">BaseCapTask</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/utils/cap_task.html#BaseCapTask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.utils.cap_task.BaseCapTask" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="attribute">
+<dt id="cap2.pipeline.utils.cap_task.BaseCapTask.MODULE_VERSION">
+<code class="descname">MODULE_VERSION</code><em class="property"> = None</em><a class="headerlink" href="#cap2.pipeline.utils.cap_task.BaseCapTask.MODULE_VERSION" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cap2.pipeline.utils.cap_task.BaseCapTask.check_versions">
+<code class="descname">check_versions</code><em class="property"> = &lt;luigi.parameter.BoolParameter object&gt;</em><a class="headerlink" href="#cap2.pipeline.utils.cap_task.BaseCapTask.check_versions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
 <dt id="cap2.pipeline.utils.cap_task.BaseCapTask.config_filename">
 <code class="descname">config_filename</code><em class="property"> = &lt;luigi.parameter.Parameter object&gt;</em><a class="headerlink" href="#cap2.pipeline.utils.cap_task.BaseCapTask.config_filename" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -115,6 +125,19 @@
 <dd><p>Return a local filepath with metadata about a completed run of this task.</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="cap2.pipeline.utils.cap_task.BaseCapTask.is_type_of_cap_task">
+<code class="descname">is_type_of_cap_task</code><span class="sig-paren">(</span><em>cap_task_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/utils/cap_task.html#BaseCapTask.is_type_of_cap_task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.utils.cap_task.BaseCapTask.is_type_of_cap_task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True iff self is of cap_task_type.</p>
+<p>This method makes it easy for duck typed CAP Tasks
+to spoof their type as another CAP Task. i.e. PangeaCapTasks</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cap2.pipeline.utils.cap_task.BaseCapTask.max_ram">
+<code class="descname">max_ram</code><em class="property"> = &lt;luigi.parameter.IntParameter object&gt;</em><a class="headerlink" href="#cap2.pipeline.utils.cap_task.BaseCapTask.max_ram" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="attribute">
 <dt id="cap2.pipeline.utils.cap_task.BaseCapTask.module_description">
 <code class="descname">module_description</code><em class="property"> = 'No description for this module.'</em><a class="headerlink" href="#cap2.pipeline.utils.cap_task.BaseCapTask.module_description" title="Permalink to this definition">¶</a></dt>
@@ -135,8 +158,7 @@
 <dl class="method">
 <dt id="cap2.pipeline.utils.cap_task.BaseCapTask.run_cmd">
 <code class="descname">run_cmd</code><span class="sig-paren">(</span><em>cmd</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/utils/cap_task.html#BaseCapTask.run_cmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.utils.cap_task.BaseCapTask.run_cmd" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run a shell command with some defaults and error logging.</p>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="classmethod">
 <dt id="cap2.pipeline.utils.cap_task.BaseCapTask.short_version_hash">
@@ -181,6 +203,11 @@
 <dd></dd></dl>
 
 <dl class="classmethod">
+<dt id="cap2.pipeline.utils.cap_task.CapTask.from_cap_task">
+<em class="property">classmethod </em><code class="descname">from_cap_task</code><span class="sig-paren">(</span><em>other</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/utils/cap_task.html#CapTask.from_cap_task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.utils.cap_task.CapTask.from_cap_task" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
 <dt id="cap2.pipeline.utils.cap_task.CapTask.from_sample">
 <em class="property">classmethod </em><code class="descname">from_sample</code><span class="sig-paren">(</span><em>sample</em>, <em>config_path</em>, <em>cores=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/utils/cap_task.html#CapTask.from_sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.utils.cap_task.CapTask.from_sample" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return an instance of this module from a Sample.</p>
@@ -213,6 +240,12 @@
 <code class="descname">sample_name</code><em class="property"> = &lt;luigi.parameter.Parameter object&gt;</em><a class="headerlink" href="#cap2.pipeline.utils.cap_task.CapTask.sample_name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="method">
+<dt id="cap2.pipeline.utils.cap_task.CapTask.version_exists">
+<code class="descname">version_exists</code><span class="sig-paren">(</span><em>version_str</em>, <em>version_hash</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/utils/cap_task.html#CapTask.version_exists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.utils.cap_task.CapTask.version_exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True iff this verion of this module already exists.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -230,6 +263,12 @@
 <dt id="cap2.pipeline.config.PipelineConfig.DB_MODE_DOWNLOAD">
 <code class="descname">DB_MODE_DOWNLOAD</code><em class="property"> = 'download'</em><a class="headerlink" href="#cap2.pipeline.config.PipelineConfig.DB_MODE_DOWNLOAD" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="method">
+<dt id="cap2.pipeline.config.PipelineConfig.allowed_versions">
+<code class="descname">allowed_versions</code><span class="sig-paren">(</span><em>module</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/config.html#PipelineConfig.allowed_versions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.config.PipelineConfig.allowed_versions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of the allowed versions for the specified module.</p>
+</dd></dl>
 
 </dd></dl>
 

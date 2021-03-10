@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>cap2.pipeline.preprocessing.fastqc &#8212; MetaSUB CAP 0.1.1 documentation</title>
+    <title>cap2.pipeline.short_read.mash &#8212; MetaSUB CAP 0.1.1 documentation</title>
     <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
@@ -32,85 +32,77 @@
 
           <div class="body" role="main">
             
-  <h1>Source code for cap2.pipeline.preprocessing.fastqc</h1><div class="highlight"><pre>
+  <h1>Source code for cap2.pipeline.short_read.mash</h1><div class="highlight"><pre>
 <span></span>
 <span class="kn">import</span> <span class="nn">luigi</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">join</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">basename</span>
 
 <span class="kn">from</span> <span class="nn">..utils.cap_task</span> <span class="k">import</span> <span class="n">CapTask</span>
+<span class="kn">from</span> <span class="nn">..constants</span> <span class="k">import</span> <span class="n">MASH_SKETCH_SIZE</span>
 <span class="kn">from</span> <span class="nn">..config</span> <span class="k">import</span> <span class="n">PipelineConfig</span>
 <span class="kn">from</span> <span class="nn">..utils.conda</span> <span class="k">import</span> <span class="n">CondaPackage</span>
-<span class="kn">from</span> <span class="nn">.base_reads</span> <span class="k">import</span> <span class="n">BaseReads</span>
+<span class="kn">from</span> <span class="nn">..preprocessing.clean_reads</span> <span class="k">import</span> <span class="n">CleanReads</span>
 
 
-<div class="viewcode-block" id="FastQC"><a class="viewcode-back" href="../../../../modules_qc.html#cap2.pipeline.preprocessing.FastQC">[docs]</a><span class="k">class</span> <span class="nc">FastQC</span><span class="p">(</span><span class="n">CapTask</span><span class="p">):</span>
+<div class="viewcode-block" id="Mash"><a class="viewcode-back" href="../../../../modules_short_read.html#cap2.pipeline.short_read.Mash">[docs]</a><span class="k">class</span> <span class="nc">Mash</span><span class="p">(</span><span class="n">CapTask</span><span class="p">):</span>
     <span class="n">module_description</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">    FastQC computes a number of quality control metrics.</span>
+<span class="s2">    This module provides small sketches of samples.</span>
 
-<span class="s2">    Motivation: Quality control is important to identify</span>
-<span class="s2">    systematic errors and sequencing issues. FastQC</span>
-<span class="s2">    includes a broad suite of checks.</span>
+<span class="s2">    Motivation: MASH sketches provide an efficient way to compute the</span>
+<span class="s2">    distance between microbiome samples. Since MASH sketches are not</span>
+<span class="s2">    based on any database they aren&#39;t biased towards certain sample</span>
+<span class="s2">    types.</span>
 
-<span class="s2">    Negatives: FastQC only runs on a subset of reads though</span>
-<span class="s2">    this is usually sufficient.</span>
+<span class="s2">    Negatives: Small MASH sketch sizes can obscure differences between</span>
+<span class="s2">    samples. As such this module produces two different sketch sizes.</span>
 <span class="s2">    &quot;&quot;&quot;</span>
-    <span class="n">MODULE_VERSION</span> <span class="o">=</span> <span class="s1">&#39;v0.2.1&#39;</span>
+    <span class="n">MODULE_VERSION</span> <span class="o">=</span> <span class="s1">&#39;v0.2.0&#39;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pkg</span> <span class="o">=</span> <span class="n">CondaPackage</span><span class="p">(</span>
-            <span class="n">package</span><span class="o">=</span><span class="s2">&quot;fastqc=0.11.9&quot;</span><span class="p">,</span>
-            <span class="n">executable</span><span class="o">=</span><span class="s2">&quot;fastqc&quot;</span><span class="p">,</span>
+            <span class="n">package</span><span class="o">=</span><span class="s2">&quot;mash==2.2.2&quot;</span><span class="p">,</span>
+            <span class="n">executable</span><span class="o">=</span><span class="s2">&quot;mash&quot;</span><span class="p">,</span>
             <span class="n">channel</span><span class="o">=</span><span class="s2">&quot;bioconda&quot;</span><span class="p">,</span>
             <span class="n">config_filename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_filename</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">reads</span> <span class="o">=</span> <span class="n">BaseReads</span><span class="o">.</span><span class="n">from_cap_task</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">PipelineConfig</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_filename</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">out_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">out_dir</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_module_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s1">&#39;fastqc&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reads</span> <span class="o">=</span> <span class="n">CleanReads</span><span class="o">.</span><span class="n">from_cap_task</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">tool_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_cmd</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{self.pkg.bin}</span><span class="s1"> --version&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">dependencies</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;fastqc==0.11.9&quot;</span><span class="p">,</span> <span class="n">BaseReads</span><span class="p">]</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">_report</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">basename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pe1</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.f&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_fastqc.html&#39;</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">_zip_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">basename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pe1</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.f&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_fastqc.zip&#39;</span>
+    <span class="k">def</span> <span class="nf">_module_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;mash&#39;</span>
 
     <span class="k">def</span> <span class="nf">requires</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pkg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">reads</span>
 
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">dependencies</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;mash==2.2.2&#39;</span><span class="p">,</span> <span class="n">CleanReads</span><span class="p">]</span>
+
     <span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s1">&#39;report&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_target</span><span class="p">(</span><span class="s1">&#39;report&#39;</span><span class="p">,</span> <span class="s1">&#39;html&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;zip_output&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_target</span><span class="p">(</span><span class="s1">&#39;zip_out&#39;</span><span class="p">,</span> <span class="s1">&#39;zip&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;10M_mash_sketch&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_target</span><span class="p">(</span><span class="s1">&#39;10M_sketch&#39;</span><span class="p">,</span> <span class="s1">&#39;msh&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;10K_mash_sketch&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_target</span><span class="p">(</span><span class="s1">&#39;10K_sketch&#39;</span><span class="p">,</span> <span class="s1">&#39;msh&#39;</span><span class="p">),</span>
         <span class="p">}</span>
 
+    <span class="k">def</span> <span class="nf">_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mash_sketch_size</span><span class="p">,</span> <span class="n">out_key</span><span class="p">):</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">f</span><span class="s1">&#39;</span><span class="si">{self.pkg.bin}</span><span class="s1"> &#39;</span>
+            <span class="n">f</span><span class="s1">&#39;sketch -s </span><span class="si">{mash_sketch_size}</span><span class="s1"> &#39;</span>
+            <span class="n">f</span><span class="s1">&#39;-o {self.output()[out_key].path[:-4]} &#39;</span>
+            <span class="n">f</span><span class="s1">&#39;{self.reads.output()[&quot;clean_reads_1&quot;].path}&#39;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">cmd</span>
+
     <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c1"># fixme: redirect output to loggers</span>
-        <span class="n">outdir</span> <span class="o">=</span> <span class="n">dirname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">()[</span><span class="s1">&#39;report&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
-        <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">pkg</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">bin</span> <span class="o">+</span> <span class="s1">&#39;/perl&#39;</span><span class="p">,</span>  <span class="c1"># fastqc uses system perl which we do not assume access to</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">pkg</span><span class="o">.</span><span class="n">bin</span><span class="p">,</span>
-            <span class="s1">&#39;-t&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cores</span><span class="p">),</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">reads</span><span class="o">.</span><span class="n">output</span><span class="p">()[</span><span class="s2">&quot;base_reads_1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
-            <span class="n">f</span><span class="s1">&#39;-o </span><span class="si">{outdir}</span><span class="s1">&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;&amp;&amp; &#39;</span><span class="p">,</span>
-            <span class="n">f</span><span class="s1">&#39;mv </span><span class="si">{outdir}</span><span class="s1">/</span><span class="si">{self._report}</span><span class="s1"> {self.output()[&quot;report&quot;].path}; &#39;</span><span class="p">,</span>
-            <span class="n">f</span><span class="s1">&#39;mv </span><span class="si">{outdir}</span><span class="s1">/</span><span class="si">{self._zip_output}</span><span class="s1"> {self.output()[&quot;zip_output&quot;].path}; &#39;</span><span class="p">,</span>
-        <span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">run_cmd</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run_cmd</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cmd</span><span class="p">(</span><span class="mi">10</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">,</span> <span class="s1">&#39;10K_mash_sketch&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run_cmd</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cmd</span><span class="p">(</span><span class="mi">10</span> <span class="o">*</span> <span class="mi">1000</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">,</span> <span class="s1">&#39;10M_mash_sketch&#39;</span><span class="p">))</span></div>
 </pre></div>
 
           </div>

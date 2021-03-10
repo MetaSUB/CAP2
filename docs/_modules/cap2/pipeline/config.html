@@ -57,7 +57,18 @@
             <span class="s1">&#39;conda_base_path&#39;</span><span class="p">,</span> <span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;CAP2_CONDA_BASE_PATH&#39;</span><span class="p">,</span> <span class="s1">&#39;vendor/conda&#39;</span><span class="p">)</span>
         <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">exc_metaspades</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">blob</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;EXC_METASPADES&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exc_metaspades</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">blob</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;EXC_METASPADES&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">module_versions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">blob</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;module_version&#39;</span><span class="p">,</span> <span class="p">{})</span>
+
+<div class="viewcode-block" id="PipelineConfig.allowed_versions"><a class="viewcode-back" href="../../../api.html#cap2.pipeline.config.PipelineConfig.allowed_versions">[docs]</a>    <span class="k">def</span> <span class="nf">allowed_versions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a list of the allowed versions for the specified module.&quot;&quot;&quot;</span>
+        <span class="n">module_name</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">module_name</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">module_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">module_versions</span><span class="p">:</span>
+            <span class="n">module_name</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">_module_name</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">module_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">module_versions</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="n">versions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">module_versions</span><span class="p">[</span><span class="n">module_name</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">versions</span></div></div>
 </pre></div>
 
           </div>

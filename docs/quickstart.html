@@ -43,9 +43,72 @@
 cap2 --help
 </pre></div>
 </div>
+</div>
+<div class="section" id="running-the-cap">
+<h2>Running the CAP<a class="headerlink" href="#running-the-cap" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="set-up">
+<h3>Set Up<a class="headerlink" href="#set-up" title="Permalink to this headline">¶</a></h3>
+<p>After the CAP is intalled it can be run on local data. There is no need to install additional programs or databases as these will be automatically installed as needed.</p>
+<p>To run the CAP you will need to make two files. A manifest file telling the CAP what data to analyze and a config file telling the CAP where to store its outputs.</p>
+<dl class="docutils">
+<dt>This manifest file should have three columns separated by tabs.</dt>
+<dd><ul class="first simple">
+<li>The first column is the name of the sample</li>
+<li>the second column is the path to the first read</li>
+<li>the third column is the path to the second read</li>
+</ul>
+<p class="last">An example manifest could look like this</p>
+</dd>
+</dl>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sample_1    /path/to/sample_1.R1.fq.gz  /path/to/sample_1.R2.fq.gz
+sample_2    /path/to/sample_2.R1.fq.gz  /path/to/sample_2.R2.fq.gz
+sample_3    /path/to/sample_3.R1.fq.gz  /path/to/sample_3.R2.fq.gz
+</pre></div>
+</div>
+<p>The config file should be a yaml file with two keys <cite>out_dir</cite> and <cite>db_dir</cite></p>
+<blockquote>
+<div>An example manifest could look like this</div></blockquote>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>out_dir: /path/to/output/dir
+db_dir: /path/to/dir/where/databases/should/be/stored
+</pre></div>
+</div>
+<p>Once you have the manifest and config file you can run the pipeline.</p>
+</div>
+<div class="section" id="running-the-pipeline">
+<h3>Running the Pipeline<a class="headerlink" href="#running-the-pipeline" title="Permalink to this headline">¶</a></h3>
+<p>To run the qpipeline use the following command</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cap2 run pipeline -c /path/to/config.yaml /path/to/manifest.txt
+</pre></div>
+</div>
+<p>The CAP uses subpipelines to group modules. There are five such subpipelines: quality control, preprocessing, short read analysis, assembly, and databases. To run a specific sub-pipelines add <cite>–stage &lt;stage name&gt;</cite> to the above command. The different stage names are listed when you run <cite>cap2 run pipeline –help</cite></p>
+<p>You can also run more than one task at the same time using <cite>–workers &lt;number of simultaneous tasks&gt;</cite> or increase the number of threads per worker with <cite>–threads &lt;num threads&gt;</cite></p>
+<p>An example of running the quality control pipeline with two workers that have four threads each would be:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cap2 run pipeline --stage qc --workers <span class="m">2</span> --threads <span class="m">4</span> -c /path/to/config.yaml /path/to/manifest.txt
+</pre></div>
+</div>
+<p>See the <a class="reference external" href="https://github.com/MetaSUB/CAP2/tree/master/demo">Demo</a> for more details.</p>
+</div>
+</div>
+<div class="section" id="advanced-topics">
+<h2>Advanced Topics<a class="headerlink" href="#advanced-topics" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="installing-subprograms">
 <h3>Installing Subprograms<a class="headerlink" href="#installing-subprograms" title="Permalink to this headline">¶</a></h3>
 <p>By default the CAP installs all necessary subprograms itself. If a particular version of a subprogram is required it is usually possible to override the defaults and supply the program as a parameter.</p>
+</div>
+<div class="section" id="databases">
+<h3>Databases<a class="headerlink" href="#databases" title="Permalink to this headline">¶</a></h3>
+<p>The CAP uses a number of large reference databases. Building and indexing these databases is considered a first-class part of the pipeline and <a class="reference internal" href="modules_databases.html#id1"><span class="std std-ref">modules are included</span></a> to do so. However, in most cases users will simply want to download prebuilt version of the databases rather than build them from scratch. This is the pipeline default and will happen automatically.</p>
+<p>To preload databases on a machine run this from the command line:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cap2 run db -c /path/to/config/file
+</pre></div>
+</div>
+<p>or from python</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">.api</span> <span class="kn">import</span> <span class="n">run_db_stage</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">config</span><span class="o">/</span><span class="nb">file</span>
+<span class="n">run_db_stage</span><span class="p">(</span><span class="n">config_path</span><span class="o">=</span><span class="n">config</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">workers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="running-tests">
 <h3>Running Tests<a class="headerlink" href="#running-tests" title="Permalink to this headline">¶</a></h3>
@@ -84,21 +147,6 @@ cap2 --help
 </div>
 </div>
 </div>
-<div class="section" id="databases">
-<h2>Databases<a class="headerlink" href="#databases" title="Permalink to this headline">¶</a></h2>
-<p>The CAP uses a number of large reference databases. Building and indexing these databases is considered a first-class part of the pipeline and <a class="reference internal" href="modules.html#id6"><span class="std std-ref">modules are included</span></a> to do so. However, in most cases users will simply want to download prebuilt version of the databases rather than build them from scratch. This is the pipeline default and will happen automatically.</p>
-<p>To preload databases on a machine run this from the command line:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cap2 run db -c /path/to/config/file
-</pre></div>
-</div>
-<p>or from python</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">.api</span> <span class="kn">import</span> <span class="n">run_db_stage</span>
-
-<span class="n">config</span> <span class="o">=</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">config</span><span class="o">/</span><span class="nb">file</span>
-<span class="n">run_db_stage</span><span class="p">(</span><span class="n">config_path</span><span class="o">=</span><span class="n">config</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">workers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
 </div>
 
 
@@ -122,7 +170,8 @@ cap2 --help
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Quickstart</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#installing-the-cap">Installing the CAP</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#databases">Databases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#running-the-cap">Running the CAP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#advanced-topics">Advanced Topics</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture and Design</a></li>

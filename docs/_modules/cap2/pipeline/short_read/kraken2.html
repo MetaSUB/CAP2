@@ -46,7 +46,7 @@
 <span class="kn">from</span> <span class="nn">..preprocessing.clean_reads</span> <span class="k">import</span> <span class="n">CleanReads</span>
 
 
-<div class="viewcode-block" id="Kraken2"><a class="viewcode-back" href="../../../../modules.html#cap2.pipeline.short_read.Kraken2">[docs]</a><span class="k">class</span> <span class="nc">Kraken2</span><span class="p">(</span><span class="n">CapTask</span><span class="p">):</span>
+<div class="viewcode-block" id="Kraken2"><a class="viewcode-back" href="../../../../modules_short_read.html#cap2.pipeline.short_read.Kraken2">[docs]</a><span class="k">class</span> <span class="nc">Kraken2</span><span class="p">(</span><span class="n">CapTask</span><span class="p">):</span>
     <span class="n">module_description</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">    This module provides taxonomic assignments for short reads.</span>
 
@@ -57,6 +57,7 @@
 <span class="s2">    Negatives: Kraken2 uses pseudo-alignment which is somewhat less sensitive</span>
 <span class="s2">    and specific than true alignment.</span>
 <span class="s2">    &quot;&quot;&quot;</span>
+    <span class="n">MODULE_VERSION</span> <span class="o">=</span> <span class="s1">&#39;v0.3.0&#39;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -77,12 +78,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">PipelineConfig</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_filename</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">out_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">out_dir</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">db</span> <span class="o">=</span> <span class="n">Kraken2DB</span><span class="p">(</span><span class="n">config_filename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_filename</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">reads</span> <span class="o">=</span> <span class="n">CleanReads</span><span class="p">(</span>
-            <span class="n">sample_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_name</span><span class="p">,</span>
-            <span class="n">pe1</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pe1</span><span class="p">,</span>
-            <span class="n">pe2</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pe2</span><span class="p">,</span>
-            <span class="n">config_filename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_filename</span>
-        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reads</span> <span class="o">=</span> <span class="n">CleanReads</span><span class="o">.</span><span class="n">from_cap_task</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_module_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
@@ -93,10 +89,6 @@
 
     <span class="k">def</span> <span class="nf">requires</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rsync_pkg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pkg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">reads</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">version</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s1">&#39;v0.2.0&#39;</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">dependencies</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
@@ -114,7 +106,6 @@
             <span class="n">f</span><span class="s1">&#39;--db </span><span class="si">{self.db.kraken2_db}</span><span class="s1"> &#39;</span>
             <span class="n">f</span><span class="s1">&#39;--paired &#39;</span>
             <span class="n">f</span><span class="s1">&#39;--threads </span><span class="si">{self.cores}</span><span class="s1"> &#39;</span>
-            <span class="s1">&#39;--use-mpa-style &#39;</span>
             <span class="s1">&#39;--gzip-compressed &#39;</span>
             <span class="n">f</span><span class="s1">&#39;--report {self.output()[&quot;report&quot;].path} &#39;</span>
             <span class="n">f</span><span class="s1">&#39;{self.reads.output()[&quot;clean_reads_1&quot;].path} &#39;</span>
@@ -125,6 +116,7 @@
 
 
 <span class="k">class</span> <span class="nc">BrakenKraken2</span><span class="p">(</span><span class="n">CapTask</span><span class="p">):</span>
+    <span class="n">MODULE_VERSION</span> <span class="o">=</span> <span class="s1">&#39;v0.1.0&#39;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -156,10 +148,6 @@
 
     <span class="k">def</span> <span class="nf">requires</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pkg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">report</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">reads</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">version</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s1">&#39;v0.1.0&#39;</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">dependencies</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>

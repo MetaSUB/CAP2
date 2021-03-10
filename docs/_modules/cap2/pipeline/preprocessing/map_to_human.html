@@ -45,7 +45,7 @@
 <span class="kn">from</span> <span class="nn">..databases.human_removal_db</span> <span class="k">import</span> <span class="n">HumanRemovalDB</span>
 
 
-<div class="viewcode-block" id="RemoveHumanReads"><a class="viewcode-back" href="../../../../modules.html#cap2.pipeline.preprocessing.RemoveHumanReads">[docs]</a><span class="k">class</span> <span class="nc">RemoveHumanReads</span><span class="p">(</span><span class="n">CapTask</span><span class="p">):</span>
+<div class="viewcode-block" id="RemoveHumanReads"><a class="viewcode-back" href="../../../../modules_preprocessing.html#cap2.pipeline.preprocessing.RemoveHumanReads">[docs]</a><span class="k">class</span> <span class="nc">RemoveHumanReads</span><span class="p">(</span><span class="n">CapTask</span><span class="p">):</span>
     <span class="n">module_description</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">    This module removes reads likely to be human.</span>
 
@@ -58,6 +58,7 @@
 <span class="s2">    human DNA may actually be microbial though in most cases</span>
 <span class="s2">    part of the microbial genome will not resemble human.</span>
 <span class="s2">    &quot;&quot;&quot;</span>
+    <span class="n">MODULE_VERSION</span> <span class="o">=</span> <span class="s1">&#39;v0.2.1&#39;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -76,21 +77,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">PipelineConfig</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_filename</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">out_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">out_dir</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">db</span> <span class="o">=</span> <span class="n">HumanRemovalDB</span><span class="p">(</span><span class="n">config_filename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_filename</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mouse_removed_reads</span> <span class="o">=</span> <span class="n">RemoveMouseReads</span><span class="p">(</span>
-            <span class="n">pe1</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pe1</span><span class="p">,</span>
-            <span class="n">pe2</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pe2</span><span class="p">,</span>
-            <span class="n">sample_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_name</span><span class="p">,</span>
-            <span class="n">config_filename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_filename</span><span class="p">,</span>
-            <span class="n">cores</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cores</span><span class="p">,</span>
-            <span class="n">data_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data_type</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mouse_removed_reads</span> <span class="o">=</span> <span class="n">RemoveMouseReads</span><span class="o">.</span><span class="n">from_cap_task</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">requires</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">samtools</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pkg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mouse_removed_reads</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">version</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s1">&#39;v0.2.1&#39;</span>
 
     <span class="k">def</span> <span class="nf">tool_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">version</span> <span class="o">=</span> <span class="s1">&#39;[BOWTIE2]</span><span class="se">\n</span><span class="s1">&#39;</span>

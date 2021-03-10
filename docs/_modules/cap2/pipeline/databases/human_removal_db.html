@@ -44,13 +44,14 @@
 <span class="kn">from</span> <span class="nn">..utils.cap_task</span> <span class="k">import</span> <span class="n">CapDbTask</span>
 
 
-<div class="viewcode-block" id="HumanRemovalDB"><a class="viewcode-back" href="../../../../modules.html#cap2.pipeline.databases.HumanRemovalDB">[docs]</a><span class="k">class</span> <span class="nc">HumanRemovalDB</span><span class="p">(</span><span class="n">CapDbTask</span><span class="p">):</span>
+<div class="viewcode-block" id="HumanRemovalDB"><a class="viewcode-back" href="../../../../modules_databases.html#cap2.pipeline.databases.HumanRemovalDB">[docs]</a><span class="k">class</span> <span class="nc">HumanRemovalDB</span><span class="p">(</span><span class="n">CapDbTask</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;This class is responsible for building and/or retriveing</span>
 <span class="sd">    validating the database which will be used to remove human</span>
 <span class="sd">    reads from the sample.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">config_filename</span> <span class="o">=</span> <span class="n">luigi</span><span class="o">.</span><span class="n">Parameter</span><span class="p">()</span>
     <span class="n">cores</span> <span class="o">=</span> <span class="n">luigi</span><span class="o">.</span><span class="n">IntParameter</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">MODULE_VERSION</span> <span class="o">=</span> <span class="s1">&#39;v1.0.0&#39;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>

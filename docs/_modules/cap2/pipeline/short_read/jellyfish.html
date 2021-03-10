@@ -46,15 +46,19 @@
 <span class="kn">from</span> <span class="nn">..preprocessing.clean_reads</span> <span class="k">import</span> <span class="n">CleanReads</span>
 
 
-<div class="viewcode-block" id="Jellyfish"><a class="viewcode-back" href="../../../../modules.html#cap2.pipeline.short_read.Jellyfish">[docs]</a><span class="k">class</span> <span class="nc">Jellyfish</span><span class="p">(</span><span class="n">CapTask</span><span class="p">):</span>
-    <span class="n">K</span> <span class="o">=</span> <span class="mi">31</span>
+<div class="viewcode-block" id="Jellyfish"><a class="viewcode-back" href="../../../../modules_short_read.html#cap2.pipeline.short_read.Jellyfish">[docs]</a><span class="k">class</span> <span class="nc">Jellyfish</span><span class="p">(</span><span class="n">CapTask</span><span class="p">):</span>
+    <span class="n">RAM</span> <span class="o">=</span> <span class="s1">&#39;1G&#39;</span>
+    <span class="n">Ks</span> <span class="o">=</span> <span class="p">[</span><span class="mi">31</span><span class="p">,</span> <span class="mi">15</span><span class="p">]</span>
     <span class="n">module_description</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">    This module coutns kmer abundances.</span>
+<span class="s2">    This module counts kmer within samples. </span>
 
-<span class="s2">    Motivation: </span>
+<span class="s2">    Motivation: K-mer counts frequencies provide a database-free way to analyze samples</span>
+<span class="s2">    and are the basis of many other analyses.</span>
 
-<span class="s2">    Negatives: </span>
+<span class="s2">    Negatives: K-mer counts can be large and are sensitive to read errors. The latter is</span>
+<span class="s2">    mitigated somewhat by read error correction.</span>
 <span class="s2">    &quot;&quot;&quot;</span>
+    <span class="n">MODULE_VERSION</span> <span class="o">=</span> <span class="s1">&#39;v0.2.0&#39;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -66,12 +70,7 @@
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">PipelineConfig</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_filename</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">out_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">out_dir</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">reads</span> <span class="o">=</span> <span class="n">CleanReads</span><span class="p">(</span>
-            <span class="n">sample_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_name</span><span class="p">,</span>
-            <span class="n">pe1</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pe1</span><span class="p">,</span>
-            <span class="n">pe2</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pe2</span><span class="p">,</span>
-            <span class="n">config_filename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_filename</span>
-        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reads</span> <span class="o">=</span> <span class="n">CleanReads</span><span class="o">.</span><span class="n">from_cap_task</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">tool_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_cmd</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{self.pkg.bin}</span><span class="s1"> --version&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
@@ -84,26 +83,23 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pkg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">reads</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">version</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s1">&#39;v0.1.0&#39;</span>
-
-    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">dependencies</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;jellyfish&#39;</span><span class="p">,</span> <span class="n">CleanReads</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="n">f</span><span class="s1">&#39;k</span><span class="si">{self.K}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_target</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;k</span><span class="si">{self.K}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;jf&#39;</span><span class="p">),</span>
+            <span class="n">f</span><span class="s1">&#39;k</span><span class="si">{K}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_target</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;k</span><span class="si">{K}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;jf&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">K</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">Ks</span>
         <span class="p">}</span>
 
-    <span class="k">def</span> <span class="nf">_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">31</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
         <span class="n">outfile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">()[</span><span class="n">f</span><span class="s1">&#39;k</span><span class="si">{k}</span><span class="s1">&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">path</span>
         <span class="n">r1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reads</span><span class="o">.</span><span class="n">output</span><span class="p">()[</span><span class="s1">&#39;clean_reads_1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">path</span>
         <span class="n">r2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reads</span><span class="o">.</span><span class="n">output</span><span class="p">()[</span><span class="s1">&#39;clean_reads_2&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">path</span>
         <span class="n">cmd</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">f</span><span class="s1">&#39;</span><span class="si">{self.pkg.bin}</span><span class="s1"> count &#39;</span>
             <span class="n">f</span><span class="s1">&#39;-m </span><span class="si">{k}</span><span class="s1"> &#39;</span>
-            <span class="s1">&#39;-s 1G &#39;</span>
+            <span class="n">f</span><span class="s1">&#39;-s </span><span class="si">{self.RAM}</span><span class="s1"> &#39;</span>
             <span class="s1">&#39;-t 8 &#39;</span>
             <span class="s1">&#39;-C &#39;</span>
             <span class="n">f</span><span class="s1">&#39;-o  </span><span class="si">{outfile}</span><span class="s1"> &#39;</span>
@@ -113,10 +109,11 @@
         <span class="k">return</span> <span class="n">cmd</span>
 
     <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">run_cmd</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cmd</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">K</span><span class="p">))</span>
-        <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">()[</span><span class="n">f</span><span class="s1">&#39;k31&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">path</span>
-        <span class="k">if</span> <span class="n">isfile</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;_0&#39;</span><span class="p">):</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;_0&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span></div>
+        <span class="k">for</span> <span class="n">K</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">Ks</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">run_cmd</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cmd</span><span class="p">(</span><span class="n">K</span><span class="p">))</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">()[</span><span class="n">f</span><span class="s1">&#39;k</span><span class="si">{K}</span><span class="s1">&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">path</span>
+            <span class="k">if</span> <span class="n">isfile</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;_0&#39;</span><span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;_0&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span></div>
 </pre></div>
 
           </div>

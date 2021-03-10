@@ -17,7 +17,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="API" href="api.html" />
-    <link rel="prev" title="Modules" href="modules.html" />
+    <link rel="prev" title="Databases" href="modules_databases.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -75,6 +75,18 @@ filepaths and other raw data.</p>
 <em class="property">class </em><code class="descclassname">cap2.capalyzer.table_builder.</code><code class="descname">CAPTableBuilder</code><span class="sig-paren">(</span><em>name</em>, <em>file_source</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/capalyzer/table_builder/cap_table_builder.html#CAPTableBuilder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.capalyzer.table_builder.CAPTableBuilder" title="Permalink to this definition">¶</a></dt>
 <dd><p>This class builds summary tables for a set of samples.</p>
 <dl class="method">
+<dt id="cap2.capalyzer.table_builder.CAPTableBuilder.covid_fast_detect_read_counts">
+<code class="descname">covid_fast_detect_read_counts</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/capalyzer/table_builder/cap_table_builder.html#CAPTableBuilder.covid_fast_detect_read_counts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.capalyzer.table_builder.CAPTableBuilder.covid_fast_detect_read_counts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a table of read counts by taxa from covid fast detect.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cap2.capalyzer.table_builder.CAPTableBuilder.fast_taxa_read_counts">
+<code class="descname">fast_taxa_read_counts</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/capalyzer/table_builder/cap_table_builder.html#CAPTableBuilder.fast_taxa_read_counts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.capalyzer.table_builder.CAPTableBuilder.fast_taxa_read_counts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a table of read counts by taxa from fast taxa.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="cap2.capalyzer.table_builder.CAPTableBuilder.metadata">
 <code class="descname">metadata</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/capalyzer/table_builder/cap_table_builder.html#CAPTableBuilder.metadata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.capalyzer.table_builder.CAPTableBuilder.metadata" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a metadata table for these samples.</p>
@@ -110,9 +122,8 @@ making the table more smaller.</p>
 
 <dl class="function">
 <dt id="cap2.capalyzer.table_builder.parsers.parse_taxa_report">
-<code class="descclassname">cap2.capalyzer.table_builder.parsers.</code><code class="descname">parse_taxa_report</code><span class="sig-paren">(</span><em>local_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/capalyzer/table_builder/parsers.html#parse_taxa_report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.capalyzer.table_builder.parsers.parse_taxa_report" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a dict of taxa_name to read_counts.</p>
-</dd></dl>
+<code class="descclassname">cap2.capalyzer.table_builder.parsers.</code><code class="descname">parse_taxa_report</code><span class="sig-paren">(</span><em>local_path</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/capalyzer/table_builder/parsers.html#parse_taxa_report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.capalyzer.table_builder.parsers.parse_taxa_report" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </div>
 </div>
@@ -135,25 +146,25 @@ making the table more smaller.</p>
 
 
 <h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
+<p class="caption"><span class="caption-text">Documentation:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">Modules</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">CAPalyzer</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture and Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Pipeline modules</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Creating and Parsing Data Tables</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#api">API</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="citation.html">Citing the CAP</a></li>
-<li class="toctree-l1"><a class="reference internal" href="license.html">License for MetaSUB CAP</a></li>
-<li class="toctree-l1"><a class="reference internal" href="license.html#other-licenses">Other Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 </ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="modules.html" title="previous chapter">Modules</a></li>
+      <li>Previous: <a href="modules_databases.html" title="previous chapter">Databases</a></li>
       <li>Next: <a href="api.html" title="next chapter">API</a></li>
   </ul></li>
 </ul>

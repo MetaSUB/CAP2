@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Modules &#8212; MetaSUB CAP 0.1.1 documentation</title>
+    <title>Assembly &#8212; MetaSUB CAP 0.1.1 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -16,8 +16,8 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Quality Control" href="modules_qc.html" />
-    <link rel="prev" title="Architecture" href="architecture.html" />
+    <link rel="next" title="Databases" href="modules_databases.html" />
+    <link rel="prev" title="Short Read" href="modules_short_read.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -34,19 +34,24 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="modules">
-<h1>Modules<a class="headerlink" href="#modules" title="Permalink to this headline">¶</a></h1>
-<p>The CAP divides modules into five subpipelines covering: quality control, preprocessing to remove low quality and contaminat sequences, analysis of short reads, analysis of assemblies, and constructing relevant databases and indices for the other four pipelines. Detailed descriptions for each subpipeline and the modules within may be found below.</p>
-<p>Each link contains a description of the subpipeline, and a list of modules in the pipelines with descriptions and links to example outputs from each module.</p>
-<div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">Documentation:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="modules_qc.html">Quality Control</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules_preprocessing.html">Preprocessing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules_short_read.html">Short Read</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules_assembly.html">Assembly</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules_databases.html">Databases</a></li>
-</ul>
+  <div class="section" id="assembly">
+<h1>Assembly<a class="headerlink" href="#assembly" title="Permalink to this headline">¶</a></h1>
+<div class="figure" id="id1">
+<a class="reference internal image-reference" href="_images/assembly.jpeg"><img alt="_images/assembly.jpeg" src="_images/assembly.jpeg" style="width: 600px;" /></a>
+</div>
+<p>The assembly subpipeline generates large sequence assemblies and analyzes them for a number of analyses. It runs on data that has been processed with the preprocessing pipeline.</p>
+<div class="section" id="modules">
+<h2>Modules<a class="headerlink" href="#modules" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="metaspades">
+<h3>MetaSPAdes<a class="headerlink" href="#metaspades" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="http://cab.spbu.ru/software/meta-spades/">MetaSPAdes</a> generates high quality assemblies of microbial genomes from metagenomic data. The assemblies can be used for a number of downstream analyses including identifying Metagenome Assembled Genomes, gene clusters, and refined taxonomic profiles.</p>
+<p>MetaSPAdes produces a number of output files <a class="reference external" href="https://github.com/ablab/spades#spadesoutsec">which are detailed here</a>. Most downstream analyses use eitheer the <cite>contigs</cite> or <cite>scaffolds</cite> file. An example of the output files from this module may be found on <a class="reference external" href="https://pangeabio.io/samples/eb8b8354-2cb3-43a7-8126-67c1c12cf684/analysis-results/53f29fcd-8ab9-4a1d-a579-7dca0c13bfb7">Pangea</a>.</p>
+<dl class="class">
+<dt id="cap2.pipeline.assembly.MetaspadesAssembly">
+<em class="property">class </em><code class="descclassname">cap2.pipeline.assembly.</code><code class="descname">MetaspadesAssembly</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/assembly/metaspades.html#MetaspadesAssembly"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.assembly.MetaspadesAssembly" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
 </div>
 </div>
 
@@ -71,11 +76,11 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture and Design</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Pipeline modules</a><ul>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Pipeline modules</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="modules_qc.html">Quality Control</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules_preprocessing.html">Preprocessing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules_short_read.html">Short Read</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules_assembly.html">Assembly</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Assembly</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules_databases.html">Databases</a></li>
 </ul>
 </li>
@@ -89,8 +94,10 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="architecture.html" title="previous chapter">Architecture</a></li>
-      <li>Next: <a href="modules_qc.html" title="next chapter">Quality Control</a></li>
+  <li><a href="modules.html">Modules</a><ul>
+      <li>Previous: <a href="modules_short_read.html" title="previous chapter">Short Read</a></li>
+      <li>Next: <a href="modules_databases.html" title="next chapter">Databases</a></li>
+  </ul></li>
   </ul></li>
 </ul>
 </div>
@@ -118,7 +125,7 @@
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
-      <a href="_sources/modules.rst.txt"
+      <a href="_sources/modules_assembly.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

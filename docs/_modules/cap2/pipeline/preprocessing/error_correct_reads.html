@@ -46,7 +46,7 @@
 <span class="kn">from</span> <span class="nn">.map_to_human</span> <span class="k">import</span> <span class="n">RemoveHumanReads</span>
 
 
-<div class="viewcode-block" id="ErrorCorrectReads"><a class="viewcode-back" href="../../../../modules.html#cap2.pipeline.preprocessing.ErrorCorrectReads">[docs]</a><span class="k">class</span> <span class="nc">ErrorCorrectReads</span><span class="p">(</span><span class="n">CapTask</span><span class="p">):</span>
+<div class="viewcode-block" id="ErrorCorrectReads"><a class="viewcode-back" href="../../../../modules_preprocessing.html#cap2.pipeline.preprocessing.ErrorCorrectReads">[docs]</a><span class="k">class</span> <span class="nc">ErrorCorrectReads</span><span class="p">(</span><span class="n">CapTask</span><span class="p">):</span>
     <span class="n">module_description</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">    This module error corrects reads using BayesHammer.</span>
 
@@ -57,10 +57,10 @@
 <span class="s2">    rate.</span>
 
 <span class="s2">    Negatives: error correction can remove SNPs present in</span>
-<span class="s2">    secondary strains as such error corrected reads should</span>
+<span class="s2">    secondary strains, as such error corrected reads should</span>
 <span class="s2">    not be used to call SNPs.</span>
 <span class="s2">    &quot;&quot;&quot;</span>
-
+    <span class="n">MODULE_VERSION</span> <span class="o">=</span> <span class="s1">&#39;v0.2.2&#39;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -72,21 +72,10 @@
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">PipelineConfig</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_filename</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">out_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">out_dir</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nonhuman_reads</span> <span class="o">=</span> <span class="n">RemoveHumanReads</span><span class="p">(</span>
-            <span class="n">pe1</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pe1</span><span class="p">,</span>
-            <span class="n">pe2</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pe2</span><span class="p">,</span>
-            <span class="n">sample_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_name</span><span class="p">,</span>
-            <span class="n">config_filename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_filename</span><span class="p">,</span>
-            <span class="n">cores</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cores</span><span class="p">,</span>
-            <span class="n">data_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data_type</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nonhuman_reads</span> <span class="o">=</span> <span class="n">RemoveHumanReads</span><span class="o">.</span><span class="n">from_cap_task</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">requires</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pkg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nonhuman_reads</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">version</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s1">&#39;v0.2.1&#39;</span>
 
     <span class="k">def</span> <span class="nf">tool_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_cmd</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{self.pkg.bin}</span><span class="s1"> --version&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
@@ -117,7 +106,9 @@
         <span class="n">cmd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pkg</span><span class="o">.</span><span class="n">bin</span>
         <span class="n">cmd</span> <span class="o">+=</span> <span class="n">f</span><span class="s1">&#39; --only-error-correction --meta -U </span><span class="si">{r1.path}</span><span class="s1"> &#39;</span>
         <span class="n">outdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{self.sample_name}</span><span class="s1">.error_correction_out&#39;</span>
-        <span class="n">cmd</span> <span class="o">+=</span> <span class="n">f</span><span class="s1">&#39; -t </span><span class="si">{self.cores}</span><span class="s1"> -o </span><span class="si">{outdir}</span><span class="s1">&#39;</span>
+        <span class="n">cmd</span> <span class="o">+=</span> <span class="n">f</span><span class="s1">&#39; -t </span><span class="si">{self.cores}</span><span class="s1"> -o </span><span class="si">{outdir}</span><span class="s1"> &#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_ram</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">cmd</span> <span class="o">+=</span> <span class="n">f</span><span class="s1">&#39; -m </span><span class="si">{self.max_ram}</span><span class="s1"> &#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">run_cmd</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>  <span class="c1"># runs error correction but leaves output in a dir</span>
         <span class="n">config_path</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{self.sample_name}</span><span class="s1">.error_correction_out/corrected/corrected.yaml&#39;</span>
         <span class="n">spades_out</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>

@@ -1,0 +1,174 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Preprocessing &#8212; MetaSUB CAP 0.1.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Short Read" href="modules_short_read.html" />
+    <link rel="prev" title="Quality Control" href="modules_qc.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="preprocessing">
+<h1>Preprocessing<a class="headerlink" href="#preprocessing" title="Permalink to this headline">¶</a></h1>
+<div class="figure" id="id1">
+<a class="reference internal image-reference" href="_images/preprocessing.jpeg"><img alt="_images/preprocessing.jpeg" src="_images/preprocessing.jpeg" style="width: 600px;" /></a>
+</div>
+<p>The preprocessing pipeline produces high quality clean reads for the rest of the pipeline to consume. It removes low quality sequences, fitlers sequences from potential host species (Human, Mouse, etc), and performs error correction. It runs directly on raw sequencing data.</p>
+<div class="section" id="modules">
+<h2>Modules<a class="headerlink" href="#modules" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="adapter-removal">
+<h3>Adapter Removal<a class="headerlink" href="#adapter-removal" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="https://adapterremoval.readthedocs.io/en/latest/">AdapterRemoval</a> removes remnant adapter sequences from and trims low quality bases from the 3’ end of reads. Adapter sequences are typically removed as part of the basecalling process but removing potential adapter sequences is fast and good practice. Additionally removing very low quality bases from the ends of reads reduces potential downstream error.</p>
+<p>AdapterRemoval produces one fastq file per input file (one for single end, two for paired end). These files contain the same reads as their input counterparts except cleaned.</p>
+<dl class="class">
+<dt id="cap2.pipeline.preprocessing.AdapterRemoval">
+<em class="property">class </em><code class="descclassname">cap2.pipeline.preprocessing.</code><code class="descname">AdapterRemoval</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/preprocessing/remove_adapters.html#AdapterRemoval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.preprocessing.AdapterRemoval" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="mouse-removal">
+<h3>Mouse Removal<a class="headerlink" href="#mouse-removal" title="Permalink to this headline">¶</a></h3>
+<p>This module removes reads that map to the mouse genome. It uses <a class="reference external" href="http://bowtie-bio.sourceforge.net/bowtie2/index.shtml">Bowtie2</a> to map reads to the mm39 genome using the <cite>–very-sensitive</cite> preset mode. Removing mouse DNA is critical for studies of mouse microbiomes but it is also useful for non-mouse studies where it helps to remove contaminants that likely are not microbial.</p>
+<p>Mouse Removal produces three files. A pair of fastqs (just one when processing single ended data) and a BAM file recording the alignments. The fastqs contain the reads that did not map to the mouse genome.</p>
+<dl class="class">
+<dt id="cap2.pipeline.preprocessing.RemoveMouseReads">
+<em class="property">class </em><code class="descclassname">cap2.pipeline.preprocessing.</code><code class="descname">RemoveMouseReads</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/preprocessing/map_to_mouse.html#RemoveMouseReads"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.preprocessing.RemoveMouseReads" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="human-removal">
+<h3>Human Removal<a class="headerlink" href="#human-removal" title="Permalink to this headline">¶</a></h3>
+<p>Most microbiome samples contain some amount of human genetic material. There are two main sources for this: human contamination during sample preparation and human material present in samples from human (e.g. from a cheek swab). Removing human sequences reduces possible misidentification as a microbial taxon.</p>
+<p>Human sequence removal relies on Hg38 with alternate contigs. Without alternate contigs large amounts of human sequence may not be identified in some samples. In some cases genuine microbial sequences may be misidentified as human sequences. This could be particularly true in studies of retroviruses. However, in most cases, removing human sequence decreases false positives and decreases downstream processing time.</p>
+<p>This module removes reads that map to the human genome. It uses <a class="reference external" href="http://bowtie-bio.sourceforge.net/bowtie2/index.shtml">Bowtie2</a> to map reads to the Hg38 genome (with alternate contigs) using the <cite>–very-sensitive</cite> preset mode. Removing human DNA is critical for essentially every microbiome study since all samples are handled by humans at some point and may contain some fraction of human DNA that could otherwise be mistakenly classified as microbial.</p>
+<p>Human Removal produces three files. A pair of fastqs (just one when processing single ended data) and a BAM file recording the alignments. The fastqs contain the reads that did not map to the human genome. An example of the output files from this module may be found on <a class="reference external" href="https://pangeabio.io/samples/bb81df30-50ab-442b-b799-3322e48bf740/analysis-results/a33abb9c-3394-4118-9132-bfc07cba4f4b">Pangea</a>.</p>
+<dl class="class">
+<dt id="cap2.pipeline.preprocessing.RemoveHumanReads">
+<em class="property">class </em><code class="descclassname">cap2.pipeline.preprocessing.</code><code class="descname">RemoveHumanReads</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/preprocessing/map_to_human.html#RemoveHumanReads"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.preprocessing.RemoveHumanReads" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="error-correction">
+<h3>Error Correction<a class="headerlink" href="#error-correction" title="Permalink to this headline">¶</a></h3>
+<p>All types of sequencing introduce errors to sequences. While these errors are generally rare (error rates les than 1% are common) they can still introduce noise to downstream analyses. Error correcting reads is useful to reduce noise and improve downstream analyses.</p>
+<div class="figure" id="id4">
+<a class="reference internal image-reference" href="_images/kmer_size_counts.png"><img alt="_images/kmer_size_counts.png" src="_images/kmer_size_counts.png" style="width: 600px;" /></a>
+<p class="caption"><span class="caption-text">y-axis gives the number of k-mers, blue points are raw data while red is after error correction. Distinct is the total number of k-mers, repeated are k-mers that occur at least twice, Unique are k-mers that occur just once.</span></p>
+</div>
+<p>Error correction in the CAP uses BayesHammer, ordinarily the first step in the MetaSPAdes assembly pipeline. Roughly speaking BayesHammer tries to find k-mers that are just one base different than another, more abundant, k-mer and replaces the less abundant k-mer with the more abundant. As can be seen in the graph above error correction with BayesHammer (red line) substantially reduces the number of unique k-mers (k-mers that occur just once) without substantially reducing the number of repeated k-mers that occur more than once.</p>
+<p>A caveat of BayesHammer is that it reduces strain diversity in metaomics since low abundance bacterial strains look similar to sequence errors. This means that downstream strain calling tools generally should not use error corrected reads.</p>
+<p>Error correction is done with BayesHammer and does not require a database. It is performed after human removal and is the last stage in the preprocessing subpipeline. It produces two fast files (one in single ended mode) and an example of the output files from this module may be found on <a class="reference external" href="https://pangeabio.io/samples/bb81df30-50ab-442b-b799-3322e48bf740/analysis-results/35e85427-d806-48e3-adb5-96f38cddf4c6">Pangea</a>.</p>
+<dl class="class">
+<dt id="cap2.pipeline.preprocessing.ErrorCorrectReads">
+<em class="property">class </em><code class="descclassname">cap2.pipeline.preprocessing.</code><code class="descname">ErrorCorrectReads</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/preprocessing/error_correct_reads.html#ErrorCorrectReads"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.preprocessing.ErrorCorrectReads" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">MetaSUB CAP</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Documentation:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture and Design</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Pipeline modules</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="modules_qc.html">Quality Control</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Preprocessing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules_short_read.html">Short Read</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules_assembly.html">Assembly</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules_databases.html">Databases</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="capalyzer.html">Creating and Parsing Data Tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citation.html">Citing the CAP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">Modules</a><ul>
+      <li>Previous: <a href="modules_qc.html" title="previous chapter">Quality Control</a></li>
+      <li>Next: <a href="modules_short_read.html" title="next chapter">Short Read</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, David C. Danko.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+      |
+      <a href="_sources/modules_preprocessing.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

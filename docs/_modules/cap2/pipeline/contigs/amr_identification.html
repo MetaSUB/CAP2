@@ -1,0 +1,162 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>cap2.pipeline.contigs.amr_identification &#8212; MetaSUB CAP 0.1.1 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for cap2.pipeline.contigs.amr_identification</h1><div class="highlight"><pre>
+<span></span>
+<span class="kn">import</span> <span class="nn">luigi</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">join</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">basename</span>
+
+<span class="kn">from</span> <span class="nn">..config</span> <span class="k">import</span> <span class="n">PipelineConfig</span>
+<span class="kn">from</span> <span class="nn">..utils.conda</span> <span class="k">import</span> <span class="n">CondaPackage</span>
+<span class="kn">from</span> <span class="nn">.prodigal</span> <span class="k">import</span> <span class="n">Prodigal</span>
+
+
+<div class="viewcode-block" id="CardRGI"><a class="viewcode-back" href="../../../../modules.html#cap2.pipeline.contigs.CardRGI">[docs]</a><span class="k">class</span> <span class="nc">CardRGI</span><span class="p">(</span><span class="n">luigi</span><span class="o">.</span><span class="n">Task</span><span class="p">):</span>
+    <span class="n">sample_name</span> <span class="o">=</span> <span class="n">luigi</span><span class="o">.</span><span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">pe1</span> <span class="o">=</span> <span class="n">luigi</span><span class="o">.</span><span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">pe2</span> <span class="o">=</span> <span class="n">luigi</span><span class="o">.</span><span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">config_filename</span> <span class="o">=</span> <span class="n">luigi</span><span class="o">.</span><span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">cores</span> <span class="o">=</span> <span class="n">luigi</span><span class="o">.</span><span class="n">IntParameter</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pkg</span> <span class="o">=</span> <span class="n">CondaPackage</span><span class="p">(</span>
+            <span class="n">package</span><span class="o">=</span><span class="s2">&quot;rgi&quot;</span><span class="p">,</span>
+            <span class="n">executable</span><span class="o">=</span><span class="s2">&quot;rgi&quot;</span><span class="p">,</span>
+            <span class="n">channel</span><span class="o">=</span><span class="s2">&quot;bioconda&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">PipelineConfig</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_filename</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">out_dir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prots</span> <span class="o">=</span> <span class="n">Prodigal</span><span class="p">(</span>
+            <span class="n">sample_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_name</span><span class="p">,</span>
+            <span class="n">pe1</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pe1</span><span class="p">,</span>
+            <span class="n">pe2</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pe2</span><span class="p">,</span>
+            <span class="n">config_filename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_filename</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">requires</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pkg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prots</span>
+
+    <span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">amrs</span> <span class="o">=</span> <span class="n">luigi</span><span class="o">.</span><span class="n">LocalTarget</span><span class="p">(</span>
+            <span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">out_dir</span><span class="p">,</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{self.sample_name}</span><span class="s1">.rgi.amrs.tsv&#39;</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">amrs</span><span class="o">.</span><span class="n">makedirs</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;amrs&#39;</span><span class="p">:</span> <span class="n">amrs</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">f</span><span class="s1">&#39;</span><span class="si">{self.pkg.bin}</span><span class="s1"> main &#39;</span>
+            <span class="n">f</span><span class="s1">&#39; -i </span><span class="si">{self.prots.proteins}</span><span class="s1"> &#39;</span>
+            <span class="n">f</span><span class="s1">&#39; -o {self.output()[&quot;amrs&quot;].path} &#39;</span>
+            <span class="n">f</span><span class="s1">&#39; -t protein &#39;</span>
+            <span class="n">f</span><span class="s1">&#39; -a diamond &#39;</span>
+            <span class="n">f</span><span class="s1">&#39; -n </span><span class="si">{self.cores}</span><span class="s1"> &#39;</span>
+            <span class="n">f</span><span class="s1">&#39; --include_loose &#39;</span>
+            <span class="n">f</span><span class="s1">&#39; --low_quality &#39;</span>
+            <span class="n">f</span><span class="s1">&#39; --clean &#39;</span>
+            <span class="n">f</span><span class="s1">&#39; -d wgs &#39;</span>
+        <span class="p">)</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">MetaSUB CAP</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../architecture.html">Architecture and Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">Pipeline modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../capalyzer.html">Creating and Parsing Data Tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../citation.html">Citing the CAP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, David C. Danko.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

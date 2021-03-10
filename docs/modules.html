@@ -1,0 +1,286 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Modules &#8212; MetaSUB CAP 0.1.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API" href="api.html" />
+    <link rel="prev" title="Architecture" href="architecture.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="modules">
+<h1>Modules<a class="headerlink" href="#modules" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="quality-control">
+<h2>Quality Control<a class="headerlink" href="#quality-control" title="Permalink to this headline">¶</a></h2>
+<div class="figure" id="id1">
+<a class="reference internal image-reference" href="_images/qc.jpeg"><img alt="_images/qc.jpeg" src="_images/qc.jpeg" style="width: 600px;" /></a>
+</div>
+<div class="section" id="fastqc">
+<h3>FastQC<a class="headerlink" href="#fastqc" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="cap2.pipeline.preprocessing.FastQC">
+<em class="property">class </em><code class="descclassname">cap2.pipeline.preprocessing.</code><code class="descname">FastQC</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/preprocessing/fastqc.html#FastQC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.preprocessing.FastQC" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+<div class="section" id="preprocessing">
+<h2>Preprocessing<a class="headerlink" href="#preprocessing" title="Permalink to this headline">¶</a></h2>
+<div class="figure" id="id2">
+<a class="reference internal image-reference" href="_images/preprocessing.jpeg"><img alt="_images/preprocessing.jpeg" src="_images/preprocessing.jpeg" style="width: 600px;" /></a>
+</div>
+<p>The preprocessing subpipeline runs before all sections of the pipeline except for Quality Control. The preprocessing pipeline is meant to produce high quality clean data for the rest of the pipeline to consume.</p>
+<div class="section" id="adapter-removal">
+<h3>Adapter Removal<a class="headerlink" href="#adapter-removal" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="cap2.pipeline.preprocessing.AdapterRemoval">
+<em class="property">class </em><code class="descclassname">cap2.pipeline.preprocessing.</code><code class="descname">AdapterRemoval</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/preprocessing/remove_adapters.html#AdapterRemoval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.preprocessing.AdapterRemoval" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="mouse-removal">
+<h3>Mouse Removal<a class="headerlink" href="#mouse-removal" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="cap2.pipeline.preprocessing.RemoveMouseReads">
+<em class="property">class </em><code class="descclassname">cap2.pipeline.preprocessing.</code><code class="descname">RemoveMouseReads</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/preprocessing/map_to_mouse.html#RemoveMouseReads"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.preprocessing.RemoveMouseReads" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="human-removal">
+<h3>Human Removal<a class="headerlink" href="#human-removal" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="cap2.pipeline.preprocessing.RemoveHumanReads">
+<em class="property">class </em><code class="descclassname">cap2.pipeline.preprocessing.</code><code class="descname">RemoveHumanReads</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/preprocessing/map_to_human.html#RemoveHumanReads"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.preprocessing.RemoveHumanReads" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Most microbiome samples contain some amount of human genetic material. There are two main sources for this: human contamination during sample preparation and human material present in samples from human (e.g. from a cheek swab). Removing human sequences reduces possible misidentification as a microbial taxon.</p>
+<p>Human sequence removal relies on Hg38 with alternate contigs. Without alternate contigs large amounts of human sequence may not be identified in some samples. In some cases genuine microbial sequences may be misidentified as human sequences. This could be particularly true in studies of retroviruses. However, in most cases, removing human sequence decreases false positives and decreases downstream processing time.</p>
+<p>Human Removal is done with Bowtie2 and Hg38 with alternate contigs. It is performed after mouse removal.</p>
+</div>
+<div class="section" id="error-correction">
+<h3>Error Correction<a class="headerlink" href="#error-correction" title="Permalink to this headline">¶</a></h3>
+<span class="target" id="id3"></span><dl class="class">
+<dt id="cap2.pipeline.preprocessing.ErrorCorrectReads">
+<em class="property">class </em><code class="descclassname">cap2.pipeline.preprocessing.</code><code class="descname">ErrorCorrectReads</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/preprocessing/error_correct_reads.html#ErrorCorrectReads"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.preprocessing.ErrorCorrectReads" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>All types of sequencing introduce errors to sequences. While these errors are generally rare (error rates les than 1% are common) they can still introduce noise to downstream analyses. Error correcting reads is useful to reduce noise and improve downstream analyses.</p>
+<div class="figure" id="id7">
+<a class="reference internal image-reference" href="_images/kmer_size_counts.png"><img alt="_images/kmer_size_counts.png" src="_images/kmer_size_counts.png" style="width: 600px;" /></a>
+<p class="caption"><span class="caption-text">y-axis gives the number of k-mers, blue points are raw data while red is after error correction. Distinct is the total number of k-mers, repeated are k-mers that occur at least twice, Unique are k-mers that occur just once.</span></p>
+</div>
+<p>Error correction in the CAP uses BayesHammer, ordinarily the first step in the MetaSPAdes assembly pipeline. Roughly speaking BayesHammer tries to find k-mers that are just one base different than another, more abundant, k-mer and replaces the less abundant k-mer with the more abundant. As can be seen in the graph above error correction with BayesHammer (red line) substantially reduces the number of unique k-mers (k-mers that occur just once) without substantially reducing the number of repeated k-mers that occur more than once.</p>
+<p>A caveat of BayesHammer is that it reduces strain diversity in metaomics since low abundance bacterial strains look similar to sequence errors. This means that downstream strain calling tools generally should not use error corrected reads.</p>
+<p>Error correction is done with BayesHammer and does not require a database. It is performed after human removal and is the last stage in the preprocessing subpipeline.</p>
+</div>
+</div>
+<div class="section" id="short-read">
+<h2>Short Read<a class="headerlink" href="#short-read" title="Permalink to this headline">¶</a></h2>
+<div class="figure" id="id4">
+<a class="reference internal image-reference" href="_images/shortread.jpeg"><img alt="_images/shortread.jpeg" src="_images/shortread.jpeg" style="width: 600px;" /></a>
+</div>
+<div class="section" id="kraken2-taxonomic-profiling">
+<h3>Kraken2 Taxonomic Profiling<a class="headerlink" href="#kraken2-taxonomic-profiling" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="cap2.pipeline.short_read.Kraken2">
+<em class="property">class </em><code class="descclassname">cap2.pipeline.short_read.</code><code class="descname">Kraken2</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/short_read/kraken2.html#Kraken2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.short_read.Kraken2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Taxonomic identification is critical for understanding microbiomes. Kraken2 is a well benchmarked tool that is computationally efficient. Kraken2 is used with a large database containg all microbial sequences from RefSeq. Kraken2 uses pseudo-alignment which is somewhat less sensitive and specific than true alignment.</p>
+<p>taxonomic profiling is done with Kraken2 directly follows read error correction.</p>
+</div>
+<div class="section" id="jellyfish-k-mer-counting">
+<h3>Jellyfish K-mer Counting<a class="headerlink" href="#jellyfish-k-mer-counting" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="cap2.pipeline.short_read.Jellyfish">
+<em class="property">class </em><code class="descclassname">cap2.pipeline.short_read.</code><code class="descname">Jellyfish</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/short_read/jellyfish.html#Jellyfish"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.short_read.Jellyfish" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Jellyfish counts the number of times each k-mer occurs in a sample. By default the CAP counts 31-mers. All k-mers, including singletons, are counted. K-mer counting occurs after <a class="reference internal" href="#id3"><span class="std std-ref">error correction</span></a> which substantially reduces the number of singletons compared to raw data.</p>
+</div>
+</div>
+<div class="section" id="assembly">
+<h2>Assembly<a class="headerlink" href="#assembly" title="Permalink to this headline">¶</a></h2>
+<div class="figure" id="id5">
+<a class="reference internal image-reference" href="_images/assembly.jpeg"><img alt="_images/assembly.jpeg" src="_images/assembly.jpeg" style="width: 600px;" /></a>
+</div>
+<div class="section" id="metaspades">
+<h3>MetaSPAdes<a class="headerlink" href="#metaspades" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="cap2.pipeline.assembly.MetaspadesAssembly">
+<em class="property">class </em><code class="descclassname">cap2.pipeline.assembly.</code><code class="descname">MetaspadesAssembly</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/assembly/metaspades.html#MetaspadesAssembly"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.assembly.MetaspadesAssembly" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>MetaSPAdes is an assembly algorithm used to produce assembly.</p>
+</div>
+<div class="section" id="metabat2">
+<h3>MetaBAT2<a class="headerlink" href="#metabat2" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="cap2.pipeline.assembly.MetaBat2Binning">
+<em class="property">class </em><code class="descclassname">cap2.pipeline.assembly.</code><code class="descname">MetaBat2Binning</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/assembly/metabat2.html#MetaBat2Binning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.assembly.MetaBat2Binning" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>MetaBAT2 groups contigs into clusters that may have come from the same taxon. MetaBAT2 primarily uses tetranucleotide frequency to match contigs.</p>
+</div>
+<div class="section" id="prodigal">
+<h3>Prodigal<a class="headerlink" href="#prodigal" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="cap2.pipeline.contigs.Prodigal">
+<em class="property">class </em><code class="descclassname">cap2.pipeline.contigs.</code><code class="descname">Prodigal</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/contigs/prodigal.html#Prodigal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.contigs.Prodigal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predict ORFs from assembled contigs.</p>
+</dd></dl>
+
+<p>Prodigal predicts Open Reading Frames (ORFs) on assembled contigs.</p>
+</div>
+<div class="section" id="resistance-gene-identifier">
+<h3>Resistance Gene Identifier<a class="headerlink" href="#resistance-gene-identifier" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="cap2.pipeline.contigs.CardRGI">
+<em class="property">class </em><code class="descclassname">cap2.pipeline.contigs.</code><code class="descname">CardRGI</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/contigs/amr_identification.html#CardRGI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.contigs.CardRGI" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+<div class="section" id="databases">
+<h2>Databases<a class="headerlink" href="#databases" title="Permalink to this headline">¶</a></h2>
+<div class="figure" id="id6">
+<a class="reference internal image-reference" href="_images/dbs.jpeg"><img alt="_images/dbs.jpeg" src="_images/dbs.jpeg" style="width: 600px;" /></a>
+</div>
+<div class="section" id="mouse-removal-database">
+<h3>Mouse Removal Database<a class="headerlink" href="#mouse-removal-database" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="cap2.pipeline.databases.MouseRemovalDB">
+<em class="property">class </em><code class="descclassname">cap2.pipeline.databases.</code><code class="descname">MouseRemovalDB</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/databases/mouse_removal_db.html#MouseRemovalDB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.databases.MouseRemovalDB" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class is responsible for building and/or retriveing
+validating the database which will be used to remove mouse
+reads from the sample.</p>
+</dd></dl>
+
+<p>The CAP uses GRCm39 for mouse removal. The raw (fasta) genome is indexed using Bowtie2.</p>
+</div>
+<div class="section" id="human-removal-database">
+<h3>Human Removal Database<a class="headerlink" href="#human-removal-database" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="cap2.pipeline.databases.HumanRemovalDB">
+<em class="property">class </em><code class="descclassname">cap2.pipeline.databases.</code><code class="descname">HumanRemovalDB</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/databases/human_removal_db.html#HumanRemovalDB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.databases.HumanRemovalDB" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class is responsible for building and/or retriveing
+validating the database which will be used to remove human
+reads from the sample.</p>
+</dd></dl>
+
+<p>The CAP uses Hg38 with alternate contigs for human removal. The raw (fasta) genome is indexed using Bowtie2.</p>
+</div>
+<div class="section" id="kraken2-taxonomic-databases">
+<h3>Kraken2 Taxonomic Databases<a class="headerlink" href="#kraken2-taxonomic-databases" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="cap2.pipeline.databases.Kraken2DB">
+<em class="property">class </em><code class="descclassname">cap2.pipeline.databases.</code><code class="descname">Kraken2DB</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/databases/kraken2_db.html#Kraken2DB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.databases.Kraken2DB" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>The CAP uses built in tools from Kraken2 to build a databse. The CAP2 taxonomic databases includes archaea, bacteria, plasmids, viruses, fungi, protozoa, and human.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">MetaSUB CAP</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#quality-control">Quality Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#preprocessing">Preprocessing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#short-read">Short Read</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#assembly">Assembly</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#databases">Databases</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citation.html">Citing the CAP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License for MetaSUB CAP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html#other-licenses">Other Licenses</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="architecture.html" title="previous chapter">Architecture</a></li>
+      <li>Next: <a href="api.html" title="next chapter">API</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, David C. Danko.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+      |
+      <a href="_sources/modules.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,366 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>cap2.pipeline.databases.kraken2_db &#8212; MetaSUB CAP 0.1.1 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for cap2.pipeline.databases.kraken2_db</h1><div class="highlight"><pre>
+<span></span>
+<span class="kn">import</span> <span class="nn">luigi</span>
+
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">join</span><span class="p">,</span> <span class="n">abspath</span><span class="p">,</span> <span class="n">dirname</span>
+<span class="kn">from</span> <span class="nn">glob</span> <span class="k">import</span> <span class="n">glob</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+
+<span class="kn">from</span> <span class="nn">..config</span> <span class="k">import</span> <span class="n">PipelineConfig</span>
+<span class="kn">from</span> <span class="nn">..utils.conda</span> <span class="k">import</span> <span class="n">CondaPackage</span>
+<span class="kn">from</span> <span class="nn">..utils.cap_task</span> <span class="k">import</span> <span class="n">CapDbTask</span>
+
+<span class="n">DB_DATE</span> <span class="o">=</span> <span class="s1">&#39;2020-06-01&#39;</span>
+
+
+<span class="s1">&#39;cap2/databases/2020-06-08/taxa_kraken2/db_download_flag&#39;</span><span class="p">,</span>
+
+
+<span class="k">class</span> <span class="nc">Kraken2DBDataDown</span><span class="p">(</span><span class="n">CapDbTask</span><span class="p">):</span>
+    <span class="n">config_filename</span> <span class="o">=</span> <span class="n">luigi</span><span class="o">.</span><span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">cores</span> <span class="o">=</span> <span class="n">luigi</span><span class="o">.</span><span class="n">IntParameter</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pkg</span> <span class="o">=</span> <span class="n">CondaPackage</span><span class="p">(</span>
+            <span class="n">package</span><span class="o">=</span><span class="s2">&quot;kraken2&quot;</span><span class="p">,</span>
+            <span class="n">executable</span><span class="o">=</span><span class="s2">&quot;kraken2&quot;</span><span class="p">,</span>
+            <span class="n">channel</span><span class="o">=</span><span class="s2">&quot;bioconda&quot;</span><span class="p">,</span>
+            <span class="n">env</span><span class="o">=</span><span class="s2">&quot;CAP_v2_kraken2&quot;</span><span class="p">,</span>
+            <span class="n">config_filename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_filename</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">PipelineConfig</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_filename</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">libraries</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;archaea&#39;</span><span class="p">,</span> <span class="s1">&#39;bacteria&#39;</span><span class="p">,</span> <span class="s1">&#39;plasmid&#39;</span><span class="p">,</span> <span class="s1">&#39;viral&#39;</span><span class="p">,</span> <span class="s1">&#39;fungi&#39;</span><span class="p">,</span> <span class="s1">&#39;protozoa&#39;</span><span class="p">,</span> <span class="s1">&#39;human&#39;</span>
+        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kraken_db_dir</span> <span class="o">=</span> <span class="s1">&#39;taxa_kraken2&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">download_libs</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">tool_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_cmd</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{self.pkg.bin}</span><span class="s1"> --version&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">requires</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pkg</span><span class="p">]</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_module_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;kraken2_taxa_db_down&#39;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">version</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;v0.1.0&#39;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">dependencies</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;kraken2&#39;</span><span class="p">,</span> <span class="n">DB_DATE</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">kraken2_db</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">db_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kraken_db_dir</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">download_flag</span> <span class="o">=</span> <span class="n">luigi</span><span class="o">.</span><span class="n">LocalTarget</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kraken2_db</span><span class="p">,</span> <span class="s1">&#39;db_download_flag&#39;</span><span class="p">))</span>
+        <span class="n">download_flag</span><span class="o">.</span><span class="n">makedirs</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;flag&#39;</span><span class="p">:</span> <span class="n">download_flag</span><span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">db_mode</span> <span class="o">==</span> <span class="n">PipelineConfig</span><span class="o">.</span><span class="n">DB_MODE_BUILD</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">download_libs</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">download_kraken2_db</span><span class="p">()</span>
+        <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">()[</span><span class="s1">&#39;flag&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">download_kraken2_db</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{self.pkg.bin}</span><span class="s1">-build --use-ftp --download-taxonomy --db </span><span class="si">{self.kraken2_db}</span><span class="s1">&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run_cmd</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">library</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">libraries</span><span class="p">:</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">f</span><span class="s1">&#39;PATH=$PATH:{dirname(abspath(self.pkg.bin))} &#39;</span>
+                <span class="n">f</span><span class="s1">&#39;</span><span class="si">{self.pkg.bin}</span><span class="s1">-build &#39;</span>
+                <span class="n">f</span><span class="s1">&#39;--use-ftp &#39;</span>
+                <span class="n">f</span><span class="s1">&#39;--download-library </span><span class="si">{library}</span><span class="s1"> &#39;</span>
+                <span class="n">f</span><span class="s1">&#39;--db </span><span class="si">{self.kraken2_db}</span><span class="s1">&#39;</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">run_cmd</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Kraken2DB"><a class="viewcode-back" href="../../../../modules.html#cap2.pipeline.databases.Kraken2DB">[docs]</a><span class="k">class</span> <span class="nc">Kraken2DB</span><span class="p">(</span><span class="n">CapDbTask</span><span class="p">):</span>
+    <span class="n">config_filename</span> <span class="o">=</span> <span class="n">luigi</span><span class="o">.</span><span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">cores</span> <span class="o">=</span> <span class="n">luigi</span><span class="o">.</span><span class="n">IntParameter</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pkg</span> <span class="o">=</span> <span class="n">CondaPackage</span><span class="p">(</span>
+            <span class="n">package</span><span class="o">=</span><span class="s2">&quot;kraken2&quot;</span><span class="p">,</span>
+            <span class="n">executable</span><span class="o">=</span><span class="s2">&quot;kraken2&quot;</span><span class="p">,</span>
+            <span class="n">channel</span><span class="o">=</span><span class="s2">&quot;bioconda&quot;</span><span class="p">,</span>
+            <span class="n">env</span><span class="o">=</span><span class="s2">&quot;CAP_v2_kraken2&quot;</span><span class="p">,</span>
+            <span class="n">config_filename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_filename</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">download_task</span> <span class="o">=</span> <span class="n">Kraken2DBDataDown</span><span class="p">(</span>
+            <span class="n">config_filename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_filename</span><span class="p">,</span>
+            <span class="n">cores</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cores</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">PipelineConfig</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_filename</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db_size</span> <span class="o">=</span> <span class="mi">120</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1000</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span>  <span class="c1"># 120 GB</span>
+
+    <span class="k">def</span> <span class="nf">requires</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pkg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">download_task</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_module_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;kraken2_taxa_db&#39;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">version</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;v0.1.0&#39;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">dependencies</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;kraken2&#39;</span><span class="p">,</span> <span class="n">DB_DATE</span><span class="p">,</span> <span class="n">Kraken2DBDataDown</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">kraken2_db</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">download_task</span><span class="o">.</span><span class="n">kraken2_db</span>
+
+    <span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">db_taxa</span> <span class="o">=</span> <span class="n">luigi</span><span class="o">.</span><span class="n">LocalTarget</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kraken2_db</span><span class="p">,</span> <span class="s1">&#39;hash.k2d&#39;</span><span class="p">))</span>
+        <span class="n">db_taxa</span><span class="o">.</span><span class="n">makedirs</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;kraken2_db_taxa&#39;</span><span class="p">:</span> <span class="n">db_taxa</span><span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">db_mode</span> <span class="o">==</span> <span class="n">PipelineConfig</span><span class="o">.</span><span class="n">DB_MODE_BUILD</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">build_kraken2_db</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">download_kraken2_db_from_s3</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">build_kraken2_db</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">f</span><span class="s1">&#39;</span><span class="si">{self.pkg.bin}</span><span class="s1">-build &#39;</span>
+            <span class="s1">&#39;--build &#39;</span>
+            <span class="n">f</span><span class="s1">&#39;--max-db-size </span><span class="si">{self.db_size}</span><span class="s1"> &#39;</span>
+            <span class="n">f</span><span class="s1">&#39;--db </span><span class="si">{self.kraken2_db}</span><span class="s1">&#39;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run_cmd</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">download_kraken2_db_from_s3</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">paths</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;cap2/databases/2020-06-08/taxa_kraken2/hash.k2d&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;cap2/databases/2020-06-08/taxa_kraken2/opts.k2d&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;cap2/databases/2020-06-08/taxa_kraken2/seqid2taxid.map&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;cap2/databases/2020-06-08/taxa_kraken2/taxo.k2d&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;cap2/databases/2020-06-08/taxa_kraken2/unmapped.txt&#39;</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">:</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s1">&#39;wget &#39;</span>
+                <span class="n">f</span><span class="s1">&#39;--directory-prefix={dirname(self.output()[&quot;kraken2_db_taxa&quot;].path)} &#39;</span>
+                <span class="n">f</span><span class="s1">&#39;https://s3.wasabisys.com/metasub-microbiome/</span><span class="si">{path}</span><span class="s1"> &#39;</span>
+
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">run_cmd</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span></div>
+
+
+<span class="k">class</span> <span class="nc">BrakenKraken2DB</span><span class="p">(</span><span class="n">CapDbTask</span><span class="p">):</span>
+    <span class="n">config_filename</span> <span class="o">=</span> <span class="n">luigi</span><span class="o">.</span><span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">cores</span> <span class="o">=</span> <span class="n">luigi</span><span class="o">.</span><span class="n">IntParameter</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pkg</span> <span class="o">=</span> <span class="n">CondaPackage</span><span class="p">(</span>
+            <span class="n">package</span><span class="o">=</span><span class="s2">&quot;bracken==2.6.0&quot;</span><span class="p">,</span>
+            <span class="n">executable</span><span class="o">=</span><span class="s2">&quot;bracken&quot;</span><span class="p">,</span>
+            <span class="n">channel</span><span class="o">=</span><span class="s2">&quot;bioconda&quot;</span><span class="p">,</span>
+            <span class="n">env</span><span class="o">=</span><span class="s2">&quot;CAP_v2_bracken_kraken2&quot;</span><span class="p">,</span>
+            <span class="n">config_filename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_filename</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kraken2_db_task</span> <span class="o">=</span> <span class="n">Kraken2DB</span><span class="p">(</span>
+            <span class="n">config_filename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_filename</span><span class="p">,</span>
+            <span class="n">cores</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cores</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">PipelineConfig</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_filename</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">read_lengths</span> <span class="o">=</span> <span class="p">[</span><span class="mi">75</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">125</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">225</span><span class="p">,</span> <span class="mi">250</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">requires</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pkg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kraken2_db_task</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_module_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;bracken_kraken2_taxa_db&#39;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">version</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;v0.1.0&#39;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">dependencies</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;bracken&#39;</span><span class="p">,</span> <span class="n">DB_DATE</span><span class="p">,</span> <span class="n">Kraken2DB</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">kraken2_db</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kraken2_db_task</span><span class="o">.</span><span class="n">kraken2_db</span>
+
+    <span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">rlen</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_lengths</span><span class="p">:</span>
+            <span class="n">out</span><span class="p">[</span><span class="n">f</span><span class="s1">&#39;bracken_kraken2_db_</span><span class="si">{rlen}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">luigi</span><span class="o">.</span><span class="n">LocalTarget</span><span class="p">(</span><span class="n">join</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">kraken2_db</span><span class="p">,</span> <span class="n">f</span><span class="s1">&#39;database</span><span class="si">{rlen}</span><span class="s1">mers.kmer_distrib&#39;</span>
+            <span class="p">))</span>
+        <span class="k">return</span> <span class="n">out</span>
+
+    <span class="k">def</span> <span class="nf">get_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">index_len</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">read_lengths</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">length</span> <span class="o">&gt;</span> <span class="n">index_len</span><span class="p">:</span>
+                <span class="k">break</span>
+        <span class="c1"># index_len is now the largest index shorter than length or the smallest</span>
+        <span class="k">return</span> <span class="n">index_len</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">()[</span><span class="n">f</span><span class="s1">&#39;bracken_kraken2_db_</span><span class="si">{index_len}</span><span class="s1">&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">db_mode</span> <span class="o">==</span> <span class="n">PipelineConfig</span><span class="o">.</span><span class="n">DB_MODE_BUILD</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">rlen</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_lengths</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">build_bracken_db</span><span class="p">(</span><span class="n">rlen</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">download_bracken_db_from_s3</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">build_bracken_db</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">read_len</span><span class="p">):</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">f</span><span class="s1">&#39;PATH=${{PATH}}:{dirname(abspath(self.pkg.bin))} &#39;</span>
+            <span class="n">f</span><span class="s1">&#39;</span><span class="si">{self.pkg.bin}</span><span class="s1">-build &#39;</span>
+            <span class="n">f</span><span class="s1">&#39;-d </span><span class="si">{self.kraken2_db}</span><span class="s1"> &#39;</span>
+            <span class="n">f</span><span class="s1">&#39;-t </span><span class="si">{self.cores}</span><span class="s1"> &#39;</span>
+            <span class="n">f</span><span class="s1">&#39;-k 35 &#39;</span>
+            <span class="n">f</span><span class="s1">&#39;-l </span><span class="si">{read_len}</span><span class="s1"> &#39;</span>
+            <span class="n">f</span><span class="s1">&#39;-x {dirname(abspath(self.kraken2_db_task.pkg.bin))}/ &#39;</span>
+            <span class="s1">&#39;; &#39;</span>
+            <span class="n">f</span><span class="s1">&#39;test -e </span><span class="si">{self.kraken2_db}</span><span class="s1">/database</span><span class="si">{read_len}</span><span class="s1">mers.kmer_distrib&#39;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run_cmd</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">download_bracken_db_from_s3</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">paths</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;cap2/databases/2020-06-08/taxa_kraken2/database100mers.kmer_distrib&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;cap2/databases/2020-06-08/taxa_kraken2/database100mers.kraken&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;cap2/databases/2020-06-08/taxa_kraken2/database125mers.kmer_distrib&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;cap2/databases/2020-06-08/taxa_kraken2/database125mers.kraken&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;cap2/databases/2020-06-08/taxa_kraken2/database150mers.kmer_distrib&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;cap2/databases/2020-06-08/taxa_kraken2/database150mers.kraken&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;cap2/databases/2020-06-08/taxa_kraken2/database175mers.kmer_distrib&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;cap2/databases/2020-06-08/taxa_kraken2/database175mers.kraken&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;cap2/databases/2020-06-08/taxa_kraken2/database200mers.kmer_distrib&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;cap2/databases/2020-06-08/taxa_kraken2/database200mers.kraken&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;cap2/databases/2020-06-08/taxa_kraken2/database225mers.kmer_distrib&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;cap2/databases/2020-06-08/taxa_kraken2/database225mers.kraken&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;cap2/databases/2020-06-08/taxa_kraken2/database250mers.kmer_distrib&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;cap2/databases/2020-06-08/taxa_kraken2/database250mers.kraken&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;cap2/databases/2020-06-08/taxa_kraken2/database75mers.kmer_distrib&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;cap2/databases/2020-06-08/taxa_kraken2/database75mers.kraken&#39;</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">:</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s1">&#39;wget &#39;</span>
+                <span class="n">f</span><span class="s1">&#39;--directory-prefix={dirname(self.output()[&quot;bracken_kraken2_db_150&quot;].path)} &#39;</span>
+                <span class="n">f</span><span class="s1">&#39;https://s3.wasabisys.com/metasub-microbiome/</span><span class="si">{path}</span><span class="s1"> &#39;</span>
+
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">run_cmd</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">MetaSUB CAP</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../architecture.html">Architecture and Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">Pipeline modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../capalyzer.html">Creating and Parsing Data Tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../citation.html">Citing the CAP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, David C. Danko.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

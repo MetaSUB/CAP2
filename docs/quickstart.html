@@ -1,0 +1,177 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Quickstart &#8212; MetaSUB CAP 0.1.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Architecture" href="architecture.html" />
+    <link rel="prev" title="The MetaSUB Core Analysis Pipeline" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="quickstart">
+<h1>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="installing-the-cap">
+<h2>Installing the CAP<a class="headerlink" href="#installing-the-cap" title="Permalink to this headline">¶</a></h2>
+<p>To install download the repo and run the setup command</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python setup.py install
+cap2 --help
+</pre></div>
+</div>
+<div class="section" id="installing-subprograms">
+<h3>Installing Subprograms<a class="headerlink" href="#installing-subprograms" title="Permalink to this headline">¶</a></h3>
+<p>By default the CAP installs all necessary subprograms itself. If a particular version of a subprogram is required it is usually possible to override the defaults and supply the program as a parameter.</p>
+</div>
+<div class="section" id="running-tests">
+<h3>Running Tests<a class="headerlink" href="#running-tests" title="Permalink to this headline">¶</a></h3>
+<p>Unit tests can be run with pytest from the repo</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python -m pytest tests
+</pre></div>
+</div>
+</div>
+<div class="section" id="configuration">
+<h3>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h3>
+<p>By default CAP2 downloads all necessary programs and databases when it is run. For users running CAP2 multiple times on the same system it will be beneficial to set up configuration so that downloads only occur once.</p>
+<p>Configuration consists of setting three environmental variables. These should go in your <cite>.bashrc</cite> or equivalent.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">CAP2_DB_DIR</span><span class="o">=</span>&lt;some <span class="nb">local</span> path...&gt;
+<span class="nv">CAP2_CONDA_SPEC_DIR</span><span class="o">=</span>&lt;some <span class="nb">local</span> path...&gt;
+<span class="nv">CAP2_CONDA_BASE_PATH</span><span class="o">=</span>&lt;some <span class="nb">local</span> path...&gt;
+</pre></div>
+</div>
+<p>You can also use a yaml configuration file. See <a class="reference internal" href="api.html#capconfig"><span class="std std-ref">the API</span></a> for details and all options.</p>
+</div>
+<div class="section" id="running-in-the-cloud">
+<h3>Running in the cloud<a class="headerlink" href="#running-in-the-cloud" title="Permalink to this headline">¶</a></h3>
+<p>Running the CAP2 in the cloud often requires some additional setup. This is what we needed to do to get the CAP2 running on DigitalOcean Ubuntu Servers:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo apt update
+sudo apt install build-essential python-dev libfreetype6-dev config
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+bash Miniconda3-latest-Linux-x86_64.sh
+<span class="nb">source</span> ~/.bashrc
+<span class="nb">cd</span> CAP2/
+git checkout feat/single-ended-reads
+python setup.py develop
+<span class="nb">cd</span>
+mkdir workdir
+<span class="nb">cd</span> workdir
+cap2 --help
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="databases">
+<h2>Databases<a class="headerlink" href="#databases" title="Permalink to this headline">¶</a></h2>
+<p>The CAP uses a number of large reference databases. Building and indexing these databases is considered a first-class part of the pipeline and <a class="reference internal" href="modules.html#id6"><span class="std std-ref">modules are included</span></a> to do so. However, in most cases users will simply want to download prebuilt version of the databases rather than build them from scratch. This is the pipeline default and will happen automatically.</p>
+<p>To preload databases on a machine run this from the command line:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cap2 run db -c /path/to/config/file
+</pre></div>
+</div>
+<p>or from python</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">.api</span> <span class="kn">import</span> <span class="n">run_db_stage</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">config</span><span class="o">/</span><span class="nb">file</span>
+<span class="n">run_db_stage</span><span class="p">(</span><span class="n">config_path</span><span class="o">=</span><span class="n">config</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">workers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">MetaSUB CAP</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Documentation:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Quickstart</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installing-the-cap">Installing the CAP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#databases">Databases</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture and Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Pipeline modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="capalyzer.html">Creating and Parsing Data Tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citation.html">Citing the CAP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">The MetaSUB Core Analysis Pipeline</a></li>
+      <li>Next: <a href="architecture.html" title="next chapter">Architecture</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, David C. Danko.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+      |
+      <a href="_sources/quickstart.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

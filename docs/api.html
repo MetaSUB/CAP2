@@ -1,0 +1,313 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>API &#8212; MetaSUB CAP 0.1.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Citing the CAP" href="citation.html" />
+    <link rel="prev" title="CAPalyzer" href="capalyzer.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="api">
+<h1>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="running-the-pipeline-and-high-level-api">
+<h2>Running the Pipeline and High Level API<a class="headerlink" href="#running-the-pipeline-and-high-level-api" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-cap2.api"><span id="highlevelapi"></span></span><dl class="function">
+<dt id="cap2.api.run_db_stage">
+<code class="descclassname">cap2.api.</code><code class="descname">run_db_stage</code><span class="sig-paren">(</span><em>config_path=''</em>, <em>cores=1</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/api.html#run_db_stage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.api.run_db_stage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the database stage of the pipeline.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cap2.api.run_modules">
+<code class="descclassname">cap2.api.</code><code class="descname">run_modules</code><span class="sig-paren">(</span><em>samples</em>, <em>modules</em>, <em>group_modules=[]</em>, <em>config_path=''</em>, <em>cores=1</em>, <em>workers=1</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/api.html#run_modules"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.api.run_modules" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a set of modules for a list of samples.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cap2.api.run_stage">
+<code class="descclassname">cap2.api.</code><code class="descname">run_stage</code><span class="sig-paren">(</span><em>samples</em>, <em>stage_name</em>, <em>config_path=''</em>, <em>cores=1</em>, <em>workers=1</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/api.html#run_stage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.api.run_stage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a subpipeline on a list of samples. stage_name can be one of <cite>qc</cite>, <cite>pre</cite>, <cite>reads</cite>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="cap2.sample.Sample">
+<em class="property">class </em><code class="descclassname">cap2.sample.</code><code class="descname">Sample</code><span class="sig-paren">(</span><em>sample_name</em>, <em>read1</em>, <em>read2=None</em>, <em>kind='short_read'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/sample.html#Sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.sample.Sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Thin data collector that represents a sample.</p>
+<dl class="method">
+<dt id="cap2.sample.Sample.as_tuple">
+<code class="descname">as_tuple</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/sample.html#Sample.as_tuple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.sample.Sample.as_tuple" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a 3-ple of strigns with (sample_name, read_1_path, read_2_path).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cap2.sample.Sample.paired">
+<code class="descname">paired</code><a class="headerlink" href="#cap2.sample.Sample.paired" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True iff this sample contains paired end data.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="cap2.sample.Sample.samples_from_manifest">
+<em class="property">classmethod </em><code class="descname">samples_from_manifest</code><span class="sig-paren">(</span><em>manifest</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/sample.html#Sample.samples_from_manifest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.sample.Sample.samples_from_manifest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of samples from a manifest file handle.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="generic-modules-and-captasks">
+<h2>Generic Modules and CAPTasks<a class="headerlink" href="#generic-modules-and-captasks" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-cap2.pipeline.utils.cap_task"><span id="captaskcode"></span></span><dl class="class">
+<dt id="cap2.pipeline.utils.cap_task.BaseCapTask">
+<em class="property">class </em><code class="descclassname">cap2.pipeline.utils.cap_task.</code><code class="descname">BaseCapTask</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/utils/cap_task.html#BaseCapTask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.utils.cap_task.BaseCapTask" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="cap2.pipeline.utils.cap_task.BaseCapTask.config_filename">
+<code class="descname">config_filename</code><em class="property"> = &lt;luigi.parameter.Parameter object&gt;</em><a class="headerlink" href="#cap2.pipeline.utils.cap_task.BaseCapTask.config_filename" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cap2.pipeline.utils.cap_task.BaseCapTask.cores">
+<code class="descname">cores</code><em class="property"> = &lt;luigi.parameter.IntParameter object&gt;</em><a class="headerlink" href="#cap2.pipeline.utils.cap_task.BaseCapTask.cores" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="cap2.pipeline.utils.cap_task.BaseCapTask.dependencies">
+<em class="property">classmethod </em><code class="descname">dependencies</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/utils/cap_task.html#BaseCapTask.dependencies"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.utils.cap_task.BaseCapTask.dependencies" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of modules this module depends on.</p>
+<p>Modules are either other <cite>BaseCapTask</cite> classes or strings.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cap2.pipeline.utils.cap_task.BaseCapTask.get_run_metadata">
+<code class="descname">get_run_metadata</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/utils/cap_task.html#BaseCapTask.get_run_metadata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.utils.cap_task.BaseCapTask.get_run_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a dict with metadata about a completed run of this task.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cap2.pipeline.utils.cap_task.BaseCapTask.get_run_metadata_filepath">
+<code class="descname">get_run_metadata_filepath</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/utils/cap_task.html#BaseCapTask.get_run_metadata_filepath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.utils.cap_task.BaseCapTask.get_run_metadata_filepath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a local filepath with metadata about a completed run of this task.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cap2.pipeline.utils.cap_task.BaseCapTask.module_description">
+<code class="descname">module_description</code><em class="property"> = 'No description for this module.'</em><a class="headerlink" href="#cap2.pipeline.utils.cap_task.BaseCapTask.module_description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="cap2.pipeline.utils.cap_task.BaseCapTask.module_name">
+<em class="property">classmethod </em><code class="descname">module_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/utils/cap_task.html#BaseCapTask.module_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.utils.cap_task.BaseCapTask.module_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a string giving the human readable name for this task.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cap2.pipeline.utils.cap_task.BaseCapTask.run">
+<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/utils/cap_task.html#BaseCapTask.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.utils.cap_task.BaseCapTask.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run an instance of this task.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cap2.pipeline.utils.cap_task.BaseCapTask.run_cmd">
+<code class="descname">run_cmd</code><span class="sig-paren">(</span><em>cmd</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/utils/cap_task.html#BaseCapTask.run_cmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.utils.cap_task.BaseCapTask.run_cmd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a shell command with some defaults and error logging.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="cap2.pipeline.utils.cap_task.BaseCapTask.short_version_hash">
+<em class="property">classmethod </em><code class="descname">short_version_hash</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/utils/cap_task.html#BaseCapTask.short_version_hash"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.utils.cap_task.BaseCapTask.short_version_hash" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a 12 character hash string giving the version of this task and all upstream tasks.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cap2.pipeline.utils.cap_task.BaseCapTask.tool_version">
+<code class="descname">tool_version</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/utils/cap_task.html#BaseCapTask.tool_version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.utils.cap_task.BaseCapTask.tool_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a string giving a version for any software used.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="cap2.pipeline.utils.cap_task.BaseCapTask.version">
+<em class="property">classmethod </em><code class="descname">version</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/utils/cap_task.html#BaseCapTask.version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.utils.cap_task.BaseCapTask.version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a string giving a human readable version for this module only.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="cap2.pipeline.utils.cap_task.BaseCapTask.version_hash">
+<em class="property">classmethod </em><code class="descname">version_hash</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/utils/cap_task.html#BaseCapTask.version_hash"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.utils.cap_task.BaseCapTask.version_hash" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a hash string giving the version of this task and all upstream tasks.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="cap2.pipeline.utils.cap_task.BaseCapTask.version_tree">
+<em class="property">classmethod </em><code class="descname">version_tree</code><span class="sig-paren">(</span><em>terminal=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/utils/cap_task.html#BaseCapTask.version_tree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.utils.cap_task.BaseCapTask.version_tree" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a newick tree with versions.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cap2.pipeline.utils.cap_task.CapTask">
+<em class="property">class </em><code class="descclassname">cap2.pipeline.utils.cap_task.</code><code class="descname">CapTask</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/utils/cap_task.html#CapTask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.utils.cap_task.CapTask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for CAP2 tasks.</p>
+<p>Currently implements some basic shared logic.</p>
+<dl class="attribute">
+<dt id="cap2.pipeline.utils.cap_task.CapTask.data_type">
+<code class="descname">data_type</code><em class="property"> = &lt;luigi.parameter.Parameter object&gt;</em><a class="headerlink" href="#cap2.pipeline.utils.cap_task.CapTask.data_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="cap2.pipeline.utils.cap_task.CapTask.from_sample">
+<em class="property">classmethod </em><code class="descname">from_sample</code><span class="sig-paren">(</span><em>sample</em>, <em>config_path</em>, <em>cores=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/utils/cap_task.html#CapTask.from_sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.utils.cap_task.CapTask.from_sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an instance of this module from a Sample.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cap2.pipeline.utils.cap_task.CapTask.get_target">
+<code class="descname">get_target</code><span class="sig-paren">(</span><em>field_name</em>, <em>ext</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/utils/cap_task.html#CapTask.get_target"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.utils.cap_task.CapTask.get_target" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a luigi LocalTarget for this instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cap2.pipeline.utils.cap_task.CapTask.paired">
+<code class="descname">paired</code><a class="headerlink" href="#cap2.pipeline.utils.cap_task.CapTask.paired" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return true iff this instance is processing paired end data.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cap2.pipeline.utils.cap_task.CapTask.pe1">
+<code class="descname">pe1</code><em class="property"> = &lt;luigi.parameter.Parameter object&gt;</em><a class="headerlink" href="#cap2.pipeline.utils.cap_task.CapTask.pe1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cap2.pipeline.utils.cap_task.CapTask.pe2">
+<code class="descname">pe2</code><em class="property"> = &lt;luigi.parameter.Parameter object&gt;</em><a class="headerlink" href="#cap2.pipeline.utils.cap_task.CapTask.pe2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cap2.pipeline.utils.cap_task.CapTask.sample_name">
+<code class="descname">sample_name</code><em class="property"> = &lt;luigi.parameter.Parameter object&gt;</em><a class="headerlink" href="#cap2.pipeline.utils.cap_task.CapTask.sample_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="capconfig"></span><dl class="class">
+<dt id="cap2.pipeline.config.PipelineConfig">
+<em class="property">class </em><code class="descclassname">cap2.pipeline.config.</code><code class="descname">PipelineConfig</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cap2/pipeline/config.html#PipelineConfig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cap2.pipeline.config.PipelineConfig" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="cap2.pipeline.config.PipelineConfig.DB_MODE_BUILD">
+<code class="descname">DB_MODE_BUILD</code><em class="property"> = 'build'</em><a class="headerlink" href="#cap2.pipeline.config.PipelineConfig.DB_MODE_BUILD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cap2.pipeline.config.PipelineConfig.DB_MODE_DOWNLOAD">
+<code class="descname">DB_MODE_DOWNLOAD</code><em class="property"> = 'download'</em><a class="headerlink" href="#cap2.pipeline.config.PipelineConfig.DB_MODE_DOWNLOAD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">MetaSUB CAP</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Documentation:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture and Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Pipeline modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="capalyzer.html">Creating and Parsing Data Tables</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#running-the-pipeline-and-high-level-api">Running the Pipeline and High Level API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#generic-modules-and-captasks">Generic Modules and CAPTasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#configuration">Configuration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="citation.html">Citing the CAP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="capalyzer.html" title="previous chapter">CAPalyzer</a></li>
+      <li>Next: <a href="citation.html" title="next chapter">Citing the CAP</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, David C. Danko.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+      |
+      <a href="_sources/api.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

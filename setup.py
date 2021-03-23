@@ -25,6 +25,7 @@ setuptools.setup(
         'pysam',
         'python-louvain',
         'gimmebio.seqs',
+        'bloom_filter',
     ],
     entry_points={
         'console_scripts': [

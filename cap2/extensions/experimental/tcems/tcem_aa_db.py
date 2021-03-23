@@ -6,6 +6,7 @@ import sqlite3
 import gzip
 from Bio import SeqIO
 from multiprocessing import Pool
+from bloom_filter import BloomFilter
 
 from ....pipeline.utils.cap_task import CapDbTask
 from ....pipeline.config import PipelineConfig
@@ -51,13 +52,14 @@ class TcemNrAaDbChunk(CapDbTask):
     chunk_index = luigi.IntParameter()
     total_chunks = luigi.IntParameter()
     fasta = luigi.Parameter()
-    MODULE_VERSION = 'v0.1.0'
+    MODULE_VERSION = 'v0.2.0'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.config = PipelineConfig(self.config_filename)
         self.db_dir = self.config.db_dir
-        self.flush_count = 1000 * 1000
+        self.bloom_size = 1000 * 1000 * 1000
+        self.bloom_error = 0.001
 
     def tool_version(self):
         return self.version()
@@ -75,7 +77,7 @@ class TcemNrAaDbChunk(CapDbTask):
 
     @property
     def tcem_index(self):
-        fname = f'tcems_aa_kmers.{self.chunk_index}_of_{self.total_chunks}.sqlite'
+        fname = f'tcems_aa_kmers.{self.chunk_index}_of_{self.total_chunks}.csv.gz'
         return join(self.db_dir, 'ncbi_nr_fasta', fname)
 
     def output(self):
@@ -94,35 +96,28 @@ class TcemNrAaDbChunk(CapDbTask):
     def build_db(self):
         if isfile(self.tcem_index):
             os.remove(self.tcem_index)
-        logger.info(f'Building TCEM database from {self.fasta}')
-        conn = sqlite3.connect(self.tcem_index)
-        c = conn.cursor()
-        c.execute('''CREATE TABLE taxa_kmers (taxon text, kmer text, UNIQUE(taxon,kmer))''')
-        full_set, seq_counter = set(), 0
-        with Pool(self.cores) as pool, gzip.open(self.fasta, 'rt') as f:
+        logger.info(f'<chunk {self.chunk_index}> Building TCEM database from {self.fasta}')
+        bloom = BloomFilter(max_elements=self.bloom_size, error_rate=self.bloom_error)
+        seq_counter = 0
+        with Pool(self.cores) as pool, gzip.open(self.fasta, 'rt') as f, gzip.open(self.tcem_index, 'wt') as o:
             try:
                 seqs = (
                     seq for i, seq in enumerate(SeqIO.parse(f, 'fasta'))
                     if (i % self.total_chunks) == self.chunk_index
                 )
                 for taxa_kmer_set in pool.imap_unordered(process_one_seq, seqs, chunksize=1000):
-                    full_set |= taxa_kmer_set
                     seq_counter += 1
-                    if seq_counter % (10 * 1000) == 0:
-                        logger.info(f'Processed {seq_counter} sequences')
-                    if len(full_set) >= self.flush_count:
-                        logger.info(f'Writing {len(full_set)} taxon kmer pairs to sqlite db')
-                        c.executemany('INSERT OR IGNORE INTO taxa_kmers VALUES (?,?)', full_set)
-                        full_set = set()
-                        logger.info(f'Finished writing {len(full_set)} taxon kmer pairs to sqlite db')
+                    if seq_counter % (100 * 1000) == 0:
+                        logger.info(f'<chunk {self.chunk_index}> Processing seq: {i}')
+                    for pair in taxa_kmer_set:
+                        pair_str = f'{pair[0]},{pair[1]}'
+                        if pair_str in bloom:
+                            continue
+                        bloom.add(pair_str)
+                        print(pair_str, file=o)
             except KeyboardInterrupt:
                 pool.terminate()
                 raise
-        logger.info(f'Processed {seq_counter} sequences')
-        logger.info(f'Writing {len(full_set)} taxon kmer pairs to sqlite db')
-        c.executemany('INSERT OR IGNORE INTO taxa_kmers VALUES (?,?)', full_set)
-        conn.commit()
-        conn.close()
         open(self.tcem_index + '.flag', 'w').close()
 
 
@@ -134,8 +129,9 @@ class TcemNrAaDb(CapDbTask):
         self.config = PipelineConfig(self.config_filename)
         self.db_dir = self.config.db_dir
         self.fasta = join(self.db_dir, 'ncbi_nr_fasta', 'nr.gz')
-        self.flush_count = 1000 * 1000 * 1000
-        self.total_chunks = 1000
+        self.bloom_size = 1000 * 1000 * 1000 * 1000
+        self.bloom_error = 0.001
+        self.pair_buffer_size = 1000 * 1000
         self.chunks = []
 
     def tool_version(self):
@@ -177,21 +173,40 @@ class TcemNrAaDb(CapDbTask):
         if self.config.db_mode == PipelineConfig.DB_MODE_BUILD:
             self.build_db()
 
+    def add_chunk_to_db(self, chunk, bloom, main_c):
+        pair_buffer = []
+
+        def flush_pair_buffer():
+            main_c.executemany(
+                'INSERT INTO taxa_kmers VALUES (?,?)',
+                (pair for pair in pair_buffer)
+            )
+
+        with gzip.open(chunk.tcem_index, 'rt') as chunk:
+            for line in chunk:
+                pair_str = line.strip()
+                if pair_str in bloom:
+                    continue
+                bloom.add(pair_str)
+                pair = tuple(pair_str.split(','))
+                pair_buffer.append(pair)
+                if len(pair_buffer) >= self.pair_buffer_size:
+                    flush_pair_buffer()
+                    pair_buffer = []
+            flush_pair_buffer()
+
     def build_db(self):
         if isfile(self.tcem_index):
             os.remove(self.tcem_index)
         logger.info(f'Building TCEM database from {self.fasta}')
         main_conn = sqlite3.connect(self.tcem_index)
         main_c = main_conn.cursor()
-        main_c.execute('''CREATE TABLE taxa_kmers (taxon text, kmer text, UNIQUE(taxon,kmer))''')
+        main_c.execute('''CREATE TABLE taxa_kmers (taxon text, kmer text)''')
 
+        bloom = BloomFilter(max_elements=self.bloom_size, error_rate=self.bloom_error)
         for chunk in self.chunks:
-            with sqlite3.connect(chunk.tcem_index) as chunk_conn:
-                chunk_c = chunk_conn.cursor()
-                main_c.executemany(
-                    'INSERT OR IGNORE INTO taxa_kmers VALUES (?,?)',
-                    chunk_c.execute(f'SELECT taxon, kmer FROM taxa_kmers')
-                )
+            self.add_chunk_to_db(chunk, bloom, main_c)
+
         main_c.execute('''CREATE INDEX kmer_index ON taxa_kmers(kmer)''')
         main_conn.commit()
         main_conn.close()

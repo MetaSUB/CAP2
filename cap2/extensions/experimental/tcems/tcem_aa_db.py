@@ -107,8 +107,8 @@ class TcemNrAaDbChunk(CapDbTask):
                 )
                 for taxa_kmer_set in pool.imap_unordered(process_one_seq, seqs, chunksize=1000):
                     seq_counter += 1
-                    if seq_counter % (100 * 1000) == 0:
-                        logger.info(f'<chunk {self.chunk_index}> Processing seq: {i}')
+                    if seq_counter % (10 * 1000) == 0:
+                        logger.info(f'<chunk {self.chunk_index}> Processing seq: {seq_counter}')
                     for pair in taxa_kmer_set:
                         pair_str = f'{pair[0]},{pair[1]}'
                         if pair_str in bloom:

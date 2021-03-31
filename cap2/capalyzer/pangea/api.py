@@ -17,6 +17,7 @@ from ..table_builder.modules import (
     FastKraken2TableModule,
     BasicStatsTableModule,
     TcemRepertoireTableModule,
+    CovidVariantTableModule,
 )
 
 logger = logging.getLogger(__name__)  # Same name as calling module
@@ -51,6 +52,7 @@ def process_group(pangea_group, strict=False):
         FastKraken2TableModule,
         BasicStatsTableModule,
         TcemRepertoireTableModule,
+        CovidVariantTableModule,
     ]
     for module in modules:
         process_module(module, module_counts, file_source, file_uploader, strict=strict)

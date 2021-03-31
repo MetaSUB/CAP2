@@ -8,6 +8,7 @@ from pangea_api import (
     Organization,
     Pipeline,
 )
+from pangea_api.work_orders import WorkOrderProto
 from pangea_api.blob_constructors import sample_from_uuid, sample_group_from_uuid
 
 from sys import stderr
@@ -155,6 +156,7 @@ class PangeaBaseCapTask(metaclass=PangeaBaseCapTaskMetaClass):
         return True
 
     def _get_analysis_result(self):
+        """Fetch and Return an AnalysisResult corresponding to this module or raise an error."""
         try:
             ar = self.pangea_obj.analysis_result(
                 self.module_name(),
@@ -169,6 +171,10 @@ class PangeaBaseCapTask(metaclass=PangeaBaseCapTaskMetaClass):
         return ar
 
     def get_results(self):
+        """Fetch and Return the AnalysisResult for this module or raise an error.
+
+        Check the AR has all fields before returning. Error if any are missing.
+        """
         ar = self._get_analysis_result()
         for field_name in self.wrapped_instance.output().keys():
             try:
@@ -179,18 +185,25 @@ class PangeaBaseCapTask(metaclass=PangeaBaseCapTaskMetaClass):
                     f'for analysis result "{ar.module_name}"'
                 )
                 raise PangeaLoadTaskError(msg)
+        return ar
 
     def _download_results(self):
+        """Download results for this module from Pangea then return the analysis result."""
         ar = self._get_analysis_result()
         for field_name, local_target in self.wrapped_instance.output().items():
             field = ar.field(field_name).get()
             field.download_file(filename=local_target.path)
-        open(self.output()['upload_flag'].path, 'w').close()  # we do this just for consistency. If we downloaded the results it means they were uploaded at some point
+        # we create this flag for consistency. If we downloaded the results
+        # it means they were uploaded at some point in the past
+        open(self.output()['upload_flag'].path, 'w').close()
+        return ar
 
     def _replicate(self):
+        """Return a short replicate number for this module."""
         return f'{self.version()} {self.short_version_hash()}'
 
     def _upload_results(self):
+        """Upload the files in this module to Pangea and return the newly created AnalysisResult."""
         metadata = json.loads(open(self.get_run_metadata_filepath()).read())
         ar = self.pangea_obj.analysis_result(
             self.module_name(), replicate=self._replicate()
@@ -203,8 +216,10 @@ class PangeaBaseCapTask(metaclass=PangeaBaseCapTaskMetaClass):
             field = ar.field(field_name).idem()
             field.upload_file(local_target.path)
         open(self.output()['upload_flag'].path, 'w').close()
+        return ar
 
     def recursively_register_module(self):
+        """Register this module and all upstream PangeaCapTask modules on Pangea."""
         self.register_module()
         for attr, value in self.wrapped_instance.__dict__.items():
             if isinstance(value, PangeaBaseCapTaskLuigiTask):
@@ -340,12 +355,58 @@ class PangeaCapTask(PangeaBaseCapTask):
                 self._download_reads()
             logger.debug(f'running wrapped_instance for {self}, running...')
             self.recursively_register_module()  # only register this module if it seems like everything else is working
-            self.wrapped_instance.run()  # see above. we reassign the original CT._run to CT._wrapped_run
+            self.set_job_order_status('working')
+            try:
+                self.wrapped_instance.run()  # see above. we reassign the original CT._run to CT._wrapped_run
+            except Exception as e:  # broad except OK since we re-raise
+                self.set_job_order_status('error')
+                raise
             if self.upload_allowed:
                 logger.debug(f'uploading results for {self}, uploading...')
-                self._upload_results()
+                try:
+                    ar = self._upload_results()
+                    self.complete_job_order(ar)
+                except Exception as e:  # broad except OK since we re-raise
+                    self.set_job_order_status('error')
+                    raise
             else:
                 open(self.output()['upload_flag'].path, 'w').close()
+
+    def get_work_order(self):
+        """Return a CAP WorkOrder for this instance's sample or None if no such WO exists."""
+        try:
+            wop = WorkOrderProto.from_name(self.knex, get_pangea_config('work_order_name'))
+            wo = wop.get_active_work_order_for_sample(self.sample)
+            return wo
+        except HTTPError:
+            return None
+
+    def get_job_order(self):
+        """Return a relevant JobOrder for for this instance or None if no such JO exists."""
+        wo = self.get_work_order()
+        if not wo:  # if no WO exists then no JO exists
+            return None
+        try:
+            jo = wo.get_job_order_by_name(self.module_name())
+            return jo
+        except KeyError:
+            return None
+
+    def set_job_order_status(self, status):
+        """Set status for job order on Pangea or No-Op if no JO exists."""
+        jo = self.get_job_order()
+        if not jo:
+            return
+        jo.status = status
+        jo.save()
+
+    def complete_job_order(self, ar):
+        jo = self.get_job_order()
+        if not jo:
+            return
+        jo.status = 'success'
+        jo.analysis_result = ar.uuid
+        jo.save()
 
     def __str__(self):
         module_name = self.module_name()

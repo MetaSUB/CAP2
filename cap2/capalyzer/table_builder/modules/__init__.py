@@ -4,3 +4,4 @@ from .kraken2_covid_fast_detect import Kraken2CovidFastDetectModule
 from .kraken2_fast_taxa import FastKraken2TableModule
 from .basic_stats_summary import BasicStatsTableModule
 from .tcem_repertoire_table import TcemRepertoireTableModule
+from .covid_variant_table import CovidVariantTableModule

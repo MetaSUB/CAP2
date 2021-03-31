@@ -34,11 +34,12 @@ def run():
 
 def set_config(endpoint, email, password, org_name, grp_name,
                name_is_uuid=False, upload_allowed=True, download_only=False,
-               data_kind='short_read'):
+               data_kind='short_read', work_order_name=None):
     luigi.configuration.get_config().set('pangea', 'pangea_endpoint', endpoint)
     luigi.configuration.get_config().set('pangea', 'user', email)
     luigi.configuration.get_config().set('pangea', 'password', password)
     luigi.configuration.get_config().set('pangea', 'data_kind', data_kind)
+    luigi.configuration.get_config().set('pangea', 'work_order_name', work_order_name)
     luigi.configuration.get_config().set('pangea', 'org_name', org_name if org_name else '')
     luigi.configuration.get_config().set('pangea', 'grp_name', grp_name if grp_name else '')
     luigi.configuration.get_config().set('pangea', 'name_is_uuid', 'name_is_uuid' if name_is_uuid else '')
@@ -92,17 +93,18 @@ def cli_run_group(upload,
 @click.option('--endpoint', default='https://pangea.gimmebio.com')
 @click.option('-e', '--email', envvar='PANGEA_USER')
 @click.option('-p', '--password', envvar='PANGEA_PASS')
+@click.option('--work-order', default='', help='Work Order UUID')
 @click.option('-s', '--stage', default='reads')
 @click.argument('org_name')
 @click.argument('grp_name')
 @click.argument('sample_name')
 def cli_run_sample(config, clean_reads, upload, download_only, scheduler_url,
                    data_kind, workers, threads,
-                   endpoint, email, password,
+                   endpoint, email, password, work_order,
                    stage,
                    org_name, grp_name, sample_name):
     sample = PangeaSample(sample_name, email, password, endpoint, org_name, grp_name,
-                          data_kind=data_kind)
+                          data_kind=data_kind, work_order_name=work_order)
     set_config(endpoint, email, password, org_name, grp_name,
                upload_allowed=upload, download_only=download_only,
                name_is_uuid=False, data_kind=data_kind)
@@ -164,6 +166,7 @@ def _process_samples_in_chunks(samples, scheduler_url, batch_size, timelimit, wo
 @click.option('--endpoint', default='https://pangea.gimmebio.com')
 @click.option('-e', '--email', envvar='PANGEA_USER')
 @click.option('-p', '--password', envvar='PANGEA_PASS')
+@click.option('--work-order', default='', help='Work Order UUID')
 @click.option('-s', '--stage', default='reads')
 @click.option('--random-seed', type=int, default=None)
 @click.argument('org_name')
@@ -171,9 +174,11 @@ def _process_samples_in_chunks(samples, scheduler_url, batch_size, timelimit, wo
 def cli_run_samples(config, clean_reads, upload, download_only, scheduler_url,
                     max_attempts,
                     batch_size, workers, threads, max_ram, timelimit,
-                    endpoint, email, password, stage, random_seed,
+                    endpoint, email, password, work_order, stage, random_seed,
                     org_name, grp_name):
-    set_config(endpoint, email, password, org_name, grp_name, upload_allowed=upload, download_only=download_only, name_is_uuid=True)
+    set_config(endpoint, email, password, org_name, grp_name,
+               upload_allowed=upload, download_only=download_only,
+               name_is_uuid=True, work_order_name=work_order)
     group = PangeaGroup(grp_name, email, password, endpoint, org_name)
     samples = [
         samp for samp in group.pangea_samples(randomize=True, seed=random_seed)
@@ -201,15 +206,17 @@ def cli_run_samples(config, clean_reads, upload, download_only, scheduler_url,
 @click.option('--endpoint', default='https://pangea.gimmebio.com')
 @click.option('-e', '--email', envvar='PANGEA_USER')
 @click.option('-p', '--password', envvar='PANGEA_PASS')
+@click.option('--work-order', default='', help='Work Order UUID')
 @click.option('-s', '--stage', default='reads')
 @click.option('--random-seed', type=int, default=None)
 @click.option('--tag-name', default='MetaSUB CAP')
 def cli_run_samples_from_tag(config, clean_reads, upload, download_only, scheduler_url,
                              max_attempts,
                              batch_size, num_samples, workers, threads, max_ram, timelimit,
-                             endpoint, email, password, stage, random_seed,
+                             endpoint, email, password, work_order, stage, random_seed,
                              tag_name):
-    set_config(endpoint, email, password, None, None, name_is_uuid=True)
+    set_config(endpoint, email, password, None, None,
+               name_is_uuid=True, work_order_name=work_order)
     tag = PangeaTag(tag_name, email, password, endpoint)
     samples = [
         samp for samp in tag.pangea_samples(randomize=True, n=num_samples)

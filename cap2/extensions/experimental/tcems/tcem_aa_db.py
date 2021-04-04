@@ -206,6 +206,7 @@ class TcemNrAaDb(CapDbTask):
 
         bloom = BloomFilter(max_elements=self.bloom_size, error_rate=self.bloom_error)
         for chunk in self.chunks:
+            logger.info(f'Adding chunk: {chunk}')
             self.add_chunk_to_db(chunk, bloom, main_c)
 
         main_c.execute('''CREATE INDEX kmer_index ON taxa_kmers(kmer)''')

@@ -178,6 +178,8 @@ class TcemNrAaDb(CapDbTask):
         pair_buffer = []
 
         def flush_pair_buffer():
+            if not pair_buffer:
+                return
             main_c.executemany(
                 'INSERT INTO taxa_kmers VALUES (?,?)',
                 (pair for pair in pair_buffer)
@@ -189,8 +191,8 @@ class TcemNrAaDb(CapDbTask):
                 if pair_str in bloom:
                     continue
                 bloom.add(pair_str)
-                pair = tuple(pair_str.split(','))
-                pair_buffer.append(pair)
+                pair = pair_str.split(',')
+                pair_buffer.append((pair[0], pair[1]))
                 if len(pair_buffer) >= self.pair_buffer_size:
                     flush_pair_buffer()
                     pair_buffer = []

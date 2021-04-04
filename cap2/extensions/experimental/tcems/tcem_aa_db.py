@@ -130,7 +130,7 @@ class TcemNrAaDb(CapDbTask):
         self.db_dir = self.config.db_dir
         self.fasta = join(self.db_dir, 'ncbi_nr_fasta', 'nr.gz')
         self.total_chunks = 1000
-        self.bloom_size = 1000 * 1000 * 1000 * 1000
+        self.bloom_size = 1000 * 1000 * 1000
         self.bloom_error = 0.001
         self.pair_buffer_size = 1000 * 1000
         self.chunks = []

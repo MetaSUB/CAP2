@@ -48,7 +48,7 @@ class TestTcems(TestCase):
         instance = TcemNrAaDb(cores=2, config_filename=TEST_CONFIG)
         self.assertEqual(instance.config.db_mode, PipelineConfig.DB_MODE_BUILD)
         instance.fasta = data_file('nr/swissprot_sample.fasta.gz')
-        instance.bloom_size = 10
+        instance.bloom_size = 1000
         instance.total_chunks = 2
         luigi.build([instance], local_scheduler=True)
         self.assertTrue(isfile(instance.output()['tcem_index'].path))

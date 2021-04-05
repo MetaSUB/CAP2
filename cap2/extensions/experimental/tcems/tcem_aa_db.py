@@ -121,6 +121,66 @@ class TcemNrAaDbChunk(CapDbTask):
         open(self.tcem_index + '.flag', 'w').close()
 
 
+class TcemSortedNrAaDbChunk(CapDbTask):
+    chunk_index = luigi.IntParameter()
+    total_chunks = luigi.IntParameter()
+    fasta = luigi.Parameter()
+    MODULE_VERSION = 'v0.2.0'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.config = PipelineConfig(self.config_filename)
+        self.db_dir = self.config.db_dir
+        self.bloom_size = 1000 * 1000 * 1000
+        self.bloom_error = 0.001
+        self.chunk = TcemNrAaDbChunk.from_cap_db_task(
+            self,
+            chunk_index=self.chunk_index,
+            total_chunks=self.total_chunks,
+            fasta=self.fasta,
+        )
+
+    def tool_version(self):
+        return self.version()
+
+    def requires(self):
+        return self.chunk
+
+    @classmethod
+    def _module_name(cls):
+        return 'tcem_sorted_nr_aa_db_chunk'
+
+    @classmethod
+    def dependencies(cls):
+        return ['2021-02-13']
+
+    @property
+    def tcem_index(self):
+        fname = f'tcems_aa_kmers.{self.chunk_index}_of_{self.total_chunks}.sorted.csv.gz'
+        return join(self.db_dir, 'ncbi_nr_fasta', fname)
+
+    def output(self):
+        tcem_index = luigi.LocalTarget(self.tcem_index)
+        tcem_index.makedirs()
+        return {
+            'tcem_index': tcem_index,
+            'flag': luigi.LocalTarget(self.tcem_index + '.flag'),
+        }
+
+    def run(self):
+        logger.info(f'Running in database mode: {self.config.db_mode}')
+        if self.config.db_mode == PipelineConfig.DB_MODE_BUILD:
+            self.build_db()
+
+    def build_db(self):
+        if isfile(self.tcem_index):
+            os.remove(self.tcem_index)
+        logger.info(f'<chunk {self.chunk_index}> Sorting TCEM chunk {self.chunk_index} of {self.total_chunks}')
+        self.run_cmd(f'gunzip -c {self.chunk.tcem_index} | sort | gzip > {self.tcem_index}')
+        open(self.tcem_index + '.flag', 'w').close()
+
+
+
 class TcemNrAaDbList(CapDbTask):
     MODULE_VERSION = 'v0.1.0'
     fasta = luigi.Parameter()
@@ -140,7 +200,7 @@ class TcemNrAaDbList(CapDbTask):
     def requires(self):
         if self.config.db_mode == PipelineConfig.DB_MODE_BUILD:
             for i in range(self.total_chunks):
-                self.chunks.append(TcemNrAaDbChunk.from_cap_db_task(
+                self.chunks.append(TcemSortedNrAaDbChunk.from_cap_db_task(
                     self,
                     chunk_index=i,
                     total_chunks=self.total_chunks,
@@ -173,44 +233,13 @@ class TcemNrAaDbList(CapDbTask):
         if self.config.db_mode == PipelineConfig.DB_MODE_BUILD:
             self.build_db()
 
-    def add_chunk_to_db(self, chunk, bloom, main_c):
-        pair_buffer = []
-
-        def flush_pair_buffer():
-            if not pair_buffer:
-                return
-            main_c.executemany(
-                'INSERT INTO taxa_kmers VALUES (?,?)',
-                (pair for pair in pair_buffer)
-            )
-
-        with gzip.open(chunk.tcem_index, 'rt') as chunk:
-            for line in chunk:
-                pair_str = line.strip()
-                if pair_str in bloom:
-                    continue
-                bloom.add(pair_str)
-                pair = pair_str.split(',')
-                pair_buffer.append((pair[0], pair[1]))
-                if len(pair_buffer) >= self.pair_buffer_size:
-                    flush_pair_buffer()
-                    pair_buffer = []
-            flush_pair_buffer()
-
     def build_db(self):
         if isfile(self.tcem_index):
             os.remove(self.tcem_index)
         logger.info(f'Building full TCEM list from {self.fasta}')
-        bloom = BloomFilter(max_elements=self.bloom_size, error_rate=self.bloom_error)
-        with gzip.open(self.tcem_index, 'wt') as tcems_file:
-            for chunk in self.chunks:
-                logger.info(f'Adding chunk: {chunk}')
-                with gzip.open(chunk.tcem_index, 'rt') as chunk:
-                    for pair_str in chunk:
-                        if pair_str in bloom:
-                            continue
-                        bloom.add(pair_str)
-                        tcems_file.write(pair_str)
+        chunk_cmd = ' '.join([f'<(gunzip -c {c.tcem_index})' for c in self.chunks])
+        cmd = f'sort -m {chunk_cmd} | gzip > {self.tcem_index}'
+        self.run_cmd(cmd)
         open(self.tcem_index + '.flag', 'w').close()
 
 

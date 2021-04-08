@@ -1,7 +1,7 @@
 
 import luigi
 import os
-from os.path import join, dirname, isfile
+from os.path import join, dirname, isfile, getsize
 import sqlite3
 import gzip
 from Bio import SeqIO
@@ -177,6 +177,9 @@ class TcemSortedNrAaDbChunk(CapDbTask):
             os.remove(self.tcem_index)
         logger.info(f'<chunk {self.chunk_index}> Sorting TCEM chunk {self.chunk_index} of {self.total_chunks}')
         self.run_cmd(f'gunzip -c {self.chunk.tcem_index} | sort | gzip > {self.tcem_index}')
+        file_size = getsize(self.tcem_index)
+        if file_size == 0:
+            assert False, 'tcem index is empty'
         open(self.tcem_index + '.flag', 'w').close()
 
 

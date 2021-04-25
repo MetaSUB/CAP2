@@ -88,7 +88,6 @@ def cli_run_samples_from_tag(state, num_samples, tag_name):
 
 @run.command('work-order')
 @use_common_state
-@click.argument('work_order', type=click.Choice(WORK_ORDER_PROTOS.keys()))
 def cli_run_samples_from_work_order(state):
     state.set_config(name_is_uuid=True)
     wo = state.pangea_work_order_proto()

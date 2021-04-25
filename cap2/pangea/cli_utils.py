@@ -20,8 +20,8 @@ def _process_one_sample_chunk(chunk, state):
     tasks = []
     for sample in chunk:
         tasks += get_task_list_for_sample(
-            sample, stage,
-            config_path=config, require_clean_reads=clean_reads, cores=state.threads, max_ram=state.max_ram
+            sample, state.stage,
+            config_path=state.config, require_clean_reads=state.clean_reads, cores=state.threads, max_ram=state.max_ram
         )
     state.luigi_build(tasks)
     return chunk

@@ -150,7 +150,7 @@ class PangeaBaseCapTask(metaclass=PangeaBaseCapTaskMetaClass):
     def results_available(self):
         """Check for results on Pangea."""
         try:
-            self.get_results()
+            return self.get_results()
         except PangeaLoadTaskError:
             return False
         return True
@@ -326,9 +326,13 @@ class PangeaCapTask(PangeaBaseCapTask):
         """Check for results on Pangea."""
         current_version_available = super().results_available()
         if current_version_available:
+            ar = self.get_results()
+            self.complete_job_order(ar)  # flag these results as already done
             return True
         for version_str, version_hash in self.config.allowed_versions(self):
             if self.results_available_for_version(version_str, version_hash):
+                ar = self.get_results()
+                self.complete_job_order(ar)  # flag these results as already done
                 return True
         return False
 

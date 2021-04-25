@@ -219,7 +219,7 @@ class PangeaWorkOrder:
     def pangea_samples(self, randomize=False, seed=None, n=100):
         samples = []
         for wo in self.wop.get_active_work_orders():
-            if wo.status == 'complete':
+            if wo.status == 'success':
                 continue
             samples.append(wo.get_sample())
         for sample in samples:

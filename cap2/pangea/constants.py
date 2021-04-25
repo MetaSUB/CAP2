@@ -1,0 +1,2 @@
+
+CAP_WORK_ORDER_PROTO_NAME = 'cap'

@@ -216,9 +216,9 @@ class PangeaWorkOrder:
         User(self.knex, email, password).login()
         self.wop = WorkOrderProto.from_uuid(self.knex, work_order_uuid)
 
-    def pangea_samples(self, randomize=False, seed=None, n=100):
+    def pangea_samples(self, randomize=True, seed=None, n=100):
         samples = []
-        for wo in self.wop.get_active_work_orders():
+        for wo in self.wop.get_active_work_orders(random=randomize, max_num=n, not_status='success'):
             if wo.status == 'success':
                 continue
             samples.append(wo.get_sample())

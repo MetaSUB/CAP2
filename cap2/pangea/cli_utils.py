@@ -11,7 +11,7 @@ from ..constants import DATA_TYPES
 from .api import get_task_list_for_sample
 from .pangea_sample import PangeaSample, PangeaGroup, PangeaTag, PangeaWorkOrder
 from .constants import WORK_ORDER_PROTOS
-
+from ..exceptions import CAPSampleError
 
 logger = logging.getLogger('cap2')
 
@@ -105,10 +105,14 @@ class State(object):
         return PangeaWorkOrder(self.work_order, self.email, self.password, self.endpoint)
 
     def filter_samples(self, samples):
-        return [
-            samp for samp in samples
-            if samp.has_reads() and ((not self.clean_reads) or samp.has_clean_reads())
-        ]
+        out = []
+        for samp in samples:
+            try:
+                if samp.has_reads() and ((not self.clean_reads) or samp.has_clean_reads()):
+                    out.append(samp)
+            except CAPSampleError:
+                pass
+        return out
 
 
 pass_state = click.make_pass_decorator(State, ensure=True)

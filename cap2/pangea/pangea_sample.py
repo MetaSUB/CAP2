@@ -50,13 +50,14 @@ class PangeaSample:
         self.name = sample_name
         self.sra = f'downloaded_data/{self.name}.sra'
         self.r1 = f'downloaded_data/{self.name}.R1.fq.gz'
+        self.r2 = None
         try:
             if self.has_reads():
                 if self.kind == 'short_read':
                     self.kind = 'single_short_read'
                     if self.is_paired():
                         self.kind = 'paired_short_read'
-            self.r2 = None
+            
             if self.kind == 'paired_short_read':
                 self.r2 = f'downloaded_data/{self.name}.R2.fq.gz'
 

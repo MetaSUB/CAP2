@@ -56,13 +56,13 @@ class PangeaSample:
                     self.kind = 'single_short_read'
                     if self.is_paired():
                         self.kind = 'paired_short_read'
+            self.r2 = None
+            if self.kind == 'paired_short_read':
+                self.r2 = f'downloaded_data/{self.name}.R2.fq.gz'
+
+            self.cap_sample = Sample(self.name, self.r1, self.r2, kind=self.kind)
         except CAPSampleError:
             self.kind = 'undetermined'
-        self.r2 = None
-        if self.kind == 'paired_short_read':
-            self.r2 = f'downloaded_data/{self.name}.R2.fq.gz'
-
-        self.cap_sample = Sample(self.name, self.r1, self.r2, kind=self.kind)
 
     def has_reads(self):
         for name in ['raw::raw_reads', 'raw_reads']:

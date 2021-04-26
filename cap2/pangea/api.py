@@ -167,3 +167,11 @@ def get_task_list_for_sample(sample, stage, config_path='', require_clean_reads=
         return [kmer_stage_task(sample, clean_reads, config_path=config_path, **kwargs)]
     if stage == 'assembly':
         return [assembly_stage_task(sample, clean_reads, config_path=config_path, **kwargs)]
+    if stage == 'all':
+        return [
+            qc_stage_task(sample, base_reads, config_path=config_path, **kwargs),
+            fast_stage_task(sample, base_reads, config_path=config_path, **kwargs),
+            clean_reads,
+            read_stage_task(sample, clean_reads, config_path=config_path, **kwargs),
+        ]
+

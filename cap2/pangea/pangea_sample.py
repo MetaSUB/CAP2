@@ -153,7 +153,7 @@ class PangeaGroup:
         self.grp = org.sample_group(grp_name).get()
         self.name = grp_name
 
-    def pangea_samples(self, randomize=False, seed=None, kind='short_read'):
+    def pangea_samples(self, randomize=False, seed=None, kind='short_read', check_for_reads=True):
         if randomize:
             if seed:
                 random.seed(seed)
@@ -173,7 +173,7 @@ class PangeaGroup:
                 sample=sample,
                 kind=kind,
             )
-            if psample.has_reads():
+            if not check_for_reads or psample.has_reads():
                 yield psample
 
     def cap_samples(self):

@@ -87,12 +87,13 @@ class State(object):
             return luigi.build(tasks, local_scheduler=True, workers=self.workers)
         return luigi.build(tasks, scheduler_url=self.scheduler_url, workers=self.workers)
 
-    def pangea_sample(self, org_name, grp_name, sample_name):
+    def pangea_sample(self, org_name, grp_name, sample_name, name_is_uuid=True):
         return PangeaSample(
             sample_name,
             self.email, self.password, self.endpoint,
             org_name, grp_name,
-            data_kind=self.data_kind, work_order_name=self.work_order
+            kind=self.data_kind,
+            name_is_uuid=name_is_uuid,
         )
 
     def pangea_group(self, org_name, grp_name):

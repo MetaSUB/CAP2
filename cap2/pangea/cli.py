@@ -6,7 +6,7 @@ import logging
 
 from os import environ
 
-from .api import get_task_list_for_sample
+from .api import get_task_list_for_sample, recursive_task_status
 
 from ..pipeline.preprocessing import FastQC, MultiQC
 from ..utils import chunks
@@ -43,6 +43,69 @@ def cli_list_samples_from_work_order(state):
     wop = state.pangea_work_order_proto()
     for sample in state.filter_samples(wop.pangea_samples()):
         print(sample)
+
+
+@pangea.group('status')
+def cli_status():
+    pass
+
+
+
+@cli_status.command('sample')
+@use_common_state
+@click.argument('org_name')
+@click.argument('grp_name')
+@click.argument('sample_name')
+def cli_status_sample(state, org_name, grp_name, sample_name):
+    """Check the status of a sample."""
+    state.set_config(org_name=org_name, grp_name=grp_name, name_is_uuid=True)
+    sample = state.pangea_sample(org_name, grp_name, sample_name)
+    tasks = get_task_list_for_sample(
+        sample, state.stage,
+        config_path=state.config, require_clean_reads=state.clean_reads, cores=state.threads, max_ram=state.max_ram
+    )
+    click.echo(f'Checking status of sample "{sample_name}" for stage "{state.stage}"', err=True)
+    sample_status = {}
+    for task in tasks:
+        for subtask, status in recursive_task_status(sample, type(task), config_path=state.config):
+            sample_status[subtask.module_name()] = status
+    for key, val in sample_status.items():
+        if key == 'raw::base_reads':  # special case
+            continue
+        print(f'{key}:  {val}')
+
+
+@cli_status.command('group')
+@use_common_state
+@click.argument('org_name')
+@click.argument('grp_name')
+def cli_status_group(state, org_name, grp_name):
+    """Check the status of a group."""
+    state.set_config(org_name=org_name, grp_name=grp_name, name_is_uuid=True)
+    group = state.pangea_group(org_name, grp_name)
+    samples = group.pangea_samples(randomize=True, check_for_reads=False, kind='no_reads')
+    samples = list(samples)
+    group_status = {}
+    for sample in samples:
+        tasks = get_task_list_for_sample(
+            sample, state.stage,
+            config_path=state.config, require_clean_reads=state.clean_reads, cores=state.threads, max_ram=state.max_ram
+        )
+        click.echo(f'Checking status of sample "{sample.name}" for stage "{state.stage}"', err=True)
+        sample_status = {}
+        for task in tasks:
+            for subtask, status in recursive_task_status(sample, type(task), config_path=state.config):
+                sample_status[subtask.module_name()] = status
+        for key, val in sample_status.items():
+            if key not in group_status:
+                group_status[key] = {}
+            group_status[key][val] = group_status[key].get(val, 0) + 1 
+    for key, grp in group_status.items():
+        if key == 'raw::base_reads':  # special case
+            continue
+        for status, count in grp.items():
+            percent = 100 * count / len(samples)
+            print(f'{key}, {status}:  {percent}')
 
 @pangea.group()
 def run():

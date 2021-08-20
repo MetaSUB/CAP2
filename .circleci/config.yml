@@ -30,6 +30,8 @@ jobs:
       - run:
           name: Install Python Dependencies
           command: |
+            export PATH="$HOME/miniconda/bin:$PATH"
+            source activate
             pip install -r requirements.txt
       - save_cache:
           paths:
@@ -40,7 +42,7 @@ jobs:
           name: Build package
           command: |
             export PATH="$HOME/miniconda/bin:$PATH"
-            . venv/bin/activate
+            source activate
             pip install -e .
             python -m pytest --color=yes tests
 

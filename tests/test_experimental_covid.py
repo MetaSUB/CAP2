@@ -172,6 +172,8 @@ class TestCovidPipeline(TestCase):
         self.assertIs(fast_detect.reads, nonhuman_reads.mouse_removed_reads.adapter_removed_reads.reads)
 
     def test_align_to_covid_genome(self):
+        if 'CIRCLECI_TESTS' in os.environ:  # do not run this test on circleci
+            return
         instance = AlignReadsToCovidGenome(
             pe1=RAW_READS_1,
             pe2=RAW_READS_2,

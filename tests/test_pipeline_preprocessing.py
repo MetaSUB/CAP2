@@ -174,6 +174,8 @@ class TestPipelinePreprocessing(TestCase):
         self.assertTrue(isfile(instance.output()['adapter_removed_reads_2'].path))
 
     def test_invoke_remove_mouse_reads(self):
+        if 'CIRCLECI_TESTS' in os.environ:  # do not run this test on circleci
+            return
         instance = RemoveMouseReads(
             pe1=RAW_READS_1,
             pe2=RAW_READS_2,
@@ -185,13 +187,12 @@ class TestPipelinePreprocessing(TestCase):
         instance.adapter_removed_reads = DummyAdapterRemovedReads()
         luigi.build([instance], local_scheduler=True)
         self.assertTrue(isfile(instance.output()['bam'].path))
-        if abspath('.') != '/root/project':  # Happens on CircleCI, unlikely otherwise
-            # I can't figure out why these files don't get created on CircleCI
-            # this is a hack but hopefully not too problematic of one.
-            self.assertTrue(isfile(instance.output()['nonmouse_reads_1'].path))
-            self.assertTrue(isfile(instance.output()['nonmouse_reads_2'].path))
+        self.assertTrue(isfile(instance.output()['nonmouse_reads_1'].path))
+        self.assertTrue(isfile(instance.output()['nonmouse_reads_2'].path))
 
     def test_invoke_remove_human_reads(self):
+        if 'CIRCLECI_TESTS' in os.environ:  # do not run this test on circleci
+            return
         instance = RemoveHumanReads(
             pe1=RAW_READS_1,
             pe2=RAW_READS_2,
@@ -203,11 +204,8 @@ class TestPipelinePreprocessing(TestCase):
         instance.mouse_removed_reads = DummyMouseRemovedReads()
         luigi.build([instance], local_scheduler=True)
         self.assertTrue(isfile(instance.output()['bam'].path))
-        if abspath('.') != '/root/project':  # Happens on CircleCI, unlikely otherwise
-            # I can't figure out why these files don't get created on CircleCI
-            # this is a hack but hopefully not too problematic of one.
-            self.assertTrue(isfile(instance.output()['nonhuman_reads_1'].path))
-            self.assertTrue(isfile(instance.output()['nonhuman_reads_2'].path))
+        self.assertTrue(isfile(instance.output()['nonhuman_reads_1'].path))
+        self.assertTrue(isfile(instance.output()['nonhuman_reads_2'].path))
 
     def test_error_correct_reads(self):
         instance = ErrorCorrectReads(

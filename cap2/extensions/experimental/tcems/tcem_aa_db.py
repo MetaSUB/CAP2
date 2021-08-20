@@ -1,7 +1,7 @@
 
 import luigi
 import os
-from os.path import join, dirname, isfile
+from os.path import join, dirname, isfile, getsize
 import sqlite3
 import gzip
 from Bio import SeqIO
@@ -121,18 +121,81 @@ class TcemNrAaDbChunk(CapDbTask):
         open(self.tcem_index + '.flag', 'w').close()
 
 
-class TcemNrAaDb(CapDbTask):
-    MODULE_VERSION = 'v0.1.0'
+class TcemSortedNrAaDbChunk(CapDbTask):
+    chunk_index = luigi.IntParameter()
+    total_chunks = luigi.IntParameter()
+    fasta = luigi.Parameter()
+    MODULE_VERSION = 'v0.2.0'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.config = PipelineConfig(self.config_filename)
         self.db_dir = self.config.db_dir
-        self.fasta = join(self.db_dir, 'ncbi_nr_fasta', 'nr.gz')
-        self.total_chunks = 1000
-        self.bloom_size = 1000 * 1000 * 1000 * 1000
+        self.bloom_size = 1000 * 1000 * 1000
         self.bloom_error = 0.001
-        self.pair_buffer_size = 1000 * 1000
+        self.chunk = TcemNrAaDbChunk.from_cap_db_task(
+            self,
+            chunk_index=self.chunk_index,
+            total_chunks=self.total_chunks,
+            fasta=self.fasta,
+        )
+
+    def tool_version(self):
+        return self.version()
+
+    def requires(self):
+        return self.chunk
+
+    @classmethod
+    def _module_name(cls):
+        return 'tcem_sorted_nr_aa_db_chunk'
+
+    @classmethod
+    def dependencies(cls):
+        return ['2021-02-13']
+
+    @property
+    def tcem_index(self):
+        fname = f'tcems_aa_kmers.{self.chunk_index}_of_{self.total_chunks}.sorted.csv.gz'
+        return join(self.db_dir, 'ncbi_nr_fasta', fname)
+
+    def output(self):
+        tcem_index = luigi.LocalTarget(self.tcem_index)
+        tcem_index.makedirs()
+        return {
+            'tcem_index': tcem_index,
+            'flag': luigi.LocalTarget(self.tcem_index + '.flag'),
+        }
+
+    def run(self):
+        logger.info(f'Running in database mode: {self.config.db_mode}')
+        if self.config.db_mode == PipelineConfig.DB_MODE_BUILD:
+            self.build_db()
+
+    def build_db(self):
+        if isfile(self.tcem_index):
+            os.remove(self.tcem_index)
+        logger.info(f'<chunk {self.chunk_index}> Sorting TCEM chunk {self.chunk_index} of {self.total_chunks}')
+        self.run_cmd(f'gunzip -c {self.chunk.tcem_index} | sort | gzip > {self.tcem_index}')
+        file_size = getsize(self.tcem_index)
+        if file_size == 0:
+            assert False, 'tcem index is empty'
+        open(self.tcem_index + '.flag', 'w').close()
+
+
+class TcemNrAaDbIntermediateChunk(CapDbTask):
+    MODULE_VERSION = 'v0.1.0'
+    fasta = luigi.Parameter()
+    mid_chunk_index = luigi.IntParameter()
+    total_mid_chunks = luigi.IntParameter()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.config = PipelineConfig(self.config_filename)
+        self.db_dir = self.config.db_dir
+        self.total_chunks = 1000
+        self.bloom_size =  1000 * 1000 * 1000
+        self.bloom_error =  0.001
         self.chunks = []
 
     def tool_version(self):
@@ -141,7 +204,9 @@ class TcemNrAaDb(CapDbTask):
     def requires(self):
         if self.config.db_mode == PipelineConfig.DB_MODE_BUILD:
             for i in range(self.total_chunks):
-                self.chunks.append(TcemNrAaDbChunk.from_cap_db_task(
+                if i % self.total_mid_chunks != self.mid_chunk_index:
+                    continue
+                self.chunks.append(TcemSortedNrAaDbChunk.from_cap_db_task(
                     self,
                     chunk_index=i,
                     total_chunks=self.total_chunks,
@@ -151,11 +216,148 @@ class TcemNrAaDb(CapDbTask):
 
     @classmethod
     def _module_name(cls):
+        return 'tcem_nr_aa_db_intermediate_chunk'
+
+    @classmethod
+    def dependencies(cls):
+        return ['2021-02-13']
+
+    @property
+    def tcem_index(self):
+        fname = f'tcems_aa_kmers.intermediate_{self.mid_chunk_index}_of_{self.total_mid_chunks}.csv.gz'
+        return join(self.db_dir, 'ncbi_nr_fasta', fname)
+
+    def output(self):
+        tcem_index = luigi.LocalTarget(self.tcem_index)
+        tcem_index.makedirs()
+        return {
+            'tcem_index': tcem_index,
+            'flag': luigi.LocalTarget(self.tcem_index + '.flag'),
+        }
+
+    def run(self):
+        logger.info(f'Running in database mode: {self.config.db_mode}')
+        if self.config.db_mode == PipelineConfig.DB_MODE_BUILD:
+            self.build_db()
+
+    def build_db(self):
+        if isfile(self.tcem_index):
+            os.remove(self.tcem_index)
+        logger.info(f'Building full TCEM list from {self.fasta}')
+        chunk_cmd = ' '.join([f'<(gunzip -c {c.tcem_index})' for c in self.chunks])
+        cmd = f'sort -m {chunk_cmd} | gzip > {self.tcem_index}'
+        self.run_cmd(cmd)
+        open(self.tcem_index + '.flag', 'w').close()
+
+
+
+class TcemNrAaDbList(CapDbTask):
+    MODULE_VERSION = 'v0.1.0'
+    fasta = luigi.Parameter()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.config = PipelineConfig(self.config_filename)
+        self.db_dir = self.config.db_dir
+        self.total_chunks = 1000
+        self.total_mid_chunks = 32
+        self.bloom_size =  1000 * 1000 * 1000
+        self.bloom_error =  0.001
+        self.chunks = []
+
+    def tool_version(self):
+        return self.version()
+
+    def requires(self):
+        if self.config.db_mode == PipelineConfig.DB_MODE_BUILD:
+            for i in range(self.total_mid_chunks):
+                mid_chunk = TcemNrAaDbIntermediateChunk.from_cap_db_task(
+                    self,
+                    mid_chunk_index=i,
+                    total_mid_chunks=self.total_mid_chunks,
+                    fasta=self.fasta,
+                )
+                mid_chunk.total_chunks = self.total_chunks
+                mid_chunk.bloom_size = self.bloom_size
+                mid_chunk.bloom_error = self.bloom_error
+                self.chunks.append(mid_chunk)
+        return self.chunks
+
+    @classmethod
+    def _module_name(cls):
+        return 'tcem_nr_aa_db_list'
+
+    @classmethod
+    def dependencies(cls):
+        return ['2021-02-13']
+
+    @property
+    def tcem_index(self):
+        return join(self.db_dir, 'ncbi_nr_fasta', 'tcems_aa_kmers.csv.gz')
+
+    def output(self):
+        tcem_index = luigi.LocalTarget(self.tcem_index)
+        tcem_index.makedirs()
+        return {
+            'tcem_index': tcem_index,
+            'flag': luigi.LocalTarget(self.tcem_index + '.flag'),
+        }
+
+    def run(self):
+        logger.info(f'Running in database mode: {self.config.db_mode}')
+        if self.config.db_mode == PipelineConfig.DB_MODE_BUILD:
+            self.build_db()
+
+    def build_db(self):
+        if isfile(self.tcem_index):
+            os.remove(self.tcem_index)
+        logger.info(f'Building full TCEM list from {self.fasta}')
+        chunk_cmd = ' '.join([f'<(gunzip -c {c.tcem_index})' for c in self.chunks])
+        cmd = f'sort -m {chunk_cmd} | gzip > {self.tcem_index}'
+        self.run_cmd(cmd)
+        open(self.tcem_index + '.flag', 'w').close()
+
+
+class TcemNrAaDb(CapDbTask):
+    MODULE_VERSION = 'v0.1.0'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.config = PipelineConfig(self.config_filename)
+        self.db_dir = self.config.db_dir
+        self.fasta = join(self.db_dir, 'ncbi_nr_fasta', 'nr.gz')
+        self.total_chunks = 1000
+        self.bloom_size = 1000 * 1000 * 1000 * 10
+        self.bloom_error = 0.001
+        self.pair_buffer_size = 1000 * 1000
+        self._tcem_list = None
+
+    def tool_version(self):
+        return self.version()
+
+    def requires(self):
+        if self.config.db_mode == PipelineConfig.DB_MODE_BUILD:
+            return self.tcem_list
+        return None
+
+    @classmethod
+    def _module_name(cls):
         return 'tcem_nr_aa_db'
 
     @classmethod
     def dependencies(cls):
         return ['2021-02-13']
+
+    @property
+    def tcem_list(self):
+        self._tcem_list = TcemNrAaDbList.from_cap_db_task(
+            self,
+            fasta=self.fasta,
+        )
+        self._tcem_list.total_chunks = self.total_chunks
+        self._tcem_list.bloom_size = self.bloom_size
+        self._tcem_list.bloom_error = self.bloom_error
+        return self._tcem_list
 
     @property
     def tcem_index(self):
@@ -174,10 +376,12 @@ class TcemNrAaDb(CapDbTask):
         if self.config.db_mode == PipelineConfig.DB_MODE_BUILD:
             self.build_db()
 
-    def add_chunk_to_db(self, chunk, bloom, main_c):
+    def add_chunk_to_db(self, chunk, main_c):
         pair_buffer = []
 
         def flush_pair_buffer():
+            if not pair_buffer:
+                return
             main_c.executemany(
                 'INSERT INTO taxa_kmers VALUES (?,?)',
                 (pair for pair in pair_buffer)
@@ -186,11 +390,8 @@ class TcemNrAaDb(CapDbTask):
         with gzip.open(chunk.tcem_index, 'rt') as chunk:
             for line in chunk:
                 pair_str = line.strip()
-                if pair_str in bloom:
-                    continue
-                bloom.add(pair_str)
-                pair = tuple(pair_str.split(','))
-                pair_buffer.append(pair)
+                pair = pair_str.split(',')
+                pair_buffer.append((pair[0], pair[1]))
                 if len(pair_buffer) >= self.pair_buffer_size:
                     flush_pair_buffer()
                     pair_buffer = []
@@ -204,9 +405,8 @@ class TcemNrAaDb(CapDbTask):
         main_c = main_conn.cursor()
         main_c.execute('''CREATE TABLE taxa_kmers (taxon text, kmer text)''')
 
-        bloom = BloomFilter(max_elements=self.bloom_size, error_rate=self.bloom_error)
-        for chunk in self.chunks:
-            self.add_chunk_to_db(chunk, bloom, main_c)
+        logger.info(f'Adding chunk: {self.tcem_list}')
+        self.add_chunk_to_db(self.tcem_list, main_c)
 
         main_c.execute('''CREATE INDEX kmer_index ON taxa_kmers(kmer)''')
         main_conn.commit()

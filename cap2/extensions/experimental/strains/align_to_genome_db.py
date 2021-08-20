@@ -78,11 +78,9 @@ class AlignReadsToGenomeDb(StrainCapDbTask):
 
     def build_bowtie2_index_from_fasta(self):
         print(self.fastas)
-        cmd = ''.join((
+        cmd = ' '.join((
             self.pkg.bin,
-            f' --threads {self.cores} ',
             ','.join(self.fastas),
-            ' ',
             self.bowtie2_index
         ))
         subprocess.check_call(cmd, shell=True)

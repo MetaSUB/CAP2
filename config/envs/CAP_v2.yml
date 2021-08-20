@@ -1,4 +1,5 @@
 name: CAP_v2
 channels:
+  - bioconda
+  - conda-forge
   - defaults
-

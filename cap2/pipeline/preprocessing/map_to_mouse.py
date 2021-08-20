@@ -35,7 +35,7 @@ class RemoveMouseReads(CapTask):
             config_filename=self.config_filename,
         )
         self.samtools = CondaPackage(
-            package="samtools=1.09",
+            package="samtools",
             executable="samtools",
             channel="bioconda",
             config_filename=self.config_filename,

@@ -4,15 +4,20 @@ import luigi
 import time
 import logging
 
-
 from os import environ
 
-from .api import get_task_list_for_sample
-from .pangea_sample import PangeaSample, PangeaGroup, PangeaTag
+from .api import get_task_list_for_sample, recursive_task_status
+
 from ..pipeline.preprocessing import FastQC, MultiQC
 from ..utils import chunks
 from ..setup_logging import *
 from ..constants import DATA_TYPES
+from .constants import WORK_ORDER_PROTOS
+from .cli_utils import (
+    _process_samples_in_chunks,
+    use_common_state,
+)
+
 
 logger = logging.getLogger('cap2')
 
@@ -27,195 +32,127 @@ def pangea_version():
     click.echo('v0.1.0')
 
 
+@pangea.group('list')
+def cli_list():
+    pass
+
+@cli_list.command('work-order')
+@use_common_state
+def cli_list_samples_from_work_order(state):
+    state.prep_state()
+    wop = state.pangea_work_order_proto()
+    for sample in state.filter_samples(wop.pangea_samples()):
+        print(sample)
+
+
+@pangea.group('status')
+def cli_status():
+    pass
+
+
+
+@cli_status.command('sample')
+@use_common_state
+@click.argument('org_name')
+@click.argument('grp_name')
+@click.argument('sample_name')
+def cli_status_sample(state, org_name, grp_name, sample_name):
+    """Check the status of a sample."""
+    state.set_config(org_name=org_name, grp_name=grp_name, name_is_uuid=True)
+    sample = state.pangea_sample(org_name, grp_name, sample_name)
+    tasks = get_task_list_for_sample(
+        sample, state.stage,
+        config_path=state.config, require_clean_reads=state.clean_reads, cores=state.threads, max_ram=state.max_ram
+    )
+    click.echo(f'Checking status of sample "{sample_name}" for stage "{state.stage}"', err=True)
+    sample_status = {}
+    for task in tasks:
+        for subtask, status in recursive_task_status(sample, type(task), config_path=state.config):
+            sample_status[subtask.module_name()] = status
+    for key, val in sample_status.items():
+        if key == 'raw::base_reads':  # special case
+            continue
+        print(f'{key}:  {val}')
+
+
+@cli_status.command('group')
+@use_common_state
+@click.argument('org_name')
+@click.argument('grp_name')
+def cli_status_group(state, org_name, grp_name):
+    """Check the status of a group."""
+    state.set_config(org_name=org_name, grp_name=grp_name, name_is_uuid=True)
+    group = state.pangea_group(org_name, grp_name)
+    samples = group.pangea_samples(randomize=True, check_for_reads=False, kind='no_reads')
+    samples = list(samples)
+    group_status = {}
+    for sample in samples:
+        tasks = get_task_list_for_sample(
+            sample, state.stage,
+            config_path=state.config, require_clean_reads=state.clean_reads, cores=state.threads, max_ram=state.max_ram
+        )
+        click.echo(f'Checking status of sample "{sample.name}" for stage "{state.stage}"', err=True)
+        sample_status = {}
+        for task in tasks:
+            for subtask, status in recursive_task_status(sample, type(task), config_path=state.config):
+                sample_status[subtask.module_name()] = status
+        for key, val in sample_status.items():
+            if key not in group_status:
+                group_status[key] = {}
+            group_status[key][val] = group_status[key].get(val, 0) + 1 
+    for key, grp in group_status.items():
+        if key == 'raw::base_reads':  # special case
+            continue
+        for status, count in grp.items():
+            percent = 100 * count / len(samples)
+            print(f'{key}, {status}:  {percent}')
+
 @pangea.group()
 def run():
     pass
 
 
-def set_config(endpoint, email, password, org_name, grp_name,
-               name_is_uuid=False, upload_allowed=True, download_only=False,
-               data_kind='short_read'):
-    luigi.configuration.get_config().set('pangea', 'pangea_endpoint', endpoint)
-    luigi.configuration.get_config().set('pangea', 'user', email)
-    luigi.configuration.get_config().set('pangea', 'password', password)
-    luigi.configuration.get_config().set('pangea', 'data_kind', data_kind)
-    luigi.configuration.get_config().set('pangea', 'org_name', org_name if org_name else '')
-    luigi.configuration.get_config().set('pangea', 'grp_name', grp_name if grp_name else '')
-    luigi.configuration.get_config().set('pangea', 'name_is_uuid', 'name_is_uuid' if name_is_uuid else '')
-    luigi.configuration.get_config().set('pangea', 'upload_allowed', 'upload_allowed' if upload_allowed else '')
-    luigi.configuration.get_config().set('pangea', 'download_only', 'download_only' if download_only else '')
-
-
-@run.command('group')
-@click.option('--upload/--no-upload', default=True)
-@click.option('--scheduler-host', default=None)
-@click.option('--scheduler-port', default=8082)
-@click.option('--endpoint', default='https://pangea.gimmebio.com')
-@click.option('--s3-endpoint', default='https://s3.wasabisys.com')
-@click.option('--s3-profile', default='default')
-@click.option('-e', '--email', default=environ.get('PANGEA_USER', None))
-@click.option('-p', '--password', default=environ.get('PANGEA_PASS', None))
-@click.option('-w', '--workers', default=1)
-@click.argument('org_name')
-@click.argument('grp_name')
-@click.argument('bucket_name')
-def cli_run_group(upload,
-                  scheduler_host, scheduler_port,
-                  endpoint, s3_endpoint, s3_profile, email, password, workers,
-                  org_name, grp_name, bucket_name):
-    set_config(endpoint, email, password, org_name, grp_name, bucket_name, s3_endpoint, s3_profile)
-    group = PangeaGroup(grp_name, email, password, endpoint, org_name)
-    tasks = []
-
-    mqc_task = PangeaGroupLoadTask.from_samples(grp_name, group.cap_samples())
-    mqc_task.wrapped_module = MultiQC
-    mqc_task.module_requires_reads[FastQC] = True
-    tasks.append(mqc_task)
-
-    if not scheduler_host:
-        luigi.build(tasks, local_scheduler=True, workers=workers)
-    else:
-        luigi.build(
-            tasks, scheduler_host=scheduler_host, scheduler_port=scheduler_port, workers=workers
-        )
-
-
 @run.command('sample')
-@click.option('-c', '--config', type=click.Path(), default='', envvar='CAP2_CONFIG')
-@click.option('--clean-reads/--all-reads', default=False)
-@click.option('--upload/--no-upload', default=True)
-@click.option('--download-only/--run', default=False)
-@click.option('--scheduler-url', default=None, envvar='CAP2_LUIGI_SCHEDULER_URL')
-@click.option('-k', '--data-kind', default='short_read', type=click.Choice(DATA_TYPES))
-@click.option('-w', '--workers', default=1)
-@click.option('-t', '--threads', default=1)
-@click.option('--endpoint', default='https://pangea.gimmebio.com')
-@click.option('-e', '--email', envvar='PANGEA_USER')
-@click.option('-p', '--password', envvar='PANGEA_PASS')
-@click.option('-s', '--stage', default='reads')
+@use_common_state
 @click.argument('org_name')
 @click.argument('grp_name')
 @click.argument('sample_name')
-def cli_run_sample(config, clean_reads, upload, download_only, scheduler_url,
-                   data_kind, workers, threads,
-                   endpoint, email, password,
-                   stage,
-                   org_name, grp_name, sample_name):
-    sample = PangeaSample(sample_name, email, password, endpoint, org_name, grp_name,
-                          data_kind=data_kind)
-    set_config(endpoint, email, password, org_name, grp_name,
-               upload_allowed=upload, download_only=download_only,
-               name_is_uuid=False, data_kind=data_kind)
+def cli_run_sample(state, org_name, grp_name, sample_name):
+    state.set_config(org_name=org_name, grp_name=grp_name)
+    sample = state.pangea_sample(org_name, grp_name, sample_name)
     tasks = get_task_list_for_sample(
-        sample, stage,
-        config_path=config, require_clean_reads=clean_reads,
+        sample, state.stage,
+        config_path=state.config, require_clean_reads=state.clean_reads,
     )
-    if not scheduler_url:
-        luigi.build(tasks, local_scheduler=True, workers=workers)
-    else:
-        luigi.build(
-            tasks, scheduler_url=scheduler_url, workers=workers
-        )
-
-
-def _process_one_sample_chunk(chunk, scheduler_url, workers,
-                              stage, config, clean_reads, **kwargs):
-    tasks = []
-    for sample in chunk:
-        tasks += get_task_list_for_sample(
-            sample, stage,
-            config_path=config, require_clean_reads=clean_reads, **kwargs
-        )
-    if not scheduler_url:
-        luigi.build(tasks, local_scheduler=True, workers=workers)
-    else:
-        luigi.build(tasks, scheduler_url=scheduler_url, workers=workers)
-    return chunk
-
-
-def _process_samples_in_chunks(samples, scheduler_url, batch_size, timelimit, workers,
-                               stage, config, clean_reads, **kwargs):
-    start_time, completed = time.time(), []
-    logging.info(f'Processing {len(samples)} samples')
-    for chunk in chunks(samples, batch_size):
-        logging.info(f'Completed processing {len(completed)} samples')
-        if timelimit and (time.time() - start_time) > (60 * 60 * timelimit):
-            logging.info(f'Timelimit reached. Stopping.')
-            return completed
-        completed += _process_one_sample_chunk(
-            chunk, scheduler_url, workers,
-            stage, config, clean_reads, **kwargs
-        )
-    return completed
+    state.luigi_build(tasks)
 
 
 @run.command('samples')
-@click.option('-c', '--config', type=click.Path(), default='', envvar='CAP2_CONFIG')
-@click.option('--clean-reads/--all-reads', default=False)
-@click.option('--upload/--no-upload', default=True)
-@click.option('--download-only/--run', default=False)
-@click.option('--scheduler-url', default=None, envvar='CAP2_LUIGI_SCHEDULER_URL')
-@click.option('--max-attempts', default=2)
-@click.option('-b', '--batch-size', default=10, help='Number of samples to process in parallel')
-@click.option('-w', '--workers', default=1)
-@click.option('-t', '--threads', default=1)
-@click.option('-m', '--max-ram', default=0)
-@click.option('--timelimit', default=0, help='Stop adding jobs after N hours')
-@click.option('--endpoint', default='https://pangea.gimmebio.com')
-@click.option('-e', '--email', envvar='PANGEA_USER')
-@click.option('-p', '--password', envvar='PANGEA_PASS')
-@click.option('-s', '--stage', default='reads')
-@click.option('--random-seed', type=int, default=None)
+@use_common_state
 @click.argument('org_name')
 @click.argument('grp_name')
-def cli_run_samples(config, clean_reads, upload, download_only, scheduler_url,
-                    max_attempts,
-                    batch_size, workers, threads, max_ram, timelimit,
-                    endpoint, email, password, stage, random_seed,
-                    org_name, grp_name):
-    set_config(endpoint, email, password, org_name, grp_name, upload_allowed=upload, download_only=download_only, name_is_uuid=True)
-    group = PangeaGroup(grp_name, email, password, endpoint, org_name)
-    samples = [
-        samp for samp in group.pangea_samples(randomize=True, seed=random_seed)
-        if not clean_reads or samp.has_clean_reads()
-    ]
-    completed = _process_samples_in_chunks(
-        samples, scheduler_url, batch_size, timelimit, workers,
-        stage, config, clean_reads, cores=threads, max_ram=max_ram
-    )
+def cli_run_samples(state, org_name, grp_name):
+    state.set_config(org_name=org_name, grp_name=grp_name, name_is_uuid=True)
+    group = state.pangea_group(org_name, grp_name)
+    samples = state.filter_samples(group.pangea_samples(randomize=True, seed=state.random_seed))
+    completed = _process_samples_in_chunks(samples, state)
 
 
 @run.command('tag')
-@click.option('-c', '--config', type=click.Path(), default='', envvar='CAP2_CONFIG')
-@click.option('--clean-reads/--all-reads', default=False)
-@click.option('--upload/--no-upload', default=True)
-@click.option('--download-only/--run', default=False)
-@click.option('--scheduler-url', default=None, envvar='CAP2_LUIGI_SCHEDULER_URL')
-@click.option('--max-attempts', default=2)
-@click.option('-b', '--batch-size', default=10, help='Number of samples to process in parallel')
-@click.option('-n', '--num-samples', default=100, help='Max number of samples for this worker to process')
-@click.option('-w', '--workers', default=1)
-@click.option('-t', '--threads', default=1)
-@click.option('-m', '--max-ram', default=0)
-@click.option('--timelimit', default=0, help='Stop adding jobs after N hours')
-@click.option('--endpoint', default='https://pangea.gimmebio.com')
-@click.option('-e', '--email', envvar='PANGEA_USER')
-@click.option('-p', '--password', envvar='PANGEA_PASS')
-@click.option('-s', '--stage', default='reads')
-@click.option('--random-seed', type=int, default=None)
+@use_common_state
+@click.option('--num-samples', default=100)
 @click.option('--tag-name', default='MetaSUB CAP')
-def cli_run_samples_from_tag(config, clean_reads, upload, download_only, scheduler_url,
-                             max_attempts,
-                             batch_size, num_samples, workers, threads, max_ram, timelimit,
-                             endpoint, email, password, stage, random_seed,
-                             tag_name):
-    set_config(endpoint, email, password, None, None, name_is_uuid=True)
-    tag = PangeaTag(tag_name, email, password, endpoint)
-    samples = [
-        samp for samp in tag.pangea_samples(randomize=True, n=num_samples)
-        if not clean_reads or samp.has_clean_reads()
-    ]
-    completed = _process_samples_in_chunks(
-        samples, scheduler_url, batch_size, timelimit, workers,
-        stage, config, clean_reads, cores=threads, max_ram=max_ram
-    )
+def cli_run_samples_from_tag(state, num_samples, tag_name):
+    state.set_config(name_is_uuid=True)
+    tag = state.pangea_tag(tag_name)
+    samples = state.filter_samples(tag.pangea_samples(randomize=True, n=num_samples))
+    completed = _process_samples_in_chunks(samples, state)
+
+
+@run.command('work-order')
+@use_common_state
+def cli_run_samples_from_work_order(state):
+    state.set_config(name_is_uuid=True)
+    wo = state.pangea_work_order_proto()
+    samples = state.filter_samples(wo.pangea_samples())
+    completed = _process_samples_in_chunks(samples, state)

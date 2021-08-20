@@ -11,7 +11,7 @@ from .make_pileup import MakeCovidPileup
 from .make_covid_consensus_seq import MakeCovidConsensusSeq
 from .call_covid_variants import CallCovidVariants
 
-from ....pangea.cli import set_config
+from ....pangea.utils import set_config
 from ....pangea.api import (
     wrap_task,
     recursively_wrap_task,
@@ -128,7 +128,7 @@ def cli_run_samples_from_tag(config, clean_reads, upload, download_only, schedul
                              batch_size, workers, threads, timelimit,
                              endpoint, email, password, stage, random_seed,
                              tag_name):
-    set_config(endpoint, email, password, None, None, name_is_uuid=True)
+    set_config(endpoint, email, password, name_is_uuid=True)
     tag = PangeaTag(tag_name, email, password, endpoint)
     samples = [
         samp for samp in tag.pangea_samples(randomize=True, seed=random_seed)

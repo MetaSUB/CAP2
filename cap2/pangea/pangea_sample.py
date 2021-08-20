@@ -10,6 +10,8 @@ from pangea_api import (
     Knex,
     User,
     Organization,
+    WorkOrderProto,
+    PangeaNotFoundError,
 )
 from pangea_api.contrib.tagging import Tag
 from pangea_api.blob_constructors import sample_from_uuid
@@ -48,22 +50,27 @@ class PangeaSample:
         self.name = sample_name
         self.sra = f'downloaded_data/{self.name}.sra'
         self.r1 = f'downloaded_data/{self.name}.R1.fq.gz'
-        if self.kind == 'short_read':
-            self.kind = 'single_short_read'
-            if self.is_paired():
-                self.kind = 'paired_short_read'
         self.r2 = None
-        if self.kind == 'paired_short_read':
-            self.r2 = f'downloaded_data/{self.name}.R2.fq.gz'
+        try:
+            if self.has_reads():
+                if self.kind == 'short_read':
+                    self.kind = 'single_short_read'
+                    if self.is_paired():
+                        self.kind = 'paired_short_read'
+            
+            if self.kind == 'paired_short_read':
+                self.r2 = f'downloaded_data/{self.name}.R2.fq.gz'
 
-        self.cap_sample = Sample(self.name, self.r1, self.r2, kind=self.kind)
+            self.cap_sample = Sample(self.name, self.r1, self.r2, kind=self.kind)
+        except CAPSampleError:
+            self.kind = 'undetermined'
 
     def has_reads(self):
         for name in ['raw::raw_reads', 'raw_reads']:
             try:
                 self.sample.analysis_result(name).get()
                 return True
-            except HTTPError:
+            except PangeaNotFoundError:
                 continue
         return False
 
@@ -106,12 +113,12 @@ class PangeaSample:
         logger.info(f'checking if sample reads are paired: {self.name}')
         try:
             ar = self.sample.analysis_result('raw::raw_reads').get()
-        except HTTPError:
+        except PangeaNotFoundError:
             ar = self.sample.analysis_result('raw_reads').get()
         try:
             ar.field('read_1').get()
             return ar.field('read_2').exists()
-        except HTTPError:
+        except PangeaNotFoundError:
             raise CAPSampleError(f'Cannot determine if sample is paired: {self.name}')
 
     def download_fastqs(self, ar):
@@ -146,7 +153,7 @@ class PangeaGroup:
         self.grp = org.sample_group(grp_name).get()
         self.name = grp_name
 
-    def pangea_samples(self, randomize=False, seed=None, kind='short_read'):
+    def pangea_samples(self, randomize=False, seed=None, kind='short_read', check_for_reads=True):
         if randomize:
             if seed:
                 random.seed(seed)
@@ -166,7 +173,7 @@ class PangeaGroup:
                 sample=sample,
                 kind=kind,
             )
-            if psample.has_reads():
+            if not check_for_reads or psample.has_reads():
                 yield psample
 
     def cap_samples(self):
@@ -187,6 +194,38 @@ class PangeaTag:
             samples = list(self.tag.get_random_samples(n=n))
         else:
             samples = self.tag.get_samples()
+        for sample in samples:
+            psample = PangeaSample(
+                sample.uuid,
+                None,
+                None,
+                None,
+                None,
+                None,
+                knex=self.knex,
+                sample=sample,
+            )
+            if psample.has_reads():
+                yield psample
+
+    def cap_samples(self):
+        for sample in self.pangea_samples():
+            yield sample.cap_sample
+
+
+class PangeaWorkOrder:
+
+    def __init__(self, work_order_uuid, email, password, endpoint):
+        self.knex = Knex(endpoint)
+        User(self.knex, email, password).login()
+        self.wop = WorkOrderProto.from_uuid(self.knex, work_order_uuid)
+
+    def pangea_samples(self, randomize=True, seed=None, n=100):
+        samples = []
+        for wo in self.wop.get_active_work_orders(random=randomize, max_num=n, not_status='success'):
+            if wo.status == 'success':
+                continue
+            samples.append(wo.get_sample())
         for sample in samples:
             psample = PangeaSample(
                 sample.uuid,

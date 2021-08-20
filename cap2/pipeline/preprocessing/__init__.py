@@ -18,6 +18,8 @@ MODULES = [
 QC_MODULES = [
     CountRawReads,
     FastQC,
+    BasicSampleStats,
+    FastKraken2,
 ]
 
 QC_GRP_MODULES = [

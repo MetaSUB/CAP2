@@ -43,6 +43,32 @@ def wrap_task(sample, module, config_path='', no_wrap=False, **kwargs):
     return task
 
 
+def task_status(sample, module, config_path='', **kwargs):
+    task = wrap_task(sample, module,
+                     config_path=config_path,
+                     **kwargs)
+    available = task.results_available()
+    if available:
+        return (task, 'available')
+    return (task, 'unavailable')
+
+
+def recursive_task_status(sample, module, config_path='', **kwargs):
+    task, status = task_status(sample, module, config_path, **kwargs)
+    yield task, status
+    attr_dict = task.__dict__
+    if hasattr(task, 'wrapped_instance'):
+        attr_dict = task.wrapped_instance.__dict__
+    for attr, value in attr_dict.items():
+        if isinstance(value, CapTask) or isinstance(value, PangeaCapTask):
+            gen = recursive_task_status(sample, type(value),
+                                    config_path=config_path,
+                                    **kwargs)
+            for subtask, substatus in gen:
+                yield subtask, substatus
+
+
+
 def recursively_wrap_task(sample, module,
                           config_path='',
                           no_wrap_tasks=[],
@@ -167,3 +193,11 @@ def get_task_list_for_sample(sample, stage, config_path='', require_clean_reads=
         return [kmer_stage_task(sample, clean_reads, config_path=config_path, **kwargs)]
     if stage == 'assembly':
         return [assembly_stage_task(sample, clean_reads, config_path=config_path, **kwargs)]
+    if stage == 'all':
+        return [
+            qc_stage_task(sample, base_reads, config_path=config_path, **kwargs),
+            fast_stage_task(sample, base_reads, config_path=config_path, **kwargs),
+            clean_reads,
+            read_stage_task(sample, clean_reads, config_path=config_path, **kwargs),
+        ]
+

@@ -44,7 +44,7 @@ jobs:
             export PATH="$HOME/miniconda/bin:$PATH"
             source activate
             pip install -e .
-            python -m pytest --color=yes tests/test_pangea.py tests/test_pipeline_preprocessing.py tests/test_short_read.py tests/test_versions.py tests/test_assembly.py tests/test_databases.py
+            python -m pytest --color=yes tests/test_api.py tests/test_pangea.py tests/test_pipeline_preprocessing.py tests/test_short_read.py tests/test_versions.py tests/test_assembly.py tests/test_databases.py
 
       - run:
           name: Run experimental module tests

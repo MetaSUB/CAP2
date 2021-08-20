@@ -53,7 +53,7 @@ jobs:
             export PATH="$HOME/miniconda/bin:$PATH"
             source activate
             export CIRCLECI_TESTS="CIRCLECI_TESTS"
-            python -m pytest --color=yes tests/test_experimental_covid.py tests/test_experimental_strain.py
+            python -m pytest --color=yes tests/test_experimental_strain.py tests/test_strainotyping.py tests/test_tcems.py
 
       - run:
           name: Run experimental module tests 2
@@ -61,7 +61,7 @@ jobs:
             export PATH="$HOME/miniconda/bin:$PATH"
             source activate
             export CIRCLECI_TESTS="CIRCLECI_TESTS"
-            python -m pytest --color=yes tests/test_strainotyping.py tests/test_tcems.py
+            python -m pytest --color=yes  tests/test_experimental_covid.py
 
 workflows:
   version: 2

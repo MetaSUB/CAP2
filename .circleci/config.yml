@@ -28,6 +28,7 @@ jobs:
             export PATH="$HOME/miniconda/bin:$PATH"
             python3 -m venv venv
             . venv/bin/activate
+            conda install -y scipy pandas numpy
             pip install -r requirements.txt
       - save_cache:
           paths:

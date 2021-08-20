@@ -16,7 +16,7 @@ from cap2.extensions.experimental.covid import (
     MakeCovidConsensusSeq,
 )
 from cap2.extensions.experimental.covid.cli import get_task_list_for_sample
-from cap2.pangea.cli import set_config
+from cap2.pangea.utils import set_config
 from cap2.pangea.pangea_sample import PangeaSample
 from pangea_api import Knex, Organization, User
 
@@ -159,7 +159,7 @@ class TestCovidPipeline(TestCase):
             knex=PANGEA_SAMPLE.knex,
             sample=PANGEA_SAMPLE,
         )
-        set_config(PANGEA_ENDPOINT, PANGEA_USER, PANGEA_PASS, '', '', name_is_uuid=True)
+        set_config(PANGEA_ENDPOINT, PANGEA_USER, PANGEA_PASS, name_is_uuid=True)
         tasks = get_task_list_for_sample(psample, 'all', '')
         self.assertEqual(len(tasks), 4)
         fast_detect, covid_genome_coverage, _, _ = tasks

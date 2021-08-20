@@ -378,6 +378,8 @@ class PangeaCapTask(PangeaBaseCapTask):
 
     def get_work_order(self):
         """Return a CAP WorkOrder for this instance's sample or None if no such WO exists."""
+        if not get_pangea_config('work_order_name'):
+            return None
         try:
             wop = WorkOrderProto.from_name(self.knex, get_pangea_config('work_order_name'))
             wo = wop.get_active_work_order_for_sample(self.sample)

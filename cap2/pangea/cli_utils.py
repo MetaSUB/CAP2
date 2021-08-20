@@ -5,6 +5,7 @@ import time
 from luigi.configuration import get_config
 from os import environ
 
+from .utils import set_config
 from ..utils import chunks
 from ..setup_logging import *
 from ..constants import DATA_TYPES
@@ -70,17 +71,12 @@ class State(object):
 
     def set_config(self, org_name=None, grp_name=None, name_is_uuid=False):
         self.prep_state()
-        get_config().set('pangea', 'pangea_endpoint', self.endpoint)
-        get_config().set('pangea', 'user', self.email)
-        get_config().set('pangea', 'password', self.password)
-        get_config().set('pangea', 'data_kind', self.data_kind)
-        get_config().set('pangea', 'upload_allowed', 'upload_allowed' if self.upload else '')
-        get_config().set('pangea', 'download_only', 'download_only' if self.download_only else '')
-        get_config().set('pangea', 'work_order_name', self.work_order if self.work_order else '')
-
-        get_config().set('pangea', 'name_is_uuid', 'name_is_uuid' if name_is_uuid else '')
-        get_config().set('pangea', 'org_name', org_name if org_name else '')
-        get_config().set('pangea', 'grp_name', grp_name if grp_name else '')
+        set_config(
+            self.endpoint, self.email, self.password,
+            org_name=org_name, grp_name=grp_name, work_order_name=self.work_order,
+            name_is_uuid=name_is_uuid, upload_allowed=self.upload, download_only=self.download_only,
+            data_kind=self.data_kind,
+        )
 
     def luigi_build(self, tasks):
         if not self.scheduler_url:

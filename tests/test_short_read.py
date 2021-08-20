@@ -5,7 +5,6 @@ from shutil import rmtree
 from os.path import join, dirname, isfile, isdir
 from unittest import TestCase, skip
 
-from cap2.pipeline.short_read.krakenuniq import KrakenUniq
 from cap2.pipeline.short_read.kraken2 import Kraken2
 from cap2.pipeline.short_read.humann2 import MicaUniref90, Humann2
 from cap2.pipeline.short_read.mash import Mash
@@ -109,19 +108,6 @@ class DummyCleanReads(luigi.ExternalTask):
 
 
 class TestShortRead(TestCase):
-
-    @skip(reason="krakenuniq creates dependency conflict")
-    def test_invoke_krakenuniq(self):
-        instance = KrakenUniq(
-            pe1=RAW_READS_1,
-            pe2=RAW_READS_2,
-            sample_name='test_sample',
-            config_filename=TEST_CONFIG
-        )
-        instance.db = DummyTaxonomicDB()
-        luigi.build([instance], local_scheduler=True)
-        self.assertTrue(isfile(instance.output()['report'].path))
-        self.assertTrue(isfile(instance.output()['read_assignments'].path))
 
     @skip(reason="kraken2 create dependency hour")
     def test_invoke_kraken2(self):

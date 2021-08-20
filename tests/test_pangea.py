@@ -9,7 +9,7 @@ from time import time, sleep
 from cap2.pangea.load_task import PangeaCapTask
 from cap2.pipeline.preprocessing import FastQC
 from unittest import TestCase, skip
-from cap2.pangea.cli import set_config
+from cap2.pangea.utils import set_config
 from cap2.pangea.api import get_task_list_for_sample, wrap_task, recursively_wrap_task
 from cap2.pangea.pangea_sample import PangeaSample
 from os.path import join, dirname, isfile, isdir, abspath
@@ -103,7 +103,7 @@ class TestPangea(TestCase):
             knex=PANGEA_SAMPLE.knex,
             sample=PANGEA_SAMPLE,
         )
-        set_config(PANGEA_ENDPOINT, PANGEA_USER, PANGEA_PASS, '', '', name_is_uuid=True)
+        set_config(PANGEA_ENDPOINT, PANGEA_USER, PANGEA_PASS, name_is_uuid=True)
         tasks = get_task_list_for_sample(psample, 'pre')
         self.assertEqual(len(tasks), 1)
         self.assertTrue( isinstance(tasks[0], PangeaCapTask))
@@ -124,7 +124,7 @@ class TestPangea(TestCase):
             knex=PANGEA_SAMPLE.knex,
             sample=PANGEA_SAMPLE,
         )
-        set_config(PANGEA_ENDPOINT, '', '', '', '', name_is_uuid=True)
+        set_config(PANGEA_ENDPOINT, '', '', name_is_uuid=True)
         pct_type = PangeaCapTask.new_task_type(FastQC)
         pct_instance = pct_type(
             pe1=psample.r1,
@@ -147,7 +147,7 @@ class TestPangea(TestCase):
             knex=PANGEA_SAMPLE.knex,
             sample=PANGEA_SAMPLE,
         )
-        set_config(PANGEA_ENDPOINT, '', '', '', '', name_is_uuid=True)
+        set_config(PANGEA_ENDPOINT, '', '', name_is_uuid=True)
         pct_type = PangeaCapTask.new_task_type(FastQC)
         pct_instance = pct_type(
             pe1=psample.r1,
@@ -168,7 +168,7 @@ class TestPangea(TestCase):
             knex=PANGEA_SAMPLE.knex,
             sample=PANGEA_SAMPLE,
         )
-        set_config(PANGEA_ENDPOINT, PANGEA_USER, PANGEA_PASS, '', '', name_is_uuid=True)
+        set_config(PANGEA_ENDPOINT, PANGEA_USER, PANGEA_PASS, name_is_uuid=True)
         tasks = get_task_list_for_sample(psample, 'fast')
         tasks = [tasks[1]]  # just basic stats class
         tasks[0].taxa = DummyFastKraken2()
@@ -189,7 +189,7 @@ class TestPangea(TestCase):
 
         wop = WorkOrderProto.from_name(PANGEA_SAMPLE_2.knex, WOP_NAME)
         wo = wop.create_work_order_for_sample(PANGEA_SAMPLE_2)
-        set_config(PANGEA_ENDPOINT, PANGEA_USER, PANGEA_PASS, '', '',
+        set_config(PANGEA_ENDPOINT, PANGEA_USER, PANGEA_PASS,
                    name_is_uuid=True, work_order_name=WOP_NAME)
         tasks = get_task_list_for_sample(psample, 'fast')
         tasks = [tasks[1]]  # just basic stats class
@@ -213,7 +213,7 @@ class TestPangea(TestCase):
             knex=PANGEA_SAMPLE.knex,
             sample=PANGEA_SAMPLE,
         )
-        set_config(PANGEA_ENDPOINT, PANGEA_USER, PANGEA_PASS, '', '', name_is_uuid=True)
+        set_config(PANGEA_ENDPOINT, PANGEA_USER, PANGEA_PASS, name_is_uuid=True)
         wrapped_flag_b = wrap_task(psample, FlagTaskVersionB, config_path=TEST_CONFIG, check_versions=False)
         luigi.build([wrapped_flag_b], local_scheduler=True)
         remove(wrapped_flag_b.flag_filepath)
@@ -244,7 +244,7 @@ class TestPangea(TestCase):
             knex=PANGEA_SAMPLE.knex,
             sample=PANGEA_SAMPLE,
         )
-        set_config(PANGEA_ENDPOINT, PANGEA_USER, PANGEA_PASS, '', '', name_is_uuid=True)
+        set_config(PANGEA_ENDPOINT, PANGEA_USER, PANGEA_PASS, name_is_uuid=True)
         wrapped_flag_b = wrap_task(psample, FlagTaskVersionB, config_path=TEST_CONFIG, check_versions=False)
         luigi.build([wrapped_flag_b], local_scheduler=True)
         remove(wrapped_flag_b.flag_filepath)

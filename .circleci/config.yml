@@ -39,12 +39,19 @@ jobs:
           key: v1-dependencies-{{ checksum "requirements.txt" }}-{{ checksum "setup.py" }}
 
       - run:
-          name: Build package
+          name: Build package, run basic tests
           command: |
             export PATH="$HOME/miniconda/bin:$PATH"
             source activate
             pip install -e .
-            python -m pytest --color=yes tests
+            python -m pytest --color=yes tests/test_assembly.py tests/test_databases.py tests/test_pangea.py tests/test_pipeline_preprocessing.py tests/test_short_read.py tests/test_versions.py
+
+      - run:
+          name: Run experimental module tests
+          command: |
+            export PATH="$HOME/miniconda/bin:$PATH"
+            source activate
+            python -m pytest --color=yes tests/test_experimental_covid.py tests/test_experimental_strain.py tests/test_strainotyping.py tests/test_tcems.py
 
 workflows:
   version: 2

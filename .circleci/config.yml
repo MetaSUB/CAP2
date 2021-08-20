@@ -4,7 +4,7 @@ jobs:
 
   test_package:
     docker:
-      - image: ubuntu:bionic
+      - image: ubuntu:xenial
 
     steps:
       - checkout

@@ -34,7 +34,7 @@ class RemoveHumanReads(CapTask):
             config_filename=self.config_filename,
         )
         self.samtools = CondaPackage(
-            package="samtools",
+            package="samtools=1.09",
             executable="samtools",
             channel="bioconda",
             config_filename=self.config_filename,

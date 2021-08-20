@@ -22,13 +22,14 @@ jobs:
           keys:
           - v1-dependencies-{{ checksum "requirements.txt" }}-{{ checksum "setup.py" }}
       - run:
-          name: Install Python Dependencies
+          name: Initialize Conda
           command: |
             export PATH="$HOME/miniconda/bin:$PATH"
-            conda init bash
-            source ~/.bashrc
-            conda activate
-            conda install -y scipy pandas numpy
+            source activate
+            conda install -y scipy pandas numpy            
+      - run:
+          name: Install Python Dependencies
+          command: |
             pip install -r requirements.txt
       - save_cache:
           paths:

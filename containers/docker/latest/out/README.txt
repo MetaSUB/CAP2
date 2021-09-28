@@ -1,0 +1,1 @@
+this file should only be visible in the docker container if out was mounted properly

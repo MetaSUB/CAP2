@@ -1,0 +1,4 @@
+# This is the config file that is used in the MCAP docker container
+
+out_dir: out
+db_dir: dbs

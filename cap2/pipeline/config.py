@@ -10,6 +10,8 @@ class PipelineConfig:
     def __init__(self, filename):
         if filename:
             self.blob = load(open(filename).read())
+        elif 'CAP2_CONFIG' in environ:
+            self.blob = load(open(environ['CAP2_CONFIG']).read())
         else:
             self.blob = {}
         self.out_dir = self.blob.get('out_dir', environ.get('CAP2_OUT_DIR', 'results'))

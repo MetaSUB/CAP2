@@ -70,22 +70,31 @@ RUN pip install \
     PyYaml==5.3.1
 
 RUN conda install --yes -c conda-forge matplotlib
-
 RUN conda clean -afy
 
-RUN pip install cap2==0.4.1
+WORKDIR /mcap
+RUN mkdir -p /mcap/out /mcap/conda/config/envs /mcap/conda/vendor/conda
+COPY mcap_config.yaml /mcap/config.yaml
+ENV CAP2_CONFIG=/mcap/config.yaml
+
+
+# install most of the software here
+# so future updates will be faster
+RUN pip install cap2==0.5.3
+RUN cap2 --help
+RUN cap2 run install
+
+RUN pip install cap2==0.5.3
 
 RUN cap2 --help
 
 ADD demo /mcap/demo/
 WORKDIR /mcap/demo
-RUN cap2 run pipeline --stage pre manifest.txt
-
+# RUN cap2 run pipeline --stage qc manifest.txt
 
 WORKDIR /mcap
-COPY mcap_config.yaml /mcap/config.yaml
-ENV CAP2_CONFIG=/mcap/config.yaml
-RUN mkdir -p /mcap/out
+RUN cap2 run install
+
 
 
 CMD ["bash"]

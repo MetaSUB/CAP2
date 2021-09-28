@@ -2,3 +2,5 @@
 
 out_dir: out
 db_dir: dbs
+conda_spec_dir: /mcap/conda/config/envs
+conda_base_path: /mcap/conda/vendor/conda

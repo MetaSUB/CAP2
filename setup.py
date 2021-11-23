@@ -17,6 +17,7 @@ setuptools.setup(
         'python-daemon',
         'luigi==3.0.0b2',
         'PyYaml>=5.3.1',
+        'jpeg',
         'biopython==1.76',
         'click>=6.7',
         'Jinja2>=3.0.0a1',  # for multiqc

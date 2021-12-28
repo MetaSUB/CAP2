@@ -15,7 +15,7 @@ setuptools.setup(
         'numpy',
         'scipy',
         'python-daemon',
-        'luigi==3.0.0b2',
+        'luigi',
         'PyYaml>=5.3.1',
         'biopython==1.76',
         'click>=6.7',

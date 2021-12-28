@@ -33,7 +33,7 @@ TEST_CONFIG = join(dirname(__file__), 'data/test_config.yaml')
 
 PANGEA_ENDPOINT = 'https://pangea.gimmebio.com'
 PANGEA_USER = 'cap2tester@fake.com'
-PANGEA_PASS = os.environ['CAP2_PANGEA_TEST_PASSWORD']
+PANGEA_PASS = os.environ.get('CAP2_PANGEA_TEST_PASSWORD', 'foobar22')  # this test will fail if the password is not set
 
 
 def create_test_sample():

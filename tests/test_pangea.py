@@ -1,6 +1,6 @@
 
 import luigi
-
+import os
 from shutil import rmtree
 
 from os import environ, remove
@@ -30,7 +30,7 @@ TEST_CONFIG = join(dirname(__file__), 'data/test_config.yaml')
 
 PANGEA_ENDPOINT = 'https://pangeabio.io'
 PANGEA_USER = 'cap2tester@fake.com'
-PANGEA_PASS = environ['CAP2_PANGEA_TEST_PASSWORD']
+PANGEA_PASS = os.environ.get('CAP2_PANGEA_TEST_PASSWORD', 'foobar22')  # this test will fail if the password is not set
 WOP_NAME = '374304a9-f5c1-4e44-a87b-9e8032d03d09'
 
 

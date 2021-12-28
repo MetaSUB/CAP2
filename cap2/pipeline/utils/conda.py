@@ -59,7 +59,7 @@ class CondaEnv(luigi.Task):
 
     def save_spec(self):
         proc = subprocess.Popen(
-            ' '.join(['conda', 'env', 'export', '--name', self.name]),
+            ' '.join(['conda', 'env', 'export']),
             stdout=subprocess.PIPE,
             shell=True
         )
@@ -111,7 +111,7 @@ class CondaEnv(luigi.Task):
         except:
             print(f'Subprocess failed from {os.getcwd()}: {cmd}', file=sys.stderr)
             raise
-        self.save_spec()
+        # self.save_spec()
         self.add_to_path()
 
     def pypi_install(self, package):

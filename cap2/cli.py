@@ -6,6 +6,7 @@ from .pangea.cli import pangea
 from .api import (
     run_db_stage,
     run_stage,
+    install_software,
 )
 from .sample import Sample
 from .constants import (
@@ -71,6 +72,18 @@ def cap_pipeline(workers, threads, config, stage, manifest):
     """
     samples = Sample.samples_from_manifest(manifest)
     run_stage(samples, stage, config_path=config, cores=threads, workers=workers)
+
+
+@run.command('install')
+@click.option('-w', '--workers', default=1)
+@click.option('-c', '--config', type=click.Path(), default='')
+def cap_pipeline(workers, config):
+    """Install the software needed by the MCAP.
+
+    This command will make a series of calls to conda in
+    order to install the requisite software for the MCAP.
+    """
+    install_software(config_path=config, workers=workers)
 
 
 if __name__ == '__main__':

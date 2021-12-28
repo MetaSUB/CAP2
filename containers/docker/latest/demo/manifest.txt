@@ -1,0 +1,1 @@
+zymo_pos_cntrl zymo_pos_cntrl.r1.fq.gz zymo_pos_cntrl.r2.fq.gz

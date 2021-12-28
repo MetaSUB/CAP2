@@ -14,6 +14,8 @@ setuptools.setup(
         'pandas',
         'numpy',
         'scipy',
+        'matplotlib',
+        'pillow',
         'python-daemon',
         'luigi==3.0.0b2',
         'PyYaml>=5.3.1',

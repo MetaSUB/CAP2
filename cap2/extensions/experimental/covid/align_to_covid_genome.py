@@ -27,7 +27,7 @@ class AlignReadsToCovidGenome(CapTask):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.pkg = CondaPackage(
-            package="bowtie2==2.4.1",
+            package="tbb=2020.2 bowtie2==2.4.1",
             executable="bowtie2",
             channel="bioconda",
             config_filename=self.config_filename,

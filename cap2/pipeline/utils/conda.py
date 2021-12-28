@@ -78,7 +78,7 @@ class CondaEnv(luigi.Task):
     def contains(self, package):
         try:
             with open(self.spec_file, 'r') as f:
-                deps = yaml.load(f)
+                deps = yaml.safe_load(f)
                 deps = deps.get('dependencies', [])
 
             while True:
@@ -133,7 +133,7 @@ class CondaEnv(luigi.Task):
         """
         init conda env
         """
-        if self.has_spec():
+        if True:
             cmd = [
                 'conda', 'env', 'create', '-f',
                 self.spec_file, '-p', self.path, "python={}".format(self.python),
@@ -151,10 +151,10 @@ class CondaEnv(luigi.Task):
                 print(f'Subprocess failed from {os.getcwd()}: {cmd}', file=sys.stderr)
                 raise
             self.save_spec()
+        self.install('pip')
 
-    def complete(self):
-        logger.debug("{}: self.complete() => ispath({}) = {} ".format(str(self), self.path, os.path.isdir(self.path)))
-        return os.path.isdir(self.path)
+    def output(self):
+        return luigi.LocalTarget(self.pip)
 
 
 class CondaPackage(luigi.Task):

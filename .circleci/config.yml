@@ -26,7 +26,7 @@ jobs:
           command: |
             export PATH="$HOME/miniconda/bin:$PATH"
             source activate
-            conda install -y scipy pandas numpy            
+            conda install -y scipy pandas numpy pillow==8.4.0            
       - run:
           name: Install Python Dependencies
           command: |

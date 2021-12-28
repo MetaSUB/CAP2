@@ -2,7 +2,7 @@
 import luigi
 import subprocess
 from os.path import join, dirname, basename
-from yaml import load
+from yaml import safe_load
 from shutil import rmtree
 
 from ..config import PipelineConfig
@@ -93,7 +93,7 @@ class ErrorCorrectReads(CapTask):
         cmd += f' -t {self.cores} -o {outdir}'
         self.run_cmd(cmd)  # runs error correction but leaves output in a dir
         config_path = f'{self.sample_name}.error_correction_out/corrected/corrected.yaml'
-        spades_out = load(open(config_path).read())
+        spades_out = safe_load(open(config_path).read())
         ec_r1 = spades_out[0]['left reads']
         assert len(ec_r1) == 1
         ec_r2 = spades_out[0]['right reads']

@@ -1,5 +1,5 @@
 
-from yaml import load
+from yaml import safe_load
 from os import environ
 
 
@@ -9,7 +9,7 @@ class PipelineConfig:
 
     def __init__(self, filename):
         if filename:
-            self.blob = load(open(filename).read())
+            self.blob = safe_load(open(filename).read())
         else:
             self.blob = {}
         self.out_dir = self.blob.get('out_dir', environ.get('CAP2_OUT_DIR', 'results'))

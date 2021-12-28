@@ -11,21 +11,21 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     package_dir={'cap2': 'cap2'},
     install_requires=[
-        'pandas',
+        'pandas==1.3.4,<2.0',
         'numpy',
-        'scipy',
-        'python-daemon',
-        'luigi',
-        'PyYaml>=5.3.1',
+        'scipy==1.7.3,<2.0',
+        'python-daemon>=2.3.0,<3.0',
+        'luigi>=3.0.3,<3.1',
+        'PyYaml==6.0',
         'biopython==1.76',
-        'click>=6.7',
-        'Jinja2>=3.0.0a1',  # for multiqc
-        'multiqc',  # hackish, tbd if I'm okay with this
-        'pangea_api>=0.9.3',
-        'pysam',
-        'python-louvain',
-        'gimmebio.seqs',
-        'bloom_filter',
+        'click>=6.0',
+        'Jinja2==3.0.3',  # for multiqc
+        'multiqc==1.11',  # hackish, tbd if I'm okay with this
+        'pangea_api>=0.9.24,<1.0',
+        'pysam==0.18.0',
+        'python-louvain==0.15',
+        'gimmebio.seqs==0.9.3',
+        'bloom_filter>=1.3.3,<2.0',
     ],
     entry_points={
         'console_scripts': [

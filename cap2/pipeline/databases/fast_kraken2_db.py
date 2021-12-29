@@ -1,7 +1,7 @@
 
 import luigi
 
-from os.path import join, abspath, dirname
+from os.path import join, abspath, dirname, isfile
 from glob import glob
 import subprocess
 
@@ -45,15 +45,17 @@ class FastKraken2DB(CapDbTask):
 
     def output(self):
         db_taxa = luigi.LocalTarget(join(self.kraken2_db, 'hash.k2d'))
-        db_taxa.makedirs()
         return {'kraken2_db_taxa': db_taxa}
 
     def run(self):
+        self.output()['kraken2_db_taxa'].makedirs()
         cmd = (
             'wget '
             f'--directory-prefix={self.config.db_dir} '
             f'{MINIKRAKEN_V2_8GB_URL} '
             ' && '
             f'tar -xzf {join(self.config.db_dir, "minikraken2_v2_8GB_201904.tgz")}'
+            ' && '
+            f'mv minikraken2_v2_8GB_201904_UPDATE {self.config.db_dir}'
         )
         self.run_cmd(cmd)

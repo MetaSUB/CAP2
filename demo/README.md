@@ -8,7 +8,7 @@ See `README.md` in main directory.
 
 ## Running
 
-Run the demo by entering the command `cap2 run qc config.yaml manifest.txt` or `make qc`
+Run the demo by entering the command `cap2 run pipeline -s qc -c config.yaml manifest.txt` or `make qc`
 
 
 ## Notes

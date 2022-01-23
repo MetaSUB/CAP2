@@ -98,7 +98,7 @@ class Humann2(CapTask):
         self.alignment = MicaUniref90.from_cap_task(self)
 
     def tool_version(self):
-        return self.run_cmd(f'{self.pkg.bin} --version').stderr.decode('utf-8')
+        return self.run_cmd(f'{self.humann.bin} --version').stderr.decode('utf-8')
 
     def requires(self):
         return self.humann, self.alignment, self.db

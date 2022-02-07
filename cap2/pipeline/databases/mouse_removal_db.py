@@ -1,6 +1,6 @@
 
 import luigi
-from os.path import join, dirname
+from os.path import join, dirname, isfile
 from glob import glob
 import subprocess
 from os import makedirs
@@ -36,13 +36,14 @@ class MouseRemovalDB(CapDbTask):
     def download_mouse_genome(self):
         local_dir = join(self.config.db_dir, 'GRCm39')
         makedirs(local_dir, exist_ok=True)
-        cmd = (
-            'wget '
-            f'--directory-prefix={local_dir} '
-            f'{MOUSE_GENOME_URL} '
-        )
-        self.run_cmd(cmd)
         local_path = join(local_dir, 'GCA_000001635.9_GRCm39_genomic.fna.gz')
+        if not isfile(local_path):
+            cmd = (
+                'wget '
+                f'--directory-prefix={local_dir} '
+                f'{MOUSE_GENOME_URL} '
+            )
+            self.run_cmd(cmd)
         return local_path
 
     @property

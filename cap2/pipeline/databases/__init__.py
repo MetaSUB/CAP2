@@ -4,7 +4,7 @@ from .human_removal_db import HumanRemovalDB
 from .hmp_db import HmpDB
 from .uniref import Uniref90
 from .kraken2_db import Kraken2DB, BrakenKraken2DB
-
+from .fast_kraken2_db import FastKraken2DB
 
 MODULES = [
     HumanRemovalDB,
@@ -12,4 +12,5 @@ MODULES = [
     Uniref90,
     Kraken2DB,
     BrakenKraken2DB,
+    FastKraken2DB,
 ]

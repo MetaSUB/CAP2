@@ -16,7 +16,7 @@ setuptools.setup(
         'scipy==1.7.3,<2.0',
         'python-daemon>=2.3.0,<3.0',
         'luigi>=3.0.3,<3.1',
-        'Pillow==8.4.0',
+        'Pillow==9.0.1',
         'PyYaml==6.0',
         'biopython==1.76',
         'click>=6.0',
